@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
-using BCrypt.Net;
 
 namespace WebBanThucAnNhanh.Controllers
 {
@@ -51,29 +50,14 @@ namespace WebBanThucAnNhanh.Controllers
         }
 
         // POST: User/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,Password,Email")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,Email,FullName,PhoneNumber,Address,Role")] User user)
         {
             if (ModelState.IsValid)
             {
-                // 2. Kiểm tra trùng lặp Username hoặc Email
-                // Lưu ý: Nếu dữ liệu lớn nên dùng _context.Users.AnyAsync()
-                bool isExist = _context.Users.Any(u => u.Username == user.Username || u.Email == user.Email);
-                if (isExist)
-                {
-                    ModelState.AddModelError("", "Tên đăng nhập hoặc Email đã tồn tại.");
-                    return View(user);
-                }
-
-                // 3. Mã hóa mật khẩu trước khi lưu (BẮT BUỘC)
-                // Sử dụng BCrypt để hash password
-                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-
-                // 4. Gán mặc định Role là "Customer" (Khách hàng)
-                // Chỉ Admin trang quản trị mới có quyền sửa Role này sau
-                user.Role = "Customer";
-
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,7 +86,7 @@ namespace WebBanThucAnNhanh.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Email,Role")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Email,FullName,PhoneNumber,Address,Role")] User user)
         {
             if (id != user.Id)
             {
