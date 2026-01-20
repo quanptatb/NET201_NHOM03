@@ -12,6 +12,6 @@ namespace WebBanThucAnNhanh.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<TypeOfFastFood> TypeOfFastFoods { get; set; }
-        // public DbSet<FastFood> FastFoods { get; set; }
+        public DbSet<FastFood> FastFoods { get; set; }
     }
 }
