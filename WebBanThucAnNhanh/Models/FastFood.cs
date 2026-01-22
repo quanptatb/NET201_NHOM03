@@ -18,9 +18,9 @@ namespace WebBanThucAnNhanh.Models
         public string NameFastFood { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập giá")]
-        [Range(0, double.MaxValue, ErrorMessage = "Giá phải lớn hơn 0")]
+        [Range(0, 99999999999, ErrorMessage = "Giá phải lớn hơn 0")] // Sửa Range lại một chút cho an toàn
         [Display(Name = "Giá bán")]
-        public double Price { get; set; } // Nếu đổi sang decimal thì sửa thành: public decimal Price { get; set; }
+        public decimal Price { get; set; } // Đổi double thành decimal
 
         [Required(ErrorMessage = "Vui lòng nhập số lượng")]
         [Display(Name = "Số lượng")]
@@ -35,18 +35,23 @@ namespace WebBanThucAnNhanh.Models
         [Display(Name = "Mô tả")]
         public string Description { get; set; }
 
+        // ... code cũ ...
+
         // Khóa ngoại
         [Display(Name = "Loại thức ăn")]
         public int IdTypeOfFastFood { get; set; }
 
-        [ForeignKey("IdTypeOfFastFood")] // Khai báo rõ ràng khóa ngoại (Optional - vì EF tự hiểu nhưng viết ra sẽ dễ đọc code hơn)
-        public TypeOfFastFood TypeOfFastFood { get; set; }
+        [ForeignKey("IdTypeOfFastFood")]
+        // THÊM DẤU ? VÀO SAU TypeOfFastFood
+        public virtual TypeOfFastFood? TypeOfFastFood { get; set; }
 
         // Khóa ngoại
         [Display(Name = "Chủ đề")]
         public int IdTheme { get; set; }
 
-        [ForeignKey("IdTheme")] // Khai báo rõ ràng khóa ngoại (Optional - vì EF tự hiểu nhưng viết ra sẽ dễ đọc code hơn)
-        public Theme Theme { get; set; }
+        [ForeignKey("IdTheme")]
+        // THÊM DẤU ? VÀO SAU Theme
+        public virtual Theme? Theme { get; set; }
+
     }
 }
