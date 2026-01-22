@@ -1,66 +1,99 @@
 @model WebBanThucAnNhanh.Models.FastFood
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi Tiết Món Ăn";
 }
 
-<h1>Details</h1>
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Danh sách món</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.NameFastFood</li>
+        </ol>
+    </nav>
 
-<div>
-    <h4>FastFood</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NameFastFood)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NameFastFood)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TypeOfFastFood)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TypeOfFastFood.NameTypeOfFastFood)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Theme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Theme.NameTheme)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdFastFood">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <div class="position-relative overflow-hidden rounded shadow-sm text-center bg-light" style="min-height: 300px;">
+                        @if (!string.IsNullOrEmpty(Model.Image))
+                        {
+                            <img src="~/images/@Model.Image" alt="@Model.NameFastFood" class="img-fluid" style="object-fit: contain; max-height: 400px; width: 100%;" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                <span>Chưa có hình ảnh</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <h1 class="display-6 fw-bold text-dark mb-2">@Model.NameFastFood</h1>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-primary me-2">
+                            <i class="bi bi-tag-fill"></i> @Html.DisplayFor(model => model.TypeOfFastFood.NameTypeOfFastFood)
+                        </span>
+                        @if(Model.Theme != null)
+                        {
+                            <span class="badge bg-info text-dark">
+                                <i class="bi bi-stars"></i> @Model.Theme.NameTheme
+                            </span>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h2 class="text-danger fw-bold">@Model.Price.ToString("N0") đ</h2>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Mô tả:</h5>
+                        <p class="text-secondary" style="line-height: 1.6;">
+                            @if(!string.IsNullOrEmpty(Model.Description))
+                            {
+                                @Model.Description
+                            }
+                            else
+                            {
+                                <i>Đang cập nhật mô tả...</i>
+                            }
+                        </p>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <small class="text-muted fw-bold d-block">TÌNH TRẠNG</small>
+                            @if (Model.Status && Model.Quantity > 0)
+                            {
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Còn hàng</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill"></i> Hết hàng / Ngừng bán</span>
+                            }
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted fw-bold d-block">SỐ LƯỢNG KHO</small>
+                            <span class="fw-bold">@Model.Quantity</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-auto">
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model?.IdFastFood" class="btn btn-danger px-4 fw-bold">
+                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                        </a>
+
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

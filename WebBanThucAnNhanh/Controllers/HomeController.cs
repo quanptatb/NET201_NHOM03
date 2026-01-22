@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
@@ -66,10 +68,10 @@ public class HomeController : Controller
         return View(result);
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
