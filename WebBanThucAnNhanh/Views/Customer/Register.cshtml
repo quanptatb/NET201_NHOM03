@@ -1,0 +1,90 @@
+@model WebBanThucAnNhanh.Models.Customer
+@{
+    ViewData["Title"] = "Đăng Ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="auth-section">
+    <div class="floating-bg float-left"></div>
+    <div class="floating-bg float-right"></div>
+
+    <div class="container">
+        <div class="auth-card animate-on-scroll" style="max-width: 700px;">
+            
+            <div class="section-title text-center" style="margin-bottom: 30px;">
+                <h2>Đăng Ký</h2>
+                <p>Tạo tài khoản để đặt món nhanh chóng!</p>
+            </div>
+
+            <form action="@Url.Action("Register", "Customer")" method="post">
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center mb-3">@ViewBag.Error</div>
+                }
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Họ và tên</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" name="FullName" placeholder="VD: Nguyễn Văn A" required />
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Số điện thoại</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-phone"></i>
+                            <input type="text" name="PhoneNumber" placeholder="09xxxx..." required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="Email" placeholder="example@gmail.com" required />
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Địa chỉ</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" name="Address" placeholder="Số nhà, đường..." required />
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border-top: 1px dashed #eee; margin: 15px 0;">
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Tên đăng nhập</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user-circle"></i>
+                            <input type="text" name="UserName" placeholder="Chọn tên đăng nhập" required />
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 280px;">
+                        <label>Mật khẩu</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="Password" placeholder="******" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-submit" style="margin-top: 25px;">
+                    <button type="submit" class="btn btn-large shine-effect" style="width: 100%;">
+                        Đăng Ký Tài Khoản
+                    </button>
+                </div>
+
+                <div class="auth-links">
+                    <p>Đã có tài khoản? <a href="@Url.Action("Login", "Customer")">Đăng nhập ngay</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

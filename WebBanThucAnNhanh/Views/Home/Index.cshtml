@@ -15,9 +15,6 @@
                 Trải nghiệm những chiếc burger ngon nhất, xúc xích nóng hổi và gà rán giòn rụm.
                 Giao hàng tận nơi chỉ trong vòng 30 phút.
             </p>
-            <div class="hero-btns">
-                <a href="#popular-dishes" class="btn">Xem món nổi bật</a>
-            </div>
         </div>
     </div>
 </section>
@@ -25,7 +22,7 @@
 <section class="about" id="about">
     <div class="container">
         <div class="section-title text-center">
-            <h2>Câu Chuyện <span class="highlight">Của Chúng Tôi</span></h2>
+            <h2>Câu Chuyện Của Chúng Tôi</h2>
         </div>
         <div class="about-content">
             <div class="about-text">
@@ -320,82 +317,89 @@
 <section class="testimonials" id="testimonials">
     <div class="container">
         <div class="section-title text-center">
-            <h2>Khách Hàng <span class="highlight">Nói Gì</span></h2>
-            <p>Khám phá lý do tại sao khách hàng luôn quay lại</p>
+            <h2>Những khách hàng thân thuộc của chúng tôi nói gì?</h2>
+            <p>Khám phá lý do tại sao khách hàng của chúng tôi luôn quay lại mua hàng lần nữa.</p>
         </div>
-        <div class="testimonials-slider">
-            <div class="testimonial-item animate-on-scroll">
-                <div class="testimonial-header">
-                    <div class="testimonial-author-img">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Minh Tuấn" />
-                    </div>
-                    <div class="testimonial-meta">
-                        <h4>Minh Tuấn</h4>
-                        <p>Người sành ăn</p>
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-icon"><i class="fas fa-quote-left"></i></div>
-                <p class="testimonial-text">"Burger ngon nhất thị trấn! Giao hàng luôn đúng giờ và đồ ăn nóng hổi."</p>
-                <div class="testimonial-date">
-                    <p>15/02/2026</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<section class="order-now" id="order">
-    <div class="floating-burger left"></div>
-    <div class="floating-fries right"></div>
-    <div class="container">
-        <div class="section-title text-center">
-            <h2>Đặt Hàng <span class="highlight">Ngay</span></h2>
-            <p>Điền thông tin và thưởng thức món ngon ngay tại nhà</p>
-        </div>
-        <div class="order-content">
-            <div class="order-info animate-on-scroll">
-                <div class="order-info-header">
-                    <h3>Thông tin đơn hàng</h3>
-                    <div class="food-icon-divider"><span><i class="fas fa-hamburger"></i></span></div>
-                </div>
-                <div class="order-item">
-                    <div class="order-icon pulse-animation"><i class="fas fa-truck"></i></div>
-                    <div class="order-details">
-                        <h4>Miễn phí vận chuyển</h4>
-                        <p>Cho đơn hàng trên 500k</p>
-                    </div>
-                </div>
-                <div class="order-item">
-                    <div class="order-icon pulse-animation"><i class="fas fa-clock"></i></div>
-                    <div class="order-details">
-                        <h4>Thời gian giao hàng</h4>
-                        <p>30-45 phút</p>
-                    </div>
-                </div>
-            </div>
-            <div class="order-form animate-on-scroll">
-                <div class="form-header">
-                    <h3>Chi tiết giao hàng</h3>
-                    <p>Điền thông tin của bạn để đặt hàng</p>
-                </div>
-                <form>
-                    <div class="form-group">
-                        <label for="fullName">Họ và tên</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="fullName" name="fullName" placeholder="Nhập họ tên của bạn"
-                                required />
+        <div class="testimonials-grid">
+
+            <div class="testimonial-card animate-on-scroll">
+                <div class="card-header-review">
+                    <div class="user-info">
+                        <img src="~/images/hung.png" alt="Hung" />
+                        <div>
+                            <h4>Hưng</h4>
+                            <span class="user-role">Người Ăn Nhiều</span>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-submit">
-                        <button type="submit" class="btn btn-large shine-effect">Đặt Hàng Ngay</button>
-                    </div>
-                </form>
+                    <i class="fas fa-quote-right quote-icon"></i>
+                </div>
+                <div class="card-body-review">
+                    <p>"Những chiếc burger ngon nhất trong thành phố!
+                        Tôi luôn bị ấn tượng bởi chất lượng và hương vị. Giao hàng lúc nào cũng đúng giờ, đồ ăn đến nơi
+                        vẫn nóng hổi và tươi ngon. Đây sẽ là món khoái khẩu của tôi. Tôi sẽ ăn burger để càng béo phì
+                        đến cuối đời”</p>
+                </div>
+                <div class="card-footer-review">
+                    February 15, 2025
+                </div>
             </div>
+
+            <div class="testimonial-card animate-on-scroll">
+                <div class="card-header-review">
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson" />
+                        <div>
+                            <h4>Sarah Johnson</h4>
+                            <span class="user-role">Blogger Thức Ăn</span>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="fas fa-quote-right quote-icon"></i>
+                </div>
+                <div class="card-body-review">
+                    <p>“Tôi đã thử rất nhiều quán đồ ăn nhanh, nhưng nơi này thực sự nổi bật!
+                        Bánh mì gà của họ ngon đến mức khó cưỡng, và dịch vụ khách hàng thì cực kỳ tuyệt vời. Tôi khuyên
+                        tất cả người theo dõi của mình nên thử!”</p>
+                </div>
+                <div class="card-footer-review">
+                    January 28, 2025
+                </div>
+            </div>
+
+            <div class="testimonial-card animate-on-scroll">
+                <div class="card-header-review">
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Michael Brown" />
+                        <div>
+                            <h4>Michael Brown</h4>
+                            <span class="user-role">Bếp Trưởng Điều Hành</span>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="fas fa-quote-right quote-icon"></i>
+                </div>
+                <div class="card-body-review">
+                    <p>“Với tư cách là một đầu bếp, tôi rất coi trọng chất lượng nguyên liệu.
+                        Nơi này chỉ sử dụng những nguyên liệu tốt nhất và tươi nhất. Gia đình tôi rất thích các combo ưu
+                        đãi cuối tuần. Chúng tôi đã đặt món ở đây hơn một năm và chất lượng chưa bao giờ làm chúng tôi
+                        thất vọng!”</p>
+                </div>
+                <div class="card-footer-review">
+                    March 5, 2025
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

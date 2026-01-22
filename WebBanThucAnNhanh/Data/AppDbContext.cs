@@ -16,7 +16,7 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
-        
+        public DbSet<Customer> Customers { get; set; }
 
         // Fluent API (nếu cần thiết lập thêm các ràng buộc phức tạp theo Y6)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
