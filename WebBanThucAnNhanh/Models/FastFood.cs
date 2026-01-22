@@ -41,5 +41,12 @@ namespace WebBanThucAnNhanh.Models
 
         [ForeignKey("IdTypeOfFastFood")] // Khai báo rõ ràng khóa ngoại (Optional - vì EF tự hiểu nhưng viết ra sẽ dễ đọc code hơn)
         public TypeOfFastFood TypeOfFastFood { get; set; }
+
+        // Khóa ngoại
+        [Display(Name = "Chủ đề")]
+        public int IdTheme { get; set; }
+
+        [ForeignKey("IdTheme")] // Khai báo rõ ràng khóa ngoại (Optional - vì EF tự hiểu nhưng viết ra sẽ dễ đọc code hơn)
+        public Theme Theme { get; set; }
     }
 }

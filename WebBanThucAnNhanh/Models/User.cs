@@ -27,7 +27,6 @@ namespace WebBanThucAnNhanh.Models
 
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         public string PhoneNumber { get; set; }
-
         public string Address { get; set; }
 
         public string Role { get; set; } = "Customer"; // Customer, Admin

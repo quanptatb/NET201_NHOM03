@@ -22,7 +22,7 @@ namespace WebBanThucAnNhanh.Controllers
         // GET: FastFood
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.FastFoods.Include(f => f.TypeOfFastFood);
+            var appDbContext = _context.FastFoods.Include(f => f.Theme).Include(f => f.TypeOfFastFood);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             var fastFood = await _context.FastFoods
+                .Include(f => f.Theme)
                 .Include(f => f.TypeOfFastFood)
                 .FirstOrDefaultAsync(m => m.IdFastFood == id);
             if (fastFood == null)
@@ -48,6 +49,7 @@ namespace WebBanThucAnNhanh.Controllers
         // GET: FastFood/Create
         public IActionResult Create()
         {
+            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme");
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood");
             return View();
         }
@@ -57,7 +59,7 @@ namespace WebBanThucAnNhanh.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFastFood,NameFastFood,Price,Quantity,Image,Status,Description,IdTypeOfFastFood")] FastFood fastFood)
+        public async Task<IActionResult> Create([Bind("IdFastFood,NameFastFood,Price,Quantity,Image,Status,Description,IdTypeOfFastFood,IdTheme")] FastFood fastFood)
         {
             if (ModelState.IsValid)
             {
@@ -65,6 +67,7 @@ namespace WebBanThucAnNhanh.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
             return View(fastFood);
         }
@@ -82,6 +85,7 @@ namespace WebBanThucAnNhanh.Controllers
             {
                 return NotFound();
             }
+            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
             return View(fastFood);
         }
@@ -91,7 +95,7 @@ namespace WebBanThucAnNhanh.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdFastFood,NameFastFood,Price,Quantity,Image,Status,Description,IdTypeOfFastFood")] FastFood fastFood)
+        public async Task<IActionResult> Edit(int id, [Bind("IdFastFood,NameFastFood,Price,Quantity,Image,Status,Description,IdTypeOfFastFood,IdTheme")] FastFood fastFood)
         {
             if (id != fastFood.IdFastFood)
             {
@@ -118,6 +122,7 @@ namespace WebBanThucAnNhanh.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
             return View(fastFood);
         }
@@ -131,6 +136,7 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             var fastFood = await _context.FastFoods
+                .Include(f => f.Theme)
                 .Include(f => f.TypeOfFastFood)
                 .FirstOrDefaultAsync(m => m.IdFastFood == id);
             if (fastFood == null)
