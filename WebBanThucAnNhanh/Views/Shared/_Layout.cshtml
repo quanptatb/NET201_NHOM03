@@ -70,6 +70,8 @@
 </body> 
 
 </html> *@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Fast Food Restaurant | Fresh & Delicious Food Delivered Fast";
 }
@@ -198,6 +200,25 @@
                     <li><a href="#menu">Menu</a></li>
                     <li><a href="#testimonials">Testimonials</a></li>
                     <li><a href="#order" class="btn">Order Online</a></li>
+                    <li class="user-menu-item">
+    @{
+        var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+    }
+    @if (string.IsNullOrEmpty(userName))
+    {
+        @* Chưa đăng nhập -> Icon User thường *@
+        <a href="@Url.Action("Login", "User")" title="Đăng nhập">
+            <i class="fas fa-user"></i>
+        </a>
+    }
+    else
+    {
+        @* Đã đăng nhập -> Icon User có tích xanh hoặc Avatar *@
+        <a href="@Url.Action("Profile", "User")" title="Xin chào @userName" class="active-user">
+            <i class="fas fa-user-check" style="color: #ff4757;"></i>
+        </a>
+    }
+</li>
                 </ul>
             </nav>
         </div>

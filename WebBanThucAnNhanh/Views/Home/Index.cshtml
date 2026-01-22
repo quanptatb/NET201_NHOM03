@@ -41,7 +41,7 @@
                 <a href="#menu" class="btn">Xem Thực Đơn</a>
             </div>
             <div class="about-image">
-                <img src="@Url.Content("~/images/burger.png")" alt="Premium Burger" />
+                <img src="@Url.Content("~/images/burgers.jpg")" alt="Premium Burger" />
             </div>
         </div>
     </div>
@@ -54,13 +54,14 @@
 
         @* --- PHẦN TÌM KIẾM (Đã bỏ chọn Loại) --- *@
         <div class="advanced-search-container animate-on-scroll">
-            <form method="get" action="@Url.Action("Index", "Home", new { fragment = "menu" })#menu" class="search-form">
-                
+            <form method="get" action="@Url.Action("Search", "Home")" class="search-form">
+
                 <div class="search-row">
                     @* 1. Tìm kiếm đa năng (Tên, Mô tả, Loại) *@
                     <div class="search-group search-keyword">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="keyword" placeholder="Nhập tên món, loại (ví dụ: Gà, Burger)..." value="@ViewBag.Keyword" />
+                        <input type="text" name="keyword" placeholder="Nhập tên món, loại (ví dụ: Gà, Burger)..."
+                            value="@ViewBag.Keyword" />
                     </div>
 
                     @* 2. Tìm theo Chủ đề (Giữ lại cái này là hợp lý) *@
@@ -72,7 +73,7 @@
                                 foreach (var theme in ViewBag.Themes)
                                 {
                                     @* Nhớ kiểm tra lại tên thuộc tính NameTheme hay TenChuDe *@
-                                     <option value="@theme.IdTheme">@theme.NameTheme</option>
+                                    <option value="@theme.IdTheme">@theme.NameTheme</option>
                                 }
                             }
                         </select>
@@ -107,54 +108,65 @@
 
         @if (ViewBag.IsSearch == true)
         {
-            @* --- GIAO DIỆN KẾT QUẢ TÌM KIẾM (Hiện tất cả món tìm được) --- *@
+            @* --- GIAO DIỆN KẾT QUẢ TÌM KIẾM (Hiện tất cả món tìm được) ---
             <div class="search-results-wrapper">
                 <div class="section-title text-center" style="margin-bottom: 30px;">
                     <h3>Kết quả tìm kiếm (@Model.Count() món)</h3>
-                    @if(Model.Count() == 0) {
+                    @if (Model.Count() == 0)
+                    {
                         <p class="text-muted">Rất tiếc, không tìm thấy món nào phù hợp với yêu cầu của bạn.</p>
                     }
-                </div>
+                </div> *@
 
-                <div class="menu-content active-content" style="display: grid;">
-                    @foreach (var item in Model)
-                    {
-                        <div class="menu-item animate-on-scroll">
-                            <div class="menu-item-img">
-                                <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
+            <div class="menu-content active-content" style="display: grid;">
+                @foreach (var item in Model)
+                {
+                    <div class="menu-item animate-on-scroll">
+                        <div class="menu-item-img">
+                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
+                        </div>
+                        <div class="menu-item-content">
+                            <div class="menu-item-title">
+                                <h4>@item.NameFastFood</h4>
+                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
                             </div>
-                            <div class="menu-item-content">
-                                <div class="menu-item-title">
-                                    <h4>@item.NameFastFood</h4>
-                                    <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
+                            <p class="menu-item-text">
+                                @* Hiện thêm tên loại để khách biết *@
+                                <small class="highlight">@item.TypeOfFastFood?.NameTypeOfFastFood</small><br />
+                                @item.Description
+                            </p>
+                            <div class="menu-item-order">
+                                @* Phần đánh giá sao bên trái *@
+                                <div class="menu-item-rating">
+                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107;"></i>
                                 </div>
-                                <p class="menu-item-text">
-                                    @* Hiện thêm tên loại để khách biết *@
-                                    <small class="highlight">@item.TypeOfFastFood?.NameTypeOfFastFood</small><br/>
-                                    @item.Description
-                                </p>
-                                <div class="menu-item-order">
-                                     <div class="menu-item-rating">
-                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                    </div>
-                                    <a href="#" class="btn" onclick="return false;">
-                                        <i class="fas fa-shopping-cart"></i> Thêm ngay
+
+                                @* Phần hành động bên phải: Số lượng + Nút Thêm *@
+                                <div class="action-group">
+                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+
+                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        <i class="fas fa-cart-plus"></i> Thêm
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
-                
-                <div class="text-center" style="margin-top: 40px;">
-                    <a href="@Url.Action("Index", "Home")#menu" class="btn" style="background: #333;">Quay lại thực đơn</a>
-                </div>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="@Url.Action("Index", "Home")#menu" class="btn" style="background: #333;">Quay lại thực đơn</a>
             </div>
         }
         else
         {
             @* --- GIAO DIỆN MENU TAB BÌNH THƯỜNG (Khi chưa tìm gì) --- *@
-            
+
             <div class="menu-tabs">
                 <button class="menu-tab active" data-target="burgers">Burgers</button>
                 <button class="menu-tab" data-target="drinks">Nước Uống</button>
@@ -177,12 +189,20 @@
                             </div>
                             <p class="menu-item-text">@item.Description</p>
                             <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                @* 1. Rating *@
+                                <div class="menu-item-rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                        class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
+
+                                @* 2. Ô Số lượng & Nút Thêm *@
+                                <div class="action-group">
+                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+
+                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        <i class="fas fa-cart-plus"></i> Thêm
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,12 +224,20 @@
                             </div>
                             <p class="menu-item-text">@item.Description</p>
                             <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                @* 1. Rating *@
+                                <div class="menu-item-rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                        class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
+
+                                @* 2. Ô Số lượng & Nút Thêm *@
+                                <div class="action-group">
+                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+
+                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        <i class="fas fa-cart-plus"></i> Thêm
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -231,12 +259,20 @@
                             </div>
                             <p class="menu-item-text">@item.Description</p>
                             <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                @* 1. Rating *@
+                                <div class="menu-item-rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                        class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
+
+                                @* 2. Ô Số lượng & Nút Thêm *@
+                                <div class="action-group">
+                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+
+                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        <i class="fas fa-cart-plus"></i> Thêm
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -258,12 +294,20 @@
                             </div>
                             <p class="menu-item-text">@item.Description</p>
                             <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                @* 1. Rating *@
+                                <div class="menu-item-rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                        class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
+
+                                @* 2. Ô Số lượng & Nút Thêm *@
+                                <div class="action-group">
+                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+
+                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        <i class="fas fa-cart-plus"></i> Thêm
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -289,15 +333,18 @@
                         <h4>Minh Tuấn</h4>
                         <p>Người sành ăn</p>
                         <div class="testimonial-rating">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
                     </div>
                 </div>
                 <div class="testimonial-icon"><i class="fas fa-quote-left"></i></div>
                 <p class="testimonial-text">"Burger ngon nhất thị trấn! Giao hàng luôn đúng giờ và đồ ăn nóng hổi."</p>
-                <div class="testimonial-date"><p>15/02/2026</p></div>
+                <div class="testimonial-date">
+                    <p>15/02/2026</p>
+                </div>
             </div>
-            </div>
+        </div>
     </div>
 </section>
 
@@ -340,7 +387,8 @@
                         <label for="fullName">Họ và tên</label>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="fullName" name="fullName" placeholder="Nhập họ tên của bạn" required />
+                            <input type="text" id="fullName" name="fullName" placeholder="Nhập họ tên của bạn"
+                                required />
                         </div>
                     </div>
                     <div class="form-submit">

@@ -671,3 +671,71 @@
         background: #dfe4ea;
         color: #ff4757;
     }
+    /* --- CSS SỐ LƯỢNG & NÚT MUA HÀNG (CẬP NHẬT) --- */
+/* ======================================================= */
+/* CSS SỐ LƯỢNG & NÚT MUA HÀNG (BẢN FINAL - SIZE TO)       */
+/* ======================================================= */
+
+/* 1. Layout căn chỉnh hàng ngang */
+.menu-item-order {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa ô input và nút */
+}
+
+/* 2. Ô nhập số lượng (Size L) */
+.qty-input {
+    width: 60px;        /* Rộng rãi */
+    height: 42px;       /* Cao bằng nút bấm */
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Bo góc mềm mại */
+    text-align: center;
+    font-size: 1.1rem;  /* Chữ to rõ */
+    font-weight: 700;
+    color: #333;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.qty-input:focus {
+    border-color: #ff4757;
+    box-shadow: 0 0 8px rgba(255, 71, 87, 0.2);
+}
+
+/* 3. Nút Thêm (Size L - Custom) */
+.btn-sm-custom {
+    height: 42px;       /* Cao khớp với ô input */
+    padding: 0 25px;    /* Nút dài, dễ bấm */
+    font-size: 1rem;    /* Chữ lớn */
+    font-weight: 700;   /* Chữ đậm */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 30px;
+    background-color: #ff4757 !important; /* Màu cam chủ đạo */
+    color: #fff !important;
+    text-decoration: none !important;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3); /* Bóng đổ xịn */
+}
+
+.btn-sm-custom:hover {
+    background-color: #e04050 !important;
+    transform: translateY(-2px); /* Hiệu ứng nổi lên khi di chuột */
+    box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4);
+}
+
+.btn-sm-custom i {
+    font-size: 1.1rem; /* Icon to tương xứng */
+}
