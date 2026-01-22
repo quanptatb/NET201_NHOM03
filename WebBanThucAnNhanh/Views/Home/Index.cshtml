@@ -1,8 +1,84 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
+
+@{
+    ViewData["Title"] = "Trang Chủ";
+    var categories = ViewBag.Categories as List<WebBanThucAnNhanh.Models.TypeOfFastFood>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="bg-dark text-white text-center py-5 mb-4" style="background-image: url('https://source.unsplash.com/1600x400/?fastfood'); background-size: cover; background-position: center;">
+    <div class="container" style="background-color: rgba(0,0,0,0.6); padding: 30px; border-radius: 10px;">
+        <h1 class="display-4 fw-bold">Thức Ăn Nhanh Siêu Ngon</h1>
+        <p class="lead">Đặt món ngay - Giao hàng liền tay</p>
+        
+        <form asp-action="Index" method="get" class="d-flex justify-content-center mt-4">
+            <div class="input-group w-50">
+                <input type="text" name="searchString" class="form-control" placeholder="Bạn muốn ăn gì hôm nay?" value="@ViewBag.CurrentFilter">
+                <button class="btn btn-warning fw-bold" type="submit">Tìm Kiếm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="list-group shadow-sm">
+                <a asp-action="Index" class="list-group-item list-group-item-action active bg-danger border-0 fw-bold">
+                    DANH MỤC MÓN ĂN
+                </a>
+                <a asp-action="Index" class="list-group-item list-group-item-action">Tất cả món ăn</a>
+                @if (categories != null)
+                {
+                    foreach (var item in categories)
+                    {
+                        <a asp-action="Index" asp-route-categoryId="@item.IdTypeOfFastFood" class="list-group-item list-group-item-action">
+                            @item.NameTypeOfFastFood
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <h3 class="mb-3 border-bottom pb-2 text-danger"><i class="bi bi-fire"></i> Món Ăn Nổi Bật</h3>
+            
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning text-center">Không tìm thấy món ăn nào phù hợp!</div>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="position-relative">
+                                    <img src="~/images/@item.Image" class="card-img-top" alt="@item.NameFastFood" style="height: 200px; object-fit: cover;">
+                                    <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded fw-bold">
+                                        @item.Price.ToString("N0") đ
+                                    </span>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <h5 class="card-title text-truncate" title="@item.NameFastFood">@item.NameFastFood</h5>
+                                    <p class="card-text text-muted small">@item.TypeOfFastFood?.NameTypeOfFastFood</p>
+                                    <p class="card-text text-secondary small text-truncate">@item.Description</p>
+                                </div>
+                                
+                                <div class="card-footer bg-white border-0 d-grid gap-2 mb-2">
+                                    <a href="#" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                    </a>
+                                    <a asp-controller="FastFood" asp-action="Details" asp-route-id="@item.IdFastFood" class="btn btn-primary btn-sm">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 </div>
