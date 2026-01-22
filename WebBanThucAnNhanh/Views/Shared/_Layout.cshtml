@@ -41,7 +41,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">User</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Card</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Quản Lý Đơn Hàng</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home"
@@ -67,7 +67,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-</body>
+</body> 
 
 </html> *@
 @{
@@ -91,6 +91,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="canonical" href="https://fastfoodrestaurant.com/" />
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/css/style.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/order-styles.css")" />
