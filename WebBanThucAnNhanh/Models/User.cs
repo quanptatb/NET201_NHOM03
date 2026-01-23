@@ -30,7 +30,7 @@ namespace WebBanThucAnNhanh.Models
         public string Address { get; set; }
 
         public string Role { get; set; } = "Customer"; // Customer, Admin
-
+        public bool Status { get; set; } = true;
         // Quan hệ 1-n: Một User có nhiều đơn hàng
         public ICollection<Order>? Orders { get; set; }
     }
