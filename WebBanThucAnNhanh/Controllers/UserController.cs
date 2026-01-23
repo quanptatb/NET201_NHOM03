@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using System.Security.Cryptography;
 using System.Text;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace WebBanThucAnNhanh.Controllers
 {
@@ -24,41 +20,25 @@ namespace WebBanThucAnNhanh.Controllers
             _context = context;
         }
 
-        // GET: User/Register
+        // --- ĐĂNG KÝ ---
         [HttpGet]
-        public IActionResult Register()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View();
-        }
+        public IActionResult Register() => View();
 
-        // POST: User/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("Username,Password,Email,FullName,PhoneNumber,Address,Role")] User user)
+        public async Task<IActionResult> Register(User user)
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra Email hoặc Username đã tồn tại chưa
                 var check = await _context.Users.FirstOrDefaultAsync(s => s.Email == user.Email || s.Username == user.Username);
                 if (check != null)
                 {
                     ModelState.AddModelError("", "Email hoặc Username đã tồn tại.");
                     return View(user);
                 }
-
-                // Mã hóa mật khẩu
                 user.Password = GetMD5(user.Password);
-
+                user.Role = "Customer"; // Mặc định là khách hàng
                 user.Status = true;
-                if (string.IsNullOrEmpty(user.Role))
-                {
-                    user.Role = "Customer";
-                }
-
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Login));
@@ -66,130 +46,84 @@ namespace WebBanThucAnNhanh.Controllers
             return View(user);
         }
 
-        // GET: User/Login
+        // --- ĐĂNG NHẬP ---
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            var passHash = GetMD5(password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == passHash);
 
-        // LOGOUT
+            if (user != null)
+            {
+                if (!user.Status) {
+                    ModelState.AddModelError("", "Tài khoản đã bị khóa.");
+                    return View();
+                }
+                
+                // Tạo Claims
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("UserId", user.Id.ToString()),
+                    new Claim("FullName", user.FullName ?? "")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.AddModelError("", "Sai tên đăng nhập hoặc mật khẩu.");
+            return View();
+        }
+
+        // --- ĐĂNG XUẤT ---
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "User");
+            return RedirectToAction("Login");
         }
 
-
-        // GET: User (Danh sách User)
-        public async Task<IActionResult> Index()
+        // --- PROFILE ---
+        [Authorize(Roles = "Customer,Admin")]
+        public async Task<IActionResult> Profile()
         {
-            return View(await _context.Users.ToListAsync());
-        }
-
-        // GET: User/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null) return NotFound();
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            var user = await _context.Users.FindAsync(userId);
             return View(user);
         }
 
-        // GET: User/Create (Admin tạo user thủ công)
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: User/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(User user)
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile(User user)
         {
-            if (ModelState.IsValid)
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            var userInDb = await _context.Users.FindAsync(userId);
+
+            if (userInDb != null)
             {
-                user.Password = GetMD5(user.Password); // Nhớ mã hóa cả khi Admin tạo
-                _context.Add(user);
+                userInDb.FullName = user.FullName;
+                userInDb.PhoneNumber = user.PhoneNumber;
+                userInDb.Address = user.Address;
+                
+                _context.Update(userInDb);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["Message"] = "Cập nhật thành công!";
+                return RedirectToAction("Profile");
             }
-            return View(user);
+            return View("Profile", user);
         }
 
-        // GET: User/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-            return View(user);
-        }
-
-        // POST: User/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Email,FullName,PhoneNumber,Address,Role,Status")] User user)
-        {
-            if (id != user.Id) return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Logic xử lý password khi edit:
-                    // Nếu user nhập pass mới -> mã hóa lại. Nếu để trống -> giữ nguyên pass cũ.
-                    // (Đoạn này cần query pass cũ để check, code mẫu đang update thẳng)
-
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: User/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null) return NotFound();
-            return View(user);
-        }
-
-        // POST: User/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-            }
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
-
-        /// <summary>
-        /// Hàm mã hóa chuỗi sang MD5
-        /// </summary>
         public static string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())
@@ -198,9 +132,7 @@ namespace WebBanThucAnNhanh.Controllers
                 byte[] targetData = md5.ComputeHash(fromData);
                 StringBuilder byte2String = new StringBuilder();
                 for (int i = 0; i < targetData.Length; i++)
-                {
                     byte2String.Append(targetData[i].ToString("x2"));
-                }
                 return byte2String.ToString();
             }
         }

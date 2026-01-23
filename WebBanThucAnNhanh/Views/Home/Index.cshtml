@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
 
-@model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
-
 @{
     ViewData["Title"] = "Trang chủ - Cửa hàng thức ăn nhanh";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -18,7 +16,7 @@
                 Giao hàng tận nơi chỉ trong vòng 30 phút.
             </p>
             <div class="hero-btns">
-                <a href="#popular-dishes" class="btn">Xem món nổi bật</a>
+                <a href="#popular-dishes" class="btn">Xem thực đơn</a>
             </div>
         </div>
     </div>
@@ -34,321 +32,123 @@
                 <h3>Phục vụ món ngon từ năm <span class="highlight">2010</span></h3>
                 <p>
                     Được thành lập với niềm đam mê mang lại hương vị tuyệt vời và chất lượng,
-                    chúng tôi đã phục vụ thức ăn nhanh cao cấp hơn một thập kỷ qua.
+                    chúng tôi cam kết sử dụng nguyên liệu tươi ngon nhất để tạo ra những bữa ăn
+                    đáng nhớ cho khách hàng.
                 </p>
-                <p>
-                    Điều làm chúng tôi khác biệt là cam kết về chất lượng và tốc độ.
-                    Các đầu bếp chuẩn bị bữa ăn với sự tỉ mỉ, đảm bảo từng miếng ăn là một trải nghiệm thú vị.
-                </p>
-                <a href="#menu" class="btn">Xem Thực Đơn</a>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i> Nguyên liệu tươi sạch
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i> Đầu bếp chuyên nghiệp
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i> Phục vụ 24/7
+                    </div>
+                </div>
             </div>
             <div class="about-image">
-                <img src="@Url.Content("~/images/burger.png")" alt="Premium Burger" />
+                <img src="~/images/burgers.jpg" alt="About Us" class="img-fluid rounded shadow" onerror="this.src='https://via.placeholder.com/500x300?text=FastFood+Image'" />
             </div>
         </div>
     </div>
 </section>
+
 <section class="menu" id="menu">
     <div class="container">
         <div class="section-title text-center">
             <h2>Thực Đơn <span class="highlight">Hấp Dẫn</span></h2>
+            <p>Khám phá các món ăn được yêu thích nhất của chúng tôi</p>
         </div>
 
-        @* --- PHẦN TÌM KIẾM (Đã bỏ chọn Loại) --- *@
-        <div class="advanced-search-container animate-on-scroll">
-            <form method="get" action="@Url.Action("Index", "Home", new { fragment = "menu" })#menu" class="search-form">
-                
-                <div class="search-row">
-                    @* 1. Tìm kiếm đa năng (Tên, Mô tả, Loại) *@
-                    <div class="search-group search-keyword">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="keyword" placeholder="Nhập tên món, loại (ví dụ: Gà, Burger)..." value="@ViewBag.Keyword" />
-                    </div>
-
-                    @* 2. Tìm theo Chủ đề (Giữ lại cái này là hợp lý) *@
-                    <div class="search-group">
-                        <select name="themeId">
-                            <option value="">-- Chọn Chủ đề --</option>
-                            @if (ViewBag.Themes != null)
-                            {
-                                foreach (var theme in ViewBag.Themes)
-                                {
-                                    @* Nhớ kiểm tra lại tên thuộc tính NameTheme hay TenChuDe *@
-                                     <option value="@theme.IdTheme">@theme.NameTheme</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-
-                <div class="search-row">
-                    @* 3. Khoảng giá *@
-                    <div class="search-group price-range">
-                        <label>Giá:</label>
-                        <input type="number" name="minPrice" placeholder="Từ" min="0" step="1000" />
-                        <span>-</span>
-                        <input type="number" name="maxPrice" placeholder="Đến" min="0" step="1000" />
-                    </div>
-
-                    @* Nút tìm *@
-                    <div class="search-group search-btn-group">
-                        <button type="submit" class="btn btn-search">
-                            <i class="fas fa-filter"></i> Tìm Kiếm
-                        </button>
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-reset" title="Làm mới">
-                            <i class="fas fa-sync"></i>
-                        </a>
-                    </div>
-                </div>
-            </form>
+        <div class="menu-tabs">
+            <button class="tab-btn active" data-target="all">Tất cả</button>
+            <button class="tab-btn" data-target="burger">Burgers</button>
+            <button class="tab-btn" data-target="chicken">Gà Rán</button>
+            <button class="tab-btn" data-target="drink">Nước Uống</button>
         </div>
 
-        @* ========================================== *@
-        @* LOGIC HIỂN THỊ: TÌM KIẾM vs MENU THƯỜNG *@
-        @* ========================================== *@
+        <div class="row" id="popular-dishes">
+            @if(Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    string categoryClass = "all";
+                    if (item.IdTypeOfFastFood == 1 || item.IdTypeOfFastFood == 2) { categoryClass += " burger"; } 
+                    else if (item.IdTypeOfFastFood == 3) { categoryClass += " drink"; } 
+                    else if (item.IdTypeOfFastFood == 4) { categoryClass += " chicken"; }
+                    else { categoryClass += " other"; }
 
-        @if (ViewBag.IsSearch == true)
-        {
-            @* --- GIAO DIỆN KẾT QUẢ TÌM KIẾM (Hiện tất cả món tìm được) --- *@
-            <div class="search-results-wrapper">
-                <div class="section-title text-center" style="margin-bottom: 30px;">
-                    <h3>Kết quả tìm kiếm (@Model.Count() món)</h3>
-                    @if(Model.Count() == 0) {
-                        <p class="text-muted">Rất tiếc, không tìm thấy món nào phù hợp với yêu cầu của bạn.</p>
-                    }
+                    <div class="col-md-4 col-sm-6 menu-item @categoryClass">
+                        <div class="food-card">
+                            <div class="card-img">
+                                <img src="@item.Image" alt="@item.NameFastFood" onerror="this.src='/images/burger.png'" />
+                                <span class="price-tag">@item.Price.ToString("N0") đ</span>
+                            </div>
+                            <div class="card-content">
+                                <h3>@item.NameFastFood</h3>
+                                
+                                <p>@item.Description</p>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <a asp-controller="Order" asp-action="Checkout" class="btn-cart">
+                                    Đặt Món <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p>Hiện chưa có món ăn nào được cập nhật.</p>
                 </div>
-
-                <div class="menu-content active-content" style="display: grid;">
-                    @foreach (var item in Model)
-                    {
-                        <div class="menu-item animate-on-scroll">
-                            <div class="menu-item-img">
-                                <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                            </div>
-                            <div class="menu-item-content">
-                                <div class="menu-item-title">
-                                    <h4>@item.NameFastFood</h4>
-                                    <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                                </div>
-                                <p class="menu-item-text">
-                                    @* Hiện thêm tên loại để khách biết *@
-                                    <small class="highlight">@item.TypeOfFastFood?.NameTypeOfFastFood</small><br/>
-                                    @item.Description
-                                </p>
-                                <div class="menu-item-order">
-                                     <div class="menu-item-rating">
-                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                    </div>
-                                    <a href="#" class="btn" onclick="return false;">
-                                        <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-                
-                <div class="text-center" style="margin-top: 40px;">
-                    <a href="@Url.Action("Index", "Home")#menu" class="btn" style="background: #333;">Quay lại thực đơn</a>
-                </div>
-            </div>
-        }
-        else
-        {
-            @* --- GIAO DIỆN MENU TAB BÌNH THƯỜNG (Khi chưa tìm gì) --- *@
-            
-            <div class="menu-tabs">
-                <button class="menu-tab active" data-target="burgers">Burgers</button>
-                <button class="menu-tab" data-target="drinks">Nước Uống</button>
-                <button class="menu-tab" data-target="chicken">Gà Rán</button>
-                <button class="menu-tab" data-target="sides">Món Phụ</button>
-            </div>
-
-            @* TAB 1: BURGERS *@
-            <div class="menu-content active-content" id="burgers" style="display: grid;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 2))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @* TAB 2: NƯỚC UỐNG *@
-            <div class="menu-content" id="drinks" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 3))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @* TAB 3: GÀ RÁN *@
-            <div class="menu-content" id="chicken" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 4))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @* TAB 4: MÓN PHỤ *@
-            <div class="menu-content" id="sides" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 5))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <a href="#" class="btn" onclick="return false;">
-                                    <i class="fas fa-shopping-cart"></i> Thêm ngay
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+            }
+        </div>
     </div>
 </section>
 
-<section class="testimonials" id="testimonials">
+<section class="order" id="order">
     <div class="container">
-        <div class="section-title text-center">
-            <h2>Khách Hàng <span class="highlight">Nói Gì</span></h2>
-            <p>Khám phá lý do tại sao khách hàng luôn quay lại</p>
-        </div>
-        <div class="testimonials-slider">
-            <div class="testimonial-item animate-on-scroll">
-                <div class="testimonial-header">
-                    <div class="testimonial-author-img">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Minh Tuấn" />
-                    </div>
-                    <div class="testimonial-meta">
-                        <h4>Minh Tuấn</h4>
-                        <p>Người sành ăn</p>
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-icon"><i class="fas fa-quote-left"></i></div>
-                <p class="testimonial-text">"Burger ngon nhất thị trấn! Giao hàng luôn đúng giờ và đồ ăn nóng hổi."</p>
-                <div class="testimonial-date"><p>15/02/2026</p></div>
-            </div>
-            </div>
-    </div>
-</section>
-
-<section class="order-now" id="order">
-    <div class="floating-burger left"></div>
-    <div class="floating-fries right"></div>
-    <div class="container">
-        <div class="section-title text-center">
-            <h2>Đặt Hàng <span class="highlight">Ngay</span></h2>
-            <p>Điền thông tin và thưởng thức món ngon ngay tại nhà</p>
-        </div>
         <div class="order-content">
-            <div class="order-info animate-on-scroll">
-                <div class="order-info-header">
-                    <h3>Thông tin đơn hàng</h3>
-                    <div class="food-icon-divider"><span><i class="fas fa-hamburger"></i></span></div>
-                </div>
-                <div class="order-item">
-                    <div class="order-icon pulse-animation"><i class="fas fa-truck"></i></div>
-                    <div class="order-details">
-                        <h4>Miễn phí vận chuyển</h4>
-                        <p>Cho đơn hàng trên 500k</p>
+            <div class="order-image animate-on-scroll">
+                <img src="~/images/best-dish.png" alt="Delivery" class="floating-anim" onerror="this.style.display='none'" />
+                <div class="order-status-card">
+                    <div class="order-item">
+                        <div class="order-icon pulse-animation"><i class="fas fa-truck"></i></div>
+                        <div class="order-details">
+                            <h4>Miễn phí vận chuyển</h4>
+                            <p>Cho đơn hàng trên 200k</p>
+                        </div>
                     </div>
-                </div>
-                <div class="order-item">
-                    <div class="order-icon pulse-animation"><i class="fas fa-clock"></i></div>
-                    <div class="order-details">
-                        <h4>Thời gian giao hàng</h4>
-                        <p>30-45 phút</p>
+                    <div class="order-item">
+                        <div class="order-icon pulse-animation"><i class="fas fa-clock"></i></div>
+                        <div class="order-details">
+                            <h4>Giao hàng siêu tốc</h4>
+                            <p>30-45 phút</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="order-form animate-on-scroll">
                 <div class="form-header">
-                    <h3>Chi tiết giao hàng</h3>
-                    <p>Điền thông tin của bạn để đặt hàng</p>
+                    <h3>Đặt Hàng Ngay</h3>
+                    <p>Bạn đã sẵn sàng thưởng thức chưa?</p>
                 </div>
-                <form>
-                    <div class="form-group">
-                        <label for="fullName">Họ và tên</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="fullName" name="fullName" placeholder="Nhập họ tên của bạn" required />
-                        </div>
-                    </div>
-                    <div class="form-submit">
-                        <button type="submit" class="btn btn-large shine-effect">Đặt Hàng Ngay</button>
-                    </div>
-                </form>
+                
+                <div class="text-center mt-4 p-3">
+                    <p class="text-muted mb-4">
+                        Nhấn nút bên dưới để đi đến trang thanh toán và hoàn tất đơn hàng của bạn.
+                        Chúng tôi sẽ giao đến tận nơi!
+                    </p>
+
+                    <a asp-controller="Order" asp-action="Checkout" class="btn btn-large shine-effect w-100">
+                        <i class="fas fa-shopping-cart"></i> Đặt Hàng Ngay
+                    </a>
+                </div>
             </div>
         </div>
     </div>
