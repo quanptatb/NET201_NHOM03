@@ -74,6 +74,8 @@
 </body> 
 
 </html> *@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Fast Food Restaurant | Fresh & Delicious Food Delivered Fast";
 }
@@ -196,12 +198,30 @@
 
             <nav>
                 <ul>
-                    <li><a href="@Url.Action("Index", "Home")" class="active">Home</a></li>
-                    <li><a href="#popular-dishes">Popular Dishes</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#menu">Menu</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#order" class="btn">Order Online</a></li>
+                    <li><a href="@Url.Action("Index", "Home")" class="active">Trang chủ</a></li>
+                    <li><a href="#about">Giới thiệu</a></li>
+                    <li><a href="#menu">Thực đơn</a></li>
+                    <li><a href="#testimonials">Đánh giá</a></li>
+                    <li><a href="#order" class="btn">Đặt món ngay</a></li>
+                    <li class="user-menu-item">
+    @{
+        var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+    }
+    @if (string.IsNullOrEmpty(userName))
+    {
+        @* Chưa đăng nhập -> Icon User thường *@
+        <a href="@Url.Action("Login", "Customer")" title="Đăng nhập">
+            <i class="fas fa-user"></i>
+        </a>
+    }
+    else
+    {
+        @* Đã đăng nhập -> Icon User có tích xanh hoặc Avatar *@
+        <a href="@Url.Action("Profile", "User")" title="Xin chào @userName" class="active-user">
+            <i class="fas fa-user-check" style="color: #ff4757;"></i>
+        </a>
+    }
+</li>
                 </ul>
             </nav>
         </div>
@@ -266,11 +286,11 @@
                 <div class="footer-links">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#menu">Menu</a></li>
-                        <li><a href="#testimonials">Testimonials</a></li>
-                        <li><a href="#order">Order Now</a></li>
+                        <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                        <li><a href="#about">Giới thiệu</a></li>
+                        <li><a href="#menu">Thực đơn</a></li>
+                        <li><a href="#testimonials">Đánh giá</a></li>
+                        <li><a href="#order"></a></li>
                     </ul>
                 </div>
 
