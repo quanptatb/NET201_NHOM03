@@ -1,80 +1,4 @@
-﻿@* <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebBanThucAnNhanh</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebBanThucAnNhanh.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-</head>
-
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebBanThucAnNhanh</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FastFood"
-                                asp-action="Index">FastFood</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Theme"
-                                asp-action="Index">Theme</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TypeOfFastFood"
-                                asp-action="Index">TypeOfFastFood</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Quản Lý Đơn Hàng</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User"
-                               asp-action="Register">Contact</a>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WebBanThucAnNhanh - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body> 
-
-</html> *@
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Fast Food Restaurant | Fresh & Delicious Food Delivered Fast";
@@ -82,22 +6,19 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-        name="description"
-        content="Enjoy fast, fresh and delicious burgers, pizzas, and more delivered to your door in 30 minutes or less. Order online or visit our restaurant today!"
-    />
+    <meta name="description"
+        content="Enjoy fast, fresh and delicious burgers, pizzas, and more delivered to your door in 30 minutes or less. Order online or visit our restaurant today!" />
     <meta name="author" content="Fast Food Restaurant" />
-    <meta
-        name="keywords"
-        content="fast food, burgers, pizza, hot dogs, chicken, fries, delivery, takeout, restaurant, quick meals"
-    />
+    <meta name="keywords"
+        content="fast food, burgers, pizza, hot dogs, chicken, fries, delivery, takeout, restaurant, quick meals" />
     <title>@ViewData["Title"]</title>
     <link rel="canonical" href="https://fastfoodrestaurant.com/" />
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/css/style.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/order-styles.css")" />
@@ -106,31 +27,14 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fastfoodrestaurant.com/" />
-    <meta
-        property="og:title"
-        content="Fast Food Restaurant | Fresh & Delicious"
-    />
-    <meta
-        property="og:description"
-        content="Enjoy fast, fresh and delicious food delivered to your door in 30 minutes or less. Order online today!"
-    />
-    <meta
-        property="og:image"
-        content="https://fastfoodrestaurant.com/images/burger.png"
-    />
+    <meta property="og:title" content="Fast Food Restaurant | Fresh & Delicious" />
+    <meta property="og:description"
+        content="Enjoy fast, fresh and delicious food delivered to your door in 30 minutes or less. Order online today!" />
+    <meta property="og:image" content="https://fastfoodrestaurant.com/images/burger.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-        name="twitter:title"
-        content="Fast Food Restaurant | Fresh & Delicious"
-    />
-    <meta
-        name="twitter:description"
-        content="Enjoy fast, fresh and delicious food delivered in 30 minutes or less."
-    />
-    <meta
-        name="twitter:image"
-        content="https://fastfoodrestaurant.com/images/burger.png"
-    />
+    <meta name="twitter:title" content="Fast Food Restaurant | Fresh & Delicious" />
+    <meta name="twitter:description" content="Enjoy fast, fresh and delicious food delivered in 30 minutes or less." />
+    <meta name="twitter:image" content="https://fastfoodrestaurant.com/images/burger.png" />
 
     <link rel="icon" href="@Url.Content("~/images/burger.png")" type="image/png" />
     <link rel="apple-touch-icon" href="@Url.Content("~/images/burger.png")" />
@@ -139,15 +43,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;500;600;700;800&family=Dancing+Script:wght@400;700&display=swap"
-        rel="stylesheet"
-    />
+        rel="stylesheet" />
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 </head>
+
 <body id="home">
     <div class="page-loader">
         <div class="loader-icon">
@@ -160,33 +61,22 @@
     <header>
         <div class="container">
             <a href="@Url.Action("Index", "Home")" id="logo">
-                <svg
-                    width="512"
-                    height="406"
-                    viewBox="0 0 512 406"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg width="512" height="406" viewBox="0 0 512 406" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M249.387 96.7978C249.387 110.759 255.301 118.146 260.054 124.081C264.133 129.177 267.08 132.858 267.08 140.997C267.08 145.577 270.794 149.291 275.374 149.291C279.954 149.291 283.668 145.577 283.668 140.997C283.668 127.036 277.754 119.65 273.002 113.714C268.923 108.618 265.974 104.936 265.974 96.7978C265.974 88.6478 268.924 84.961 273.004 79.8598C277.755 73.9204 283.668 66.529 283.668 52.5601C283.668 38.5857 277.756 31.1899 273.005 25.2472C268.924 20.1416 265.974 16.4536 265.974 8.29373C265.974 3.71338 262.261 0 257.681 0C253.1 0 249.387 3.71338 249.387 8.29373C249.387 22.2681 255.299 29.6639 260.049 35.6066C264.131 40.7134 267.08 44.4024 267.08 52.5623C267.08 60.7123 264.131 64.3992 260.05 69.5004C255.3 75.4387 249.387 82.8312 249.387 96.7978Z"
-                        fill="white"
-                    />
+                        fill="white" />
                     <path
                         d="M294.155 105.084C296.788 105.084 299.135 103.855 300.656 101.941C306.642 94.4595 319.053 78.9148 319.053 52.5618C319.053 41.8573 316.995 31.7666 312.936 22.5683C311.087 18.3772 306.19 16.4796 301.999 18.3296C297.808 20.1786 295.912 25.0752 297.761 29.2663C300.882 36.3403 302.466 44.1784 302.466 52.5618C302.466 73.0351 293.293 84.5911 287.755 91.5158C286.572 92.9489 285.861 94.7868 285.861 96.7917C285.861 101.371 289.574 105.084 294.155 105.084Z"
-                        fill="white"
-                    />
+                        fill="white" />
                     <path
                         d="M227.63 131.539C228.74 131.539 229.869 131.314 230.952 130.84C235.147 129.003 237.059 124.112 235.222 119.916C232.147 112.892 230.588 105.114 230.588 96.797C230.588 76.2396 239.842 64.6715 245.372 57.7568C245.521 57.5699 245.663 57.3764 245.795 57.1773C247.653 54.3917 247.644 50.706 245.786 47.9204C243.246 44.1086 238.097 43.0802 234.286 45.6203C233.304 46.2749 232.508 47.1021 231.908 48.0354C225.762 55.7375 214 71.1495 214 96.797C214 107.417 216.029 117.435 220.028 126.57C221.392 129.683 224.436 131.539 227.63 131.539Z"
-                        fill="white"
-                    />
+                        fill="white" />
                     <path
                         d="M400.717 287.434C407.73 287.434 413.435 281.729 413.435 274.717C413.435 267.705 407.73 262 400.717 262C393.705 262 388 267.705 388 274.717C388 281.729 393.705 287.434 400.717 287.434Z"
-                        fill="white"
-                    />
+                        fill="white" />
                     <path
                         d="M503.706 353.779H390.848C426.037 336.017 455.099 310.088 475.527 278.067C477.264 275.347 477.264 271.867 475.527 269.146C456.23 238.896 428.529 213.543 395.421 195.829C361.396 177.623 322.436 168 282.757 168C226.674 168 173.564 186.878 132.357 221.308C110.285 202.949 83.7391 188.543 55.1445 179.457C52.705 178.683 50.0433 179.076 47.9345 180.526C45.8246 181.977 44.5031 184.32 44.3527 186.875C43.7191 197.689 44.377 234.744 77.0831 273.607C49.2803 306.645 44.6402 338.366 44.262 353.78H8.29374C3.71338 353.78 0 357.494 0 362.074C0 366.654 3.71338 370.368 8.29374 370.368H74.9201L91.0099 391.821C97.5531 400.546 107.971 405.754 118.877 405.754H393.123C404.029 405.754 414.447 400.546 420.99 391.821L437.08 370.368H503.706C508.287 370.368 512 366.654 512 362.074C512 357.492 508.287 353.779 503.706 353.779ZM458.604 273.603C441.1 299.319 416.54 321.103 387.896 336.55C371.083 319.736 361.823 297.382 361.823 273.604C361.823 250.031 371.318 227.276 387.947 210.646C416.749 226.13 441.074 247.815 458.604 273.603ZM362.713 344.379C362.713 347.711 361.789 350.953 360.074 353.779H328.859C327.144 350.953 326.22 347.711 326.22 344.379C326.22 334.319 334.406 326.133 344.467 326.133C354.527 326.133 362.713 334.318 362.713 344.379ZM372.272 203.061C354.995 222.34 345.235 247.557 345.235 273.605C345.235 286.339 347.481 298.725 351.772 310.322C349.415 309.817 346.972 309.545 344.467 309.545C340.316 309.545 336.335 310.277 332.641 311.615C328.522 299.53 326.436 286.886 326.436 273.952C326.436 245.255 336.8 217.991 355.713 196.626C361.332 198.545 366.853 200.699 372.272 203.061ZM61.2664 348.077C62.8068 333.015 69.3157 306.307 94.2334 279.219C97.1539 276.046 97.1539 271.163 94.2334 267.99C69.3135 240.901 62.8057 214.194 61.2653 199.134C85.7617 208.383 108.249 221.84 126.838 238.444C129.985 241.255 134.74 241.255 137.887 238.444C176.77 203.714 228.218 184.587 282.756 184.587C301.662 184.587 320.377 186.942 338.389 191.494C321.673 212.683 311.86 238.274 310.133 265.313H256C255.942 265.313 255.886 265.32 255.829 265.321C253.457 256.235 248.487 247.435 241.187 240.135C225.876 224.825 203.964 219.732 186.657 227.464C184.792 228.297 183.3 229.789 182.467 231.654C177.834 242.024 177.81 254.047 181.825 265.314H123.515C118.934 265.314 115.221 269.027 115.221 273.607C115.221 278.188 118.934 281.901 123.515 281.901H191.261C192.471 283.376 193.762 284.808 195.138 286.185C205.682 296.73 219.358 302.428 232.505 302.428C236.689 302.428 240.815 301.837 244.774 300.656L259.106 314.985C258.023 316.174 257.01 317.429 256.061 318.732C248.492 312.829 239.161 309.546 229.46 309.546C215.665 309.546 202.731 316.21 194.541 327.242C194.384 327.239 194.228 327.239 194.073 327.239C186.289 327.239 179.095 329.806 173.289 334.137C160.536 326.885 148.641 318.374 137.887 308.768C134.741 305.957 129.984 305.957 126.838 308.768C108.249 325.372 85.7628 338.828 61.2664 348.077ZM310.931 353.779H266.007C264.888 350.781 264.294 347.599 264.294 344.379C264.294 329.441 276.448 317.287 291.387 317.287C300.107 317.287 308.314 321.594 313.395 328.665C310.995 333.39 309.633 338.726 309.633 344.379C309.633 347.584 310.076 350.744 310.931 353.779ZM291.387 300.699C284.647 300.699 278.26 302.235 272.554 304.973L256.033 288.455C256.596 286.309 256.984 284.118 257.204 281.9H310.09C310.59 290.448 311.898 298.867 314.004 307.094C307.271 302.997 299.47 300.699 291.387 300.699ZM220.6 276.484L229.785 285.666C221.768 284.915 213.413 280.999 206.869 274.453C197.492 265.076 193.493 251.981 196.496 241.491C206.988 238.488 220.083 242.486 229.46 251.862C235.48 257.884 239.269 265.435 240.425 272.848L232.327 264.754C229.088 261.515 223.837 261.515 220.599 264.755C217.36 267.993 217.361 273.246 220.6 276.484ZM248.757 353.779H177.842C180.868 347.881 187.001 343.827 194.073 343.827C194.959 343.827 195.947 343.932 197.276 344.168C200.747 344.785 204.229 343.139 205.958 340.066C210.786 331.47 219.792 326.133 229.46 326.133C236.774 326.133 243.765 329.169 248.846 334.5C248.109 337.677 247.706 340.981 247.706 344.379C247.706 347.551 248.074 350.7 248.757 353.779ZM89.5071 353.777C104.995 346.017 119.445 336.643 132.358 325.903C141.766 333.756 151.906 340.852 162.617 347.122C161.611 349.232 160.814 351.46 160.246 353.777H89.5071ZM407.72 381.866C404.292 386.436 398.836 389.165 393.123 389.165H118.877C113.164 389.165 107.707 386.436 104.28 381.866L95.6544 370.367H416.346L407.72 381.866Z"
-                        fill="white"
-                    />
+                        fill="white" />
                 </svg>
             </a>
 
@@ -204,24 +94,24 @@
                     <li><a href="#testimonials">Đánh giá</a></li>
                     <li><a href="#order" class="btn">Đặt món ngay</a></li>
                     <li class="user-menu-item">
-    @{
-        var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
-    }
-    @if (string.IsNullOrEmpty(userName))
-    {
-        @* Chưa đăng nhập -> Icon User thường *@
-        <a href="@Url.Action("Login", "Customer")" title="Đăng nhập">
-            <i class="fas fa-user"></i>
-        </a>
-    }
-    else
-    {
-        @* Đã đăng nhập -> Icon User có tích xanh hoặc Avatar *@
-        <a href="@Url.Action("Profile", "User")" title="Xin chào @userName" class="active-user">
-            <i class="fas fa-user-check" style="color: #ff4757;"></i>
-        </a>
-    }
-</li>
+                        @{
+                            var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+                        }
+                        @if (string.IsNullOrEmpty(userName))
+                        {
+                            @* Chưa đăng nhập -> Icon User thường *@
+                            <a href="@Url.Action("Login", "Account")" title="Đăng nhập">
+                                <i class="fas fa-user"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            @* Đã đăng nhập -> Icon User có tích xanh hoặc Avatar *@
+                            <a href="@Url.Action("Profile", "User")" title="Xin chào @userName" class="active-user">
+                                <i class="fas fa-user-check" style="color: #ff4757;"></i>
+                            </a>
+                        }
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -233,34 +123,23 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-about">
-                    <svg
-                        class="footer-logo"
-                        width="512"
-                        height="406"
-                        viewBox="0 0 512 406"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
+                    <svg class="footer-logo" width="512" height="406" viewBox="0 0 512 406" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M249.387 96.7978C249.387 110.759 255.301 118.146 260.054 124.081C264.133 129.177 267.08 132.858 267.08 140.997C267.08 145.577 270.794 149.291 275.374 149.291C279.954 149.291 283.668 145.577 283.668 140.997C283.668 127.036 277.754 119.65 273.002 113.714C268.923 108.618 265.974 104.936 265.974 96.7978C265.974 88.6478 268.924 84.961 273.004 79.8598C277.755 73.9204 283.668 66.529 283.668 52.5601C283.668 38.5857 277.756 31.1899 273.005 25.2472C268.924 20.1416 265.974 16.4536 265.974 8.29373C265.974 3.71338 262.261 0 257.681 0C253.1 0 249.387 3.71338 249.387 8.29373C249.387 22.2681 255.299 29.6639 260.049 35.6066C264.131 40.7134 267.08 44.4024 267.08 52.5623C267.08 60.7123 264.131 64.3992 260.05 69.5004C255.3 75.4387 249.387 82.8312 249.387 96.7978Z"
-                            fill="#F35F2A"
-                        />
+                            fill="#F35F2A" />
                         <path
                             d="M294.155 105.084C296.788 105.084 299.135 103.855 300.656 101.941C306.642 94.4595 319.053 78.9148 319.053 52.5618C319.053 41.8573 316.995 31.7666 312.936 22.5683C311.087 18.3772 306.19 16.4796 301.999 18.3296C297.808 20.1786 295.912 25.0752 297.761 29.2663C300.882 36.3403 302.466 44.1784 302.466 52.5618C302.466 73.0351 293.293 84.5911 287.755 91.5158C286.572 92.9489 285.861 94.7868 285.861 96.7917C285.861 101.371 289.574 105.084 294.155 105.084Z"
-                            fill="#F35F2A"
-                        />
+                            fill="#F35F2A" />
                         <path
                             d="M227.63 131.539C228.74 131.539 229.869 131.314 230.952 130.84C235.147 129.003 237.059 124.112 235.222 119.916C232.147 112.892 230.588 105.114 230.588 96.797C230.588 76.2396 239.842 64.6715 245.372 57.7568C245.521 57.5699 245.663 57.3764 245.795 57.1773C247.653 54.3917 247.644 50.706 245.786 47.9204C243.246 44.1086 238.097 43.0802 234.286 45.6203C233.304 46.2749 232.508 47.1021 231.908 48.0354C225.762 55.7375 214 71.1495 214 96.797C214 107.417 216.029 117.435 220.028 126.57C221.392 129.683 224.436 131.539 227.63 131.539Z"
-                            fill="#F35F2A"
-                        />
+                            fill="#F35F2A" />
                         <path
                             d="M400.717 287.434C407.73 287.434 413.435 281.729 413.435 274.717C413.435 267.705 407.73 262 400.717 262C393.705 262 388 267.705 388 274.717C388 281.729 393.705 287.434 400.717 287.434Z"
-                            fill="#F35F2A"
-                        />
+                            fill="#F35F2A" />
                         <path
                             d="M503.706 353.779H390.848C426.037 336.017 455.099 310.088 475.527 278.067C477.264 275.347 477.264 271.867 475.527 269.146C456.23 238.896 428.529 213.543 395.421 195.829C361.396 177.623 322.436 168 282.757 168C226.674 168 173.564 186.878 132.357 221.308C110.285 202.949 83.7391 188.543 55.1445 179.457C52.705 178.683 50.0433 179.076 47.9345 180.526C45.8246 181.977 44.5031 184.32 44.3527 186.875C43.7191 197.689 44.377 234.744 77.0831 273.607C49.2803 306.645 44.6402 338.366 44.262 353.78H8.29374C3.71338 353.78 0 357.494 0 362.074C0 366.654 3.71338 370.368 8.29374 370.368H74.9201L91.0099 391.821C97.5531 400.546 107.971 405.754 118.877 405.754H393.123C404.029 405.754 414.447 400.546 420.99 391.821L437.08 370.368H503.706C508.287 370.368 512 366.654 512 362.074C512 357.492 508.287 353.779 503.706 353.779ZM458.604 273.603C441.1 299.319 416.54 321.103 387.896 336.55C371.083 319.736 361.823 297.382 361.823 273.604C361.823 250.031 371.318 227.276 387.947 210.646C416.749 226.13 441.074 247.815 458.604 273.603ZM362.713 344.379C362.713 347.711 361.789 350.953 360.074 353.779H328.859C327.144 350.953 326.22 347.711 326.22 344.379C326.22 334.319 334.406 326.133 344.467 326.133C354.527 326.133 362.713 334.318 362.713 344.379ZM372.272 203.061C354.995 222.34 345.235 247.557 345.235 273.605C345.235 286.339 347.481 298.725 351.772 310.322C349.415 309.817 346.972 309.545 344.467 309.545C340.316 309.545 336.335 310.277 332.641 311.615C328.522 299.53 326.436 286.886 326.436 273.952C326.436 245.255 336.8 217.991 355.713 196.626C361.332 198.545 366.853 200.699 372.272 203.061ZM61.2664 348.077C62.8068 333.015 69.3157 306.307 94.2334 279.219C97.1539 276.046 97.1539 271.163 94.2334 267.99C69.3135 240.901 62.8057 214.194 61.2653 199.134C85.7617 208.383 108.249 221.84 126.838 238.444C129.985 241.255 134.74 241.255 137.887 238.444C176.77 203.714 228.218 184.587 282.756 184.587C301.662 184.587 320.377 186.942 338.389 191.494C321.673 212.683 311.86 238.274 310.133 265.313H256C255.942 265.313 255.886 265.32 255.829 265.321C253.457 256.235 248.487 247.435 241.187 240.135C225.876 224.825 203.964 219.732 186.657 227.464C184.792 228.297 183.3 229.789 182.467 231.654C177.834 242.024 177.81 254.047 181.825 265.314H123.515C118.934 265.314 115.221 269.027 115.221 273.607C115.221 278.188 118.934 281.901 123.515 281.901H191.261C192.471 283.376 193.762 284.808 195.138 286.185C205.682 296.73 219.358 302.428 232.505 302.428C236.689 302.428 240.815 301.837 244.774 300.656L259.106 314.985C258.023 316.174 257.01 317.429 256.061 318.732C248.492 312.829 239.161 309.546 229.46 309.546C215.665 309.546 202.731 316.21 194.541 327.242C194.384 327.239 194.228 327.239 194.073 327.239C186.289 327.239 179.095 329.806 173.289 334.137C160.536 326.885 148.641 318.374 137.887 308.768C134.741 305.957 129.984 305.957 126.838 308.768C108.249 325.372 85.7628 338.828 61.2664 348.077ZM310.931 353.779H266.007C264.888 350.781 264.294 347.599 264.294 344.379C264.294 329.441 276.448 317.287 291.387 317.287C300.107 317.287 308.314 321.594 313.395 328.665C310.995 333.39 309.633 338.726 309.633 344.379C309.633 347.584 310.076 350.744 310.931 353.779ZM291.387 300.699C284.647 300.699 278.26 302.235 272.554 304.973L256.033 288.455C256.596 286.309 256.984 284.118 257.204 281.9H310.09C310.59 290.448 311.898 298.867 314.004 307.094C307.271 302.997 299.47 300.699 291.387 300.699ZM220.6 276.484L229.785 285.666C221.768 284.915 213.413 280.999 206.869 274.453C197.492 265.076 193.493 251.981 196.496 241.491C206.988 238.488 220.083 242.486 229.46 251.862C235.48 257.884 239.269 265.435 240.425 272.848L232.327 264.754C229.088 261.515 223.837 261.515 220.599 264.755C217.36 267.993 217.361 273.246 220.6 276.484ZM248.757 353.779H177.842C180.868 347.881 187.001 343.827 194.073 343.827C194.959 343.827 195.947 343.932 197.276 344.168C200.747 344.785 204.229 343.139 205.958 340.066C210.786 331.47 219.792 326.133 229.46 326.133C236.774 326.133 243.765 329.169 248.846 334.5C248.109 337.677 247.706 340.981 247.706 344.379C247.706 347.551 248.074 350.7 248.757 353.779ZM89.5071 353.777C104.995 346.017 119.445 336.643 132.358 325.903C141.766 333.756 151.906 340.852 162.617 347.122C161.611 349.232 160.814 351.46 160.246 353.777H89.5071ZM407.72 381.866C404.292 386.436 398.836 389.165 393.123 389.165H118.877C113.164 389.165 107.707 386.436 104.28 381.866L95.6544 370.367H416.346L407.72 381.866Z"
-                            fill="#F35F2A"
-                        />
+                            fill="#F35F2A" />
                     </svg>
 
                     <p>
@@ -268,18 +147,10 @@
                         premium quality ingredients and excellent customer service.
                     </p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook"
-                            ><i class="fab fa-facebook-f"></i
-                        ></a>
-                        <a href="#" aria-label="Twitter"
-                            ><i class="fab fa-twitter"></i
-                        ></a>
-                        <a href="#" aria-label="Instagram"
-                            ><i class="fab fa-instagram"></i
-                        ></a>
-                        <a href="#" aria-label="YouTube"
-                            ><i class="fab fa-youtube"></i
-                        ></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
 
@@ -312,11 +183,7 @@
                         and news.
                     </p>
                     <div class="newsletter-form">
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            aria-label="Email for newsletter"
-                        />
+                        <input type="email" placeholder="Enter your email" aria-label="Email for newsletter" />
                         <button type="submit" aria-label="Subscribe">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -337,6 +204,7 @@
 
     <script src="@Url.Content("~/js/site.js")"></script>
     <!-- End of body section -->
-  </body>
-  <!-- End of HTML document -->
+</body>
+<!-- End of HTML document -->
+
 </html>

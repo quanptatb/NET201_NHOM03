@@ -23,69 +23,6 @@ namespace WebBanThucAnNhanh.Controllers
         {
             _context = context;
         }
-
-        // GET: User/Register
-        [HttpGet]
-        public IActionResult Register()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View();
-        }
-
-        // POST: User/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("Username,Password,Email,FullName,PhoneNumber,Address,Role")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                // Kiểm tra Email hoặc Username đã tồn tại chưa
-                var check = await _context.Users.FirstOrDefaultAsync(s => s.Email == user.Email || s.Username == user.Username);
-                if (check != null)
-                {
-                    ModelState.AddModelError("", "Email hoặc Username đã tồn tại.");
-                    return View(user);
-                }
-
-                // Mã hóa mật khẩu
-                user.Password = GetMD5(user.Password);
-
-                user.Status = true;
-                if (string.IsNullOrEmpty(user.Role))
-                {
-                    user.Role = "Customer";
-                }
-
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Login));
-            }
-            return View(user);
-        }
-
-        // GET: User/Login
-        [HttpGet]
-        public IActionResult Login()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View();
-        }
-
-
-        // LOGOUT
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "User");
-        }
-
-
         // GET: User (Danh sách User)
         public async Task<IActionResult> Index()
         {
