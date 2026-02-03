@@ -17,6 +17,6 @@ namespace WebBanThucAnNhanh.Models
 
         // Thêm dòng này để tạo quan hệ 1-nhiều (1 loại có nhiều món)
         // Giúp bạn dễ dàng truy vấn: var listMonAn = typeObj.FastFoods;
-        public ICollection<FastFood>? FastFoods { get; set; }
+        public virtual ICollection<FastFood>? FastFoods { get; set; }
     }
 }
