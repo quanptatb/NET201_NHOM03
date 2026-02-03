@@ -20,6 +20,35 @@ namespace WebBanThucAnNhanh.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // SEED DATA (Y1)
+            // 1. Tạo loại món ăn mẫu
+            modelBuilder.Entity<TypeOfFastFood>().HasData(
+                new TypeOfFastFood { IdTypeOfFastFood = 1, NameTypeOfFastFood = "Đồ ăn nhanh" },
+                new TypeOfFastFood { IdTypeOfFastFood = 2, NameTypeOfFastFood = "Đồ uống" }
+            );
+
+            // 2. Tạo chủ đề mẫu
+            modelBuilder.Entity<Theme>().HasData(
+                new Theme { IdTheme = 1, NameTheme = "Bữa sáng" },
+                new Theme { IdTheme = 2, NameTheme = "Tiệc tùng" }
+            );
+
+            // 3. Tạo tài khoản Admin mặc định
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Password = "202cb962ac59075b964b07152d234b70", // Mã hóa MD5 của "123"
+                    FullName = "Administrator",
+                    Email = "admin@fastfood.com",
+                    Role = "Admin",
+                    Status = true,
+                    Address = "Hà Nội",
+                    PhoneNumber = "0123456789"
+                }
+            );
+
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
                 .Property(o => o.DateCreated)

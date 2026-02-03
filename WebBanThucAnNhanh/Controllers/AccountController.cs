@@ -12,6 +12,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authentication.Google;
+
 
 namespace WebBanThucAnNhanh.Controllers
 {
@@ -139,6 +142,47 @@ namespace WebBanThucAnNhanh.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        public IActionResult LoginGoogle()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        // Action nhận phản hồi từ Google
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded) return RedirectToAction("Login");
+
+            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            // Logic: Kiểm tra email này đã có trong DB chưa
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+
+            if (user == null)
+            {
+                // Y4: Nếu chưa có thì tự động đăng ký (hoặc chuyển trang đăng ký)
+                user = new User
+                {
+                    Email = email,
+                    Username = email, // Dùng email làm user tạm
+                    FullName = name,
+                    Password = "GoogleLoginDefault", // Set pass ngẫu nhiên hoặc cờ đánh dấu
+                    Role = "Customer",
+                    Status = true
+                };
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            // Lưu Session đăng nhập hệ thống của bạn
+            HttpContext.Session.SetString("UserName", user.Username);
+            HttpContext.Session.SetString("Role", user.Role);
+
+            return RedirectToAction("Index", "Home");
         }
 
         public static string GetMD5(string str)

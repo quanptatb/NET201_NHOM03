@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260203190335_SeedDataFix")]
+    partial class SeedDataFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,7 +289,7 @@ namespace WebBanThucAnNhanh.Migrations
                             Address = "Hà Nội",
                             Email = "admin@fastfood.com",
                             FullName = "Administrator",
-                            Password = "202cb962ac59075b964b07152d234b70",
+                            Password = "123",
                             PhoneNumber = "0123456789",
                             Role = "Admin",
                             Status = true,
