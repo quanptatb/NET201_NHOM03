@@ -171,19 +171,21 @@ namespace WebBanThucAnNhanh.Controllers
             // --- XỬ LÝ DATABASE ---
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
+            // Tìm đoạn code trong phương thức GoogleResponse
             if (user == null)
             {
-                // Tự động đăng ký nếu chưa có
+                // Y4: Nếu chưa có thì tự động đăng ký
                 user = new User
                 {
                     Email = email,
-                    Username = email, 
-                    FullName = name ?? "Google User",
-                    Password = GetMD5(Guid.NewGuid().ToString()), // Mật khẩu ngẫu nhiên bảo mật
+                    Username = email,
+                    FullName = name,
+                    Password = "GoogleLoginDefault",
                     Role = "Customer",
                     Status = true,
-                    PhoneNumber = "",
-                    Address = ""
+                    // --- THÊM 2 DÒNG DƯỚI ĐÂY ---
+                    Address = "Chưa cập nhật", // Gán địa chỉ mặc định để tránh lỗi database
+                    PhoneNumber = ""           // Gán chuỗi rỗng nếu database không cho phép null
                 };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
