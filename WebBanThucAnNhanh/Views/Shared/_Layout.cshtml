@@ -94,36 +94,60 @@
                     <li class="user-menu-item dropdown">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-check" style="color: #ff4757;"></i> Chào, @User.Identity.Name
+                            <a href="#" class="dropdown-toggle user-avatar-wrap" data-bs-toggle="dropdown">
+                                <img src="~/images/avtdefault.png" class="user-avatar" />
+                                <span class="username">@User.Identity.Name</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Hồ sơ</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("History", "Checkout")">Đơn hàng</a></li>
+
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Profile", "Account")">
+                                        <i class="fas fa-id-card me-2"></i> Hồ sơ
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("History", "Checkout")">
+                                        <i class="fas fa-receipt me-2"></i> Đơn hàng
+                                    </a>
+                                </li>
+
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <li><a class="dropdown-item text-danger" href="@Url.Action("Index", "Order")">Quản trị
-                                            Admin</a></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="@Url.Action("Index", "Order")">
+                                            <i class="fas fa-cog me-2"></i> Quản trị Admin
+                                        </a>
+                                    </li>
                                 }
+
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="@Url.Action("Logout", "Account")">Đăng xuất</a></li>
+
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                                    </a>
+                                </li>
                             </ul>
                         }
                         else
                         {
-                            <a href="@Url.Action("Login", "Account")" title="Đăng nhập">
+                            <a href="@Url.Action("Login", "Account")">
                                 <i class="fas fa-user"></i> Đăng nhập
                             </a>
                         }
                     </li>
+
                 </ul>
             </nav>
         </div>
     </header>
 
-    @RenderBody()
+    <main class="content">
+            @RenderBody()
+        </main>
 
     <footer>
         @* ... Phần nội dung Footer giữ nguyên ... *@

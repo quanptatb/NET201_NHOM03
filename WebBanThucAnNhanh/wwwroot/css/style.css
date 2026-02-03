@@ -203,16 +203,17 @@ h4 {
   visibility: hidden;
 }
 
-/* Header & Navigation */
+/* Tìm đoạn này trong style.css (khoảng dòng 203) */
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1.8rem 0;
-  z-index: 1000;
-  transition: var(--transition);
-}
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.8rem 0;
+    z-index: 1000;
+    transition: var(--transition);
+    background-color: transparent; /* Thêm dòng này để chắc chắn nó trong suốt */
+} 
 
 header.scrolled {
   background-color: var(--white);
@@ -1174,3 +1175,67 @@ footer {
     gap: 5px;
     white-space: nowrap; /* Không cho chữ xuống dòng */
 }
+.user-avatar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;        /* làm vùng click to hơn */
+}
+
+.user-avatar {
+    width: 44px;              /* ⬅️ TĂNG SIZE ẢNH */
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid #ff4757;
+    cursor: pointer;
+}
+
+/* TÊN USER */
+.user-avatar-wrap span,
+.user-avatar-wrap .username {
+    font-size: 16px;          /* ⬅️ TĂNG CHỮ */
+    font-weight: 600;
+    color: #ff4757;
+}
+
+/* Dropdown */
+.user-menu-item .dropdown-menu {
+    margin-top: 12px;
+}
+
+/* Ẩn caret bootstrap */
+.user-avatar-wrap::after {
+    display: none !important;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+    padding-top: 0px; /* bù cho header fixed */
+}
+
+
+
+.cart-section {
+    min-height: calc(100vh - 220px);
+}
+/* ===== CHECKOUT FORM ===== */
+.checkout-section .form-control {
+    height: 52px;              /* tăng chiều cao input */
+    font-size: 1.7rem;         /* chữ to hơn */
+    padding: 10px 16px;
+    border-radius: 12px;       /* bo tròn mềm hơn */
+}
+
+
+
