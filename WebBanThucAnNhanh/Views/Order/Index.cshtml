@@ -7,11 +7,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Xác Nhận Đơn Hàng</h1>
 
-<p>
+@* <p>
     <a asp-action="Create">Create New</a>
-</p>
+</p> *@
 <table class="table">
     <thead>
         <tr>
@@ -37,86 +37,41 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var order in Model)
         {
             <tr>
+                <td>@order.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.TotalPrice.ToString("N0") VNĐ</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DateCreated)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalPrice)
-                </td>
-                <td>
-                    @if (item.Status == 0)
+                    @if (order.Status == 0)
                     {
-                        <span class="badge bg-warning text-dark">Chưa giao</span>
+                        <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                        <form asp-action="ConfirmOrder" asp-route-id="@order.IdOrder" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Xác nhận</button>
+                        </form>
                     }
-                    else if (item.Status == 1)
+                    else if (order.Status == 1)
                     {
-
                         <span class="badge bg-primary">Đang giao</span>
                     }
-                    else if (item.Status == 2)
+                    else if (order.Status == 2)
                     {
-
                         <span class="badge bg-success">Đã giao</span>
                     }
                     else
                     {
-
                         <span class="badge bg-danger">Đã hủy</span>
                     }
                 </td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.PhoneNumber</td>
+                <td>@order.User?.Email</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShippingAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PhoneNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Email)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdOrder">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdOrder">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdOrder">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@order.IdOrder">Sửa</a> |
+                    <a asp-action="Delete" asp-route-id="@order.IdOrder">Xóa</a> |
+                    <a asp-action="Details" asp-route-id="@order.IdOrder">Chi tiết</a>
                 </td>
             </tr>
-            @foreach (var order in Model)
-            {
-                <tr>
-                    <td>@order.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@order.TotalPrice.ToString("N0") VNĐ</td>
-                    <td>
-                        @if (order.Status == 0)
-                        {
-                            <span class="badge bg-warning text-dark">Chờ xác nhận</span>
-                            <form asp-action="ConfirmOrder" asp-route-id="@order.IdOrder" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-success">Xác nhận</button>
-                            </form>
-                        }
-                        else if (order.Status == 1)
-                        {
-                            <span class="badge bg-primary">Đang giao</span>
-                        }
-                        else if (order.Status == 2)
-                        {
-                            <span class="badge bg-success">Đã giao</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Đã hủy</span>
-                        }
-                    </td>
-                    <td>@order.ShippingAddress</td>
-                    <td>@order.PhoneNumber</td>
-                    <td>@order.User?.Email</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@order.IdOrder">Sửa</a> |
-                        <a asp-action="Details" asp-route-id="@order.IdOrder">Chi tiết</a>
-                    </td>
-                </tr>
-            }
         }
     </tbody>
 </table>
