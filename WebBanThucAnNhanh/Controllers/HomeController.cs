@@ -17,10 +17,9 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Include cả Theme và TypeOfFastFood để hiển thị đầy đủ thông tin trang chủ
         var allFoods = await _context.FastFoods
             .Include(f => f.TypeOfFastFood)
-            .Include(f => f.Theme) // Nên Include thêm Theme nếu trang chủ có hiển thị
+            .Include(f => f.Theme) 
             .ToListAsync();
 
         ViewBag.Themes = await _context.Themes.ToListAsync();
