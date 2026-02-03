@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* CSS đơn giản cho Sidebar */
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #343a40;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .sidebar a {
+            color: #cfd8dc;
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #495057;
+            color: #fff;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <div class="sidebar">
+            <h3 class="text-center text-warning">Admin Panel</h3>
+            <hr />
+            <a href="@Url.Action("Index", "User")"><i class="fas fa-users"></i> Quản lý User</a>
+            <a href="@Url.Action("Index", "FastFood")"><i class="fas fa-hamburger"></i> Quản lý Món ăn</a>
+            <a href="@Url.Action("Index", "Order")"><i class="fas fa-file-invoice"></i> Quản lý Đơn hàng</a>
+            <hr />
+            <a href="@Url.Action("Index", "Home")">Về trang chủ</a>
+            <a href="@Url.Action("Logout", "Account")">Đăng xuất</a>
+        </div>
+
+        <div class="content">
+            <nav class="navbar navbar-light bg-light mb-4 shadow-sm">
+                <div class="container-fluid">
+                    <span class="navbar-brand">Xin chào, @Context.User.Identity.Name</span>
+                </div>
+            </nav>
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

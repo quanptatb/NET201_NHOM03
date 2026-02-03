@@ -12,9 +12,12 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebBanThucAnNhanh.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AccountController : Controller
     {
 
@@ -73,6 +76,71 @@ namespace WebBanThucAnNhanh.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View();
+        }
+        // POST: Account/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password) // Hoặc dùng Model LoginViewModel
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin";
+                return View();
+            }
+
+            // Mã hóa password nhập vào để so sánh với DB (vì Register bạn dùng GetMD5)
+            string f_password = GetMD5(password);
+
+            // Tìm user trong DB
+            var user = await _context.Users.FirstOrDefaultAsync(s => (s.Username == username || s.Email == username) && s.Password == f_password);
+
+            if (user != null)
+            {
+                // Kiểm tra trạng thái hoạt động
+                if (user.Status == false)
+                {
+                    ViewBag.Error = "Tài khoản đang bị khóa.";
+                    return View();
+                }
+
+                // Tạo danh sách quyền (Claims)
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role), // Quan trọng: Lấy Role từ DB (Admin/Customer)
+            new Claim("FullName", user.FullName ?? "") // Lưu thêm thông tin phụ nếu cần
+        };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties(); // Có thể cấu hình Remember Me tại đây
+
+                // Ghi Cookie xác thực
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                // Lưu Session hiển thị tên (giữ logic cũ của bạn để hiển thị trên Layout)
+                HttpContext.Session.SetString("UserName", user.Username);
+
+                // Điều hướng dựa trên Role
+                if (user.Role == "Admin")
+                {
+                    return RedirectToAction("Index", "User", new { area = "Admin" }); // Hoặc Controller Admin cụ thể
+                                                                                      // Ví dụ: return RedirectToAction("Index", "User"); // Nếu Controller User nằm chung
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                ViewBag.Error = "Sai tên đăng nhập hoặc mật khẩu";
+                return View();
+            }
+        }
+
+        // Action trang từ chối truy cập (nếu User cố vào trang Admin)
+        public IActionResult AccessDenied()
+        {
+            return View(); //thông báo "Bạn không có quyền truy cập"
         }
         // LOGOUT
         public async Task<IActionResult> Logout()

@@ -10,9 +10,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ============================================================
-// 1. THÊM DỊCH VỤ SESSION VÀ HTTPCONTEXTACCESSOR (BẮT BUỘC)
-// ============================================================
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login"; // Đường dẫn khi chưa đăng nhập
+        options.AccessDeniedPath = "/Account/AccessDenied"; // Đường dẫn khi không đúng quyền
+    });
+
+// 1. THÊM DỊCH VỤ SESSION VÀ HTTPCONTEXTACCESSOR
 builder.Services.AddDistributedMemoryCache(); // Cần cho Session
 builder.Services.AddSession(options =>
 {
@@ -35,12 +40,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // ============================================================
 // 2. KÍCH HOẠT SESSION (ĐẶT TRƯỚC MapControllerRoute)
 // ============================================================
-app.UseSession(); 
+app.UseSession();
 // ============================================================
 
 app.MapStaticAssets();
