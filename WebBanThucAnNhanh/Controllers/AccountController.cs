@@ -143,24 +143,33 @@ namespace WebBanThucAnNhanh.Controllers
         {
             return View();
         }
+// 1. Gửi yêu cầu sang Google
         public IActionResult LoginGoogle()
         {
-            var properties = new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") };
+            var properties = new AuthenticationProperties 
+            { 
+                RedirectUri = Url.Action("GoogleResponse") 
+            };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        // Action nhận phản hồi từ Google
+        // 2. Nhận phản hồi từ Google và Đăng nhập vào hệ thống
         public async Task<IActionResult> GoogleResponse()
         {
+            // Lấy thông tin từ Google trả về
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Nếu lỗi hoặc không lấy được thông tin -> Về trang login
             if (!result.Succeeded) return RedirectToAction("Login");
 
             var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
             var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
-            // Logic: Kiểm tra email này đã có trong DB chưa
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login");
+
+            // --- XỬ LÝ DATABASE ---
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             // Tìm đoạn code trong phương thức GoogleResponse
             if (user == null)
@@ -181,14 +190,34 @@ namespace WebBanThucAnNhanh.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
+            else
+            {
+                // Nếu tài khoản bị khóa
+                if (user.Status == false) return RedirectToAction("Login");
+            }
 
-            // Lưu Session đăng nhập hệ thống của bạn
+            // --- QUAN TRỌNG: TẠO COOKIE ĐĂNG NHẬP HỆ THỐNG ---
+            // Phải tạo Claims giống hệt hàm Login thường để dùng chung logic
+            var userClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("FullName", user.FullName ?? ""),
+                new Claim("UserId", user.Id.ToString()) // Rất quan trọng cho Giỏ hàng/Thanh toán
+            };
+
+            var identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            // Đăng nhập (Ghi đè Cookie cũ của Google bằng Cookie của App)
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Xóa cookie tạm
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); // Ghi cookie chính
+
+            // Lưu Session bổ trợ (như bạn đang làm)
             HttpContext.Session.SetString("UserName", user.Username);
-            HttpContext.Session.SetString("Role", user.Role);
 
             return RedirectToAction("Index", "Home");
         }
-
         public static string GetMD5(string str)
         {
             // ... (Giữ nguyên code MD5 của bạn) ...
