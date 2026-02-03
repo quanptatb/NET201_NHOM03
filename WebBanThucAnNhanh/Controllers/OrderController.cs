@@ -9,7 +9,6 @@ using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace WebBanThucAnNhanh.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -22,129 +21,84 @@ namespace WebBanThucAnNhanh.Controllers
             _context = context;
         }
 
-        // GET: Order
+        // GET: Admin/Order
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Orders.Include(o => o.User);
+            // Sắp xếp đơn mới nhất lên đầu
+            var appDbContext = _context.Orders.Include(o => o.User).OrderByDescending(o => o.DateCreated);
             return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Order/Details/5
+        // GET: Admin/Order/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var order = await _context.Orders
                 .Include(o => o.User)
+                // QUAN TRỌNG: Include thêm chi tiết đơn và thông tin món ăn
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.FastFood)
                 .FirstOrDefaultAsync(m => m.IdOrder == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+
+            if (order == null) return NotFound();
 
             return View(order);
         }
 
-        // GET: Order/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
-            return View();
-        }
-
-        // POST: Order/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdOrder,DateCreated,TotalPrice,Status,ShippingAddress,PhoneNumber,UserId")] Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
-            return View(order);
-        }
-
-        // GET: Order/Edit/5
+        // GET: Admin/Order/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+            if (order == null) return NotFound();
+
+            // Chỉ cần truyền User để hiển thị tên (nếu view cần), không cho sửa User
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
             return View(order);
         }
 
-        // POST: Order/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Admin/Order/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdOrder,DateCreated,TotalPrice,Status,ShippingAddress,PhoneNumber,UserId")] Order order)
+        public async Task<IActionResult> Edit(int id, int Status)
         {
-            if (id != order.IdOrder)
-            {
-                return NotFound();
-            }
+            // Tìm đơn hàng gốc trong DB
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
 
-            if (ModelState.IsValid)
+            // Chỉ cập nhật trạng thái
+            order.Status = Status; // Ví dụ: 0=Mới, 1=Đang giao, 2=Hoàn tất, 3=Hủy
+
+            try
             {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.IdOrder))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(order);
+                await _context.SaveChangesAsync();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email", order.UserId);
-            return View(order);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(order.IdOrder)) return NotFound();
+                else throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Order/Delete/5
+        // GET: Admin/Order/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var order = await _context.Orders
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.IdOrder == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+
+            if (order == null) return NotFound();
 
             return View(order);
         }
 
-        // POST: Order/Delete/5
+        // POST: Admin/Order/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -152,12 +106,17 @@ namespace WebBanThucAnNhanh.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order != null)
             {
+                // Cần đảm bảo Database có thiết lập Cascade Delete cho OrderDetails
+                // Nếu không, bạn phải xóa OrderDetails bằng tay trước khi xóa Order
                 _context.Orders.Remove(order);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        // Bỏ hàm Create vì Admin không nên tạo đơn hàng thủ công (Đơn hàng phải từ Checkout)
+        // Nếu cần test thì giữ lại, nhưng thực tế ít dùng.
 
         private bool OrderExists(int id)
         {

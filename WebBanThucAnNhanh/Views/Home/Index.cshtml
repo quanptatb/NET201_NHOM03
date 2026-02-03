@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
-
 @{
     ViewData["Title"] = "Trang chủ - Cửa hàng thức ăn nhanh";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,13 +7,9 @@
 <section class="hero" id="home">
     <div class="container">
         <div class="hero-content">
-            <h1>
-                Thưởng thức món ngon <span class="highlight">Tuyệt hảo</span>
-            </h1>
-            <p>
-                Trải nghiệm những chiếc burger ngon nhất, xúc xích nóng hổi và gà rán giòn rụm.
-                Giao hàng tận nơi chỉ trong vòng 30 phút.
-            </p>
+            <h1>Thưởng thức món ngon <span class="highlight">Tuyệt hảo</span></h1>
+            <p>Trải nghiệm những chiếc burger ngon nhất, xúc xích nóng hổi và gà rán giòn rụm. Giao hàng tận nơi chỉ
+                trong vòng 30 phút.</p>
         </div>
     </div>
 </section>
@@ -49,104 +44,69 @@
             <h2>Thực Đơn <span class="highlight">Hấp Dẫn</span></h2>
         </div>
 
-        @* --- PHẦN TÌM KIẾM (Đã bỏ chọn Loại) --- *@
+        @* Form Tìm kiếm (Chỉ giữ lại form đơn giản trỏ sang trang Search) *@
         <div class="advanced-search-container animate-on-scroll">
             <form method="get" action="@Url.Action("Search", "Home")" class="search-form">
-
                 <div class="search-row">
-                    @* 1. Tìm kiếm đa năng (Tên, Mô tả, Loại) *@
                     <div class="search-group search-keyword">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="keyword" placeholder="Nhập tên món, loại (ví dụ: Gà, Burger)..."
-                            value="@ViewBag.Keyword" />
+                        <input type="text" name="keyword" placeholder="Bạn muốn ăn gì hôm nay?..." />
                     </div>
-
-                    @* 2. Tìm theo Chủ đề (Giữ lại cái này là hợp lý) *@
                     <div class="search-group">
                         <select name="themeId">
-                            <option value="">-- Chọn Chủ đề --</option>
+                            <option value="">-- Tất cả chủ đề --</option>
                             @if (ViewBag.Themes != null)
                             {
                                 foreach (var theme in ViewBag.Themes)
                                 {
-                                    @* Nhớ kiểm tra lại tên thuộc tính NameTheme hay TenChuDe *@
                                     <option value="@theme.IdTheme">@theme.NameTheme</option>
                                 }
                             }
                         </select>
                     </div>
-                </div>
-
-                <div class="search-row">
-                    @* 3. Khoảng giá *@
-                    <div class="search-group price-range">
-                        <label>Giá:</label>
-                        <input type="number" name="minPrice" placeholder="Từ" min="0" step="1000" />
-                        <span>-</span>
-                        <input type="number" name="maxPrice" placeholder="Đến" min="0" step="1000" />
-                    </div>
-
-                    @* Nút tìm *@
                     <div class="search-group search-btn-group">
                         <button type="submit" class="btn btn-search">
                             <i class="fas fa-filter"></i> Tìm Kiếm
                         </button>
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-reset" title="Làm mới">
-                            <i class="fas fa-sync"></i>
-                        </a>
                     </div>
                 </div>
             </form>
         </div>
 
-        @* ========================================== *@
-        @* LOGIC HIỂN THỊ: TÌM KIẾM vs MENU THƯỜNG *@
-        @* ========================================== *@
+        @* MENU TAB *@
+        <div class="menu-tabs">
+            <button class="menu-tab active" data-target="burgers">Burgers</button>
+            <button class="menu-tab" data-target="drinks">Nước Uống</button>
+            <button class="menu-tab" data-target="chicken">Gà Rán</button>
+            <button class="menu-tab" data-target="sides">Món Phụ</button>
+        </div>
 
-        @if (ViewBag.IsSearch == true)
-        {
-            @* --- GIAO DIỆN KẾT QUẢ TÌM KIẾM (Hiện tất cả món tìm được) ---
-            <div class="search-results-wrapper">
-                <div class="section-title text-center" style="margin-bottom: 30px;">
-                    <h3>Kết quả tìm kiếm (@Model.Count() món)</h3>
-                    @if (Model.Count() == 0)
-                    {
-                        <p class="text-muted">Rất tiếc, không tìm thấy món nào phù hợp với yêu cầu của bạn.</p>
-                    }
-                </div> *@
-
-            <div class="menu-content active-content" style="display: grid;">
-                @foreach (var item in Model)
+        @* Hàm hiển thị danh sách món (Helper local function để đỡ lặp code) *@
+        @{
+            // SỬA 1: Đổi void thành async Task
+            async Task RenderProductList(IEnumerable<WebBanThucAnNhanh.Models.FastFood> products)
+            {
+                foreach (var item in products)
                 {
                     <div class="menu-item animate-on-scroll">
                         <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
+                            <img src="~/images/@item.Image" alt="@item.NameFastFood" />
                         </div>
                         <div class="menu-item-content">
                             <div class="menu-item-title">
                                 <h4>@item.NameFastFood</h4>
                                 <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
                             </div>
-                            <p class="menu-item-text">
-                                @* Hiện thêm tên loại để khách biết *@
-                                <small class="highlight">@item.TypeOfFastFood?.NameTypeOfFastFood</small><br />
-                                @item.Description
-                            </p>
+                            <p class="menu-item-text">@item.Description</p>
                             <div class="menu-item-order">
-                                @* Phần đánh giá sao bên trái *@
                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star" style="color: #ffc107;"></i>
-                                    <i class="fas fa-star" style="color: #ffc107;"></i>
-                                    <i class="fas fa-star" style="color: #ffc107;"></i>
-                                    <i class="fas fa-star" style="color: #ffc107;"></i>
-                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                    <i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
+                                        class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
+                                        class="fas fa-star text-warning"></i>
                                 </div>
-
-                                @* Phần hành động bên phải: Số lượng + Nút Thêm *@
                                 <div class="action-group">
-                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
-
-                                    <a href="#" class="btn-sm-custom" onclick="return false;">
+                                    @* NÚT THÊM VÀO GIỎ CHÍNH THỨC *@
+                                    <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
                                         <i class="fas fa-cart-plus"></i> Thêm
                                     </a>
                                 </div>
@@ -154,163 +114,41 @@
                         </div>
                     </div>
                 }
-            </div>
-
-            <div class="text-center" style="margin-top: 40px;">
-                <a href="@Url.Action("Index", "Home")#menu" class="btn" style="background: #333;">Quay lại thực đơn</a>
-            </div>
+            }
         }
-        else
-        {
-            @* --- GIAO DIỆN MENU TAB BÌNH THƯỜNG (Khi chưa tìm gì) --- *@
 
-            <div class="menu-tabs">
-                <button class="menu-tab active" data-target="burgers">Burgers</button>
-                <button class="menu-tab" data-target="drinks">Nước Uống</button>
-                <button class="menu-tab" data-target="chicken">Gà Rán</button>
-                <button class="menu-tab" data-target="sides">Món Phụ</button>
-            </div>
+        @* TAB 1: BURGERS *@
+        <div class="menu-content active-content" id="burgers" style="display: grid;">
+            @{
+                // SỬA 2: Thêm await khi gọi hàm
+                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 2));
+            }
+        </div>
 
-            @* TAB 1: BURGERS *@
-            <div class="menu-content active-content" id="burgers" style="display: grid;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 2))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                @* 1. Rating *@
-                                <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                        class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
+        @* TAB 2: NƯỚC UỐNG *@
+        <div class="menu-content" id="drinks" style="display: none;">
+            @{
+                // SỬA 2: Thêm await khi gọi hàm
+                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 3));
+            }
+        </div>
 
-                                @* 2. Ô Số lượng & Nút Thêm *@
-                                <div class="action-group">
-                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
+        @* TAB 3: GÀ RÁN *@
+        <div class="menu-content" id="chicken" style="display: none;">
+            @{
+                // SỬA 2: Thêm await khi gọi hàm
+                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 4));
+            }
+        </div>
 
-                                    <a href="#" class="btn-sm-custom" onclick="return false;">
-                                        <i class="fas fa-cart-plus"></i> Thêm
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+        @* TAB 4: MÓN PHỤ *@
+        <div class="menu-content" id="sides" style="display: none;">
+            @{
+                // SỬA 2: Thêm await khi gọi hàm
+                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 5));
+            }
+        </div>
 
-            @* TAB 2: NƯỚC UỐNG *@
-            <div class="menu-content" id="drinks" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 3))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                @* 1. Rating *@
-                                <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                        class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-
-                                @* 2. Ô Số lượng & Nút Thêm *@
-                                <div class="action-group">
-                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
-
-                                    <a href="#" class="btn-sm-custom" onclick="return false;">
-                                        <i class="fas fa-cart-plus"></i> Thêm
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @* TAB 3: GÀ RÁN *@
-            <div class="menu-content" id="chicken" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 4))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                @* 1. Rating *@
-                                <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                        class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-
-                                @* 2. Ô Số lượng & Nút Thêm *@
-                                <div class="action-group">
-                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
-
-                                    <a href="#" class="btn-sm-custom" onclick="return false;">
-                                        <i class="fas fa-cart-plus"></i> Thêm
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @* TAB 4: MÓN PHỤ *@
-            <div class="menu-content" id="sides" style="display: none;">
-                @foreach (var item in Model.Where(x => x.IdTypeOfFastFood == 5))
-                {
-                    <div class="menu-item animate-on-scroll">
-                        <div class="menu-item-img">
-                            <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
-                        </div>
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            <p class="menu-item-text">@item.Description</p>
-                            <div class="menu-item-order">
-                                @* 1. Rating *@
-                                <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                        class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-
-                                @* 2. Ô Số lượng & Nút Thêm *@
-                                <div class="action-group">
-                                    <input type="number" class="qty-input" value="1" min="1" max="99" />
-
-                                    <a href="#" class="btn-sm-custom" onclick="return false;">
-                                        <i class="fas fa-cart-plus"></i> Thêm
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
     </div>
 </section>
 

@@ -12,8 +12,8 @@ namespace WebBanThucAnNhanh.Models
         public string NameCombo { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue)]
-        public double Price { get; set; }
+        [Range(0, 999999999, ErrorMessage = "Giá phải lớn hơn 0")]
+        public decimal Price { get; set; } // SỬA: double -> decimal
 
         public string Image { get; set; }
 

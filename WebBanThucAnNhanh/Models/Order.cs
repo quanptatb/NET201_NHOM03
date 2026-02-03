@@ -13,7 +13,7 @@ namespace WebBanThucAnNhanh.Models
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
         [Required]
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
 
         // Trạng thái: 0-Chưa giao, 1-Đang giao, 2-Đã giao, 3-Hủy
         public int Status { get; set; } = 0;

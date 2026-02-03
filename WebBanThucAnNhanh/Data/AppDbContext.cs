@@ -16,17 +16,39 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-
-        // Fluent API (nếu cần thiết lập thêm các ràng buộc phức tạp theo Y6)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ví dụ: Set giá trị mặc định cho ngày tạo đơn
+            // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
                 .Property(o => o.DateCreated)
                 .HasDefaultValueSql("GETDATE()");
+
+            // 2. Cấu hình kiểu dữ liệu tiền tệ (decimal) để tránh cảnh báo và sai số
+            // (Chỉnh sửa tên Property cho khớp với Model thực tế của bạn)
+            modelBuilder.Entity<FastFood>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Order>().Property(p => p.TotalPrice).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<OrderDetail>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+
+            // 3. CẤU HÌNH QUAN HỆ ĐỂ BẢO VỆ DỮ LIỆU (QUAN TRỌNG)
+
+            // Quan hệ: Một OrderDetail thuộc về một FastFood
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.FastFood)
+                .WithMany() // Một món ăn có thể nằm trong nhiều chi tiết đơn
+                .HasForeignKey(od => od.FastFoodId)
+                .OnDelete(DeleteBehavior.Restrict);
+            // ^ RESTRICT: Nếu món ăn này đã có trong đơn hàng, Cấm xóa món ăn đó.
+            // Admin phải ẩn món (Status = false) thay vì xóa vĩnh viễn.
+
+            // Quan hệ: Một OrderDetail thuộc về một Order
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // ^ CASCADE: Nếu xóa Đơn hàng, thì xóa luôn các Chi tiết của đơn đó (Hợp lý).
         }
     }
 }

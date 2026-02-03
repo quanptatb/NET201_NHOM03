@@ -1,57 +1,90 @@
 @model WebBanThucAnNhanh.Models.Order
 @{
-    ViewData["Title"] = "Quản lý người dùng";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Trỏ về layout admin mới tạo
-}
-@{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Details</h1>
+<h1>Chi tiết đơn hàng #@Model.IdOrder</h1>
 
 <div>
-    <h4>Order</h4>
+    <h4>Thông tin chung</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateCreated)
+        @* ... Giữ nguyên phần dl/dt/dd cũ của bạn ... *@
+        <dt class="col-sm-2">Ngày đặt</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.DateCreated)</dd>
+
+        <dt class="col-sm-2">Trạng thái</dt>
+        <dd class="col-sm-10">
+            @if (Model.Status == 0)
+            {
+                <span class="badge bg-warning text-dark">Chờ xử lý</span>
+            }
+            else if (Model.Status == 1)
+            {
+
+                <span class="badge bg-primary">Đang giao</span>
+            }
+            else if (Model.Status == 2)
+            {
+
+                <span class="badge bg-success">Đã giao</span>
+            }
+            else
+            {
+
+                <span class="badge bg-danger">Đã hủy</span>
+            }
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TotalPrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalPrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Email)
-        </dd>
+
+        <dt class="col-sm-2">Người nhận</dt>
+        <dd class="col-sm-10">@Model.User?.FullName - @Model.PhoneNumber <br /> @Model.ShippingAddress</dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdOrder">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+@* THÊM PHẦN NÀY *@
+<div class="mt-4">
+    <h4>Danh sách món ăn</h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Món ăn</th>
+                <th>Hình ảnh</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderDetails != null)
+            {
+                foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@(item.FastFood?.NameFastFood ?? "Món đã bị xóa")</td>
+                        <td>
+                            @if (item.FastFood != null)
+                            {
+                                <img src="~/images/@item.FastFood.Image" width="50" />
+                            }
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("n0") đ</td>
+                        <td>@((item.Quantity * item.Price).ToString("n0")) đ</td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
+                <td class="fw-bold text-danger">@Model.TotalPrice.ToString("n0") đ</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model?.IdOrder" class="btn btn-warning">Cập nhật trạng thái</a> |
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </div>

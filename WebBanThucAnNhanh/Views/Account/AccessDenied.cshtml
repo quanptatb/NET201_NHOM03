@@ -1,6 +1,14 @@
-@* không có quyền truy cập *@
 @{
     ViewData["Title"] = "Access Denied";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Bạn không có quyền truy cập trang này!</h2>
-<p>Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là một lỗi.</p>
+
+<div class="container text-center" style="padding: 100px 0;">
+    <h2 class="text-danger" style="font-size: 3rem;">🚫</h2>
+    <h2 class="text-danger">Bạn không có quyền truy cập trang này!</h2>
+    <p class="lead">Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là một lỗi.</p>
+
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">
+        <i class="fas fa-home"></i> Quay về trang chủ
+    </a>
+</div>

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebBanThucAnNhanh.Controllers
 {
-    [Route("[controller]")]
+    // Bắt buộc phải đăng nhập mới được vào trang thanh toán
+    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,10 +23,10 @@ namespace WebBanThucAnNhanh.Controllers
         {
             _context = context;
         }
-        // GET: Order/Checkout (Khách hàng đặt món)
-        // Thay thế cho hàm Create cũ
-        // GET: Order/Checkout (Khách hàng đặt món)
-        public IActionResult Checkout()
+
+        // 1. Đổi tên thành Index để đường dẫn là /Checkout thay vì /Checkout/Checkout
+        [HttpGet]
+        public IActionResult Index()
         {
             // Kiểm tra giỏ hàng
             var sessionCart = HttpContext.Session.GetString("Cart");
@@ -38,15 +39,17 @@ namespace WebBanThucAnNhanh.Controllers
 
             if (cartItems.Count == 0)
             {
-                return RedirectToAction("Index", "FastFood"); // Giỏ rỗng thì về trang mua hàng
+                return RedirectToAction("Index", "Home"); // Về trang chủ nếu giỏ rỗng
             }
 
-            // Lấy thông tin User để điền sẵn vào form (nếu cần)
+            // Lấy User ID từ Claim (Nhớ sửa AccountController như hướng dẫn trên)
             var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null) return RedirectToAction("Login", "User");
 
-            // Tính tổng tiền
-            double total = cartItems.Sum(item => item.Total);
+            // Phòng hờ trường hợp cookie cũ chưa có UserId, bắt đăng nhập lại
+            if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
+            // Tính tổng tiền (Ép kiểu về decimal nếu CartItem dùng decimal)
+            decimal total = cartItems.Sum(item => item.Total);
 
             // Tạo model Order để truyền data sang View
             var orderModel = new Order
@@ -55,70 +58,70 @@ namespace WebBanThucAnNhanh.Controllers
                 UserId = int.Parse(userIdClaim.Value)
             };
 
-            return View(orderModel);
+            return View(orderModel); // View này cần đặt tên là Index.cshtml trong thư mục Views/Checkout
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Checkout([Bind("ShippingAddress,PhoneNumber")] Order order)
+        // Đặt tên ActionName để trùng khớp với form post
+        public async Task<IActionResult> Index([Bind("ShippingAddress,PhoneNumber")] Order order)
         {
-            // 1. Lấy User ID
             var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null) return RedirectToAction("Login", "User");
+            if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
             order.UserId = int.Parse(userIdClaim.Value);
             order.DateCreated = DateTime.Now;
-            order.Status = 0; // Chờ xử lý
+            order.Status = 0; // 0: Chờ xử lý
 
-            // 2. Lấy Giỏ hàng từ Session (Logic giống bên CartController)
+            // Kiểm tra lại giỏ hàng trong Session (tránh hack sửa HTML)
             var sessionCart = HttpContext.Session.GetString("Cart");
             if (string.IsNullOrEmpty(sessionCart))
             {
-                ModelState.AddModelError("", "Giỏ hàng đang trống!");
-                return View(order);
+                return RedirectToAction("Index", "Home");
             }
 
             var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
-            if (cartItems.Count == 0) return RedirectToAction("Index", "FastFood");
 
-            // 3. Tính tổng tiền thực tế
+            // Tính toán lại tổng tiền ở Server (Bảo mật)
             order.TotalPrice = cartItems.Sum(x => x.Total);
 
-            // 4. Lưu Order trước để có ID
+            // 1. Lưu Order
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Lưu để sinh ra OrderId
 
-            // 5. Lưu OrderDetail (Chi tiết đơn hàng)
+            // 2. Lưu OrderDetail
             foreach (var item in cartItems)
             {
                 var detail = new OrderDetail
                 {
-                    OrderId = order.IdOrder,      // ID đơn hàng vừa tạo
-                    FastFoodId = item.Id,         // ID món ăn
+                    OrderId = order.IdOrder,
+                    FastFoodId = item.Id,
                     Quantity = item.Quantity,
-                    Price = item.Price
+                    Price = item.Price // Giá tại thời điểm mua
                 };
                 _context.OrderDetails.Add(detail);
             }
             await _context.SaveChangesAsync();
 
-            // 6. Xóa Session giỏ hàng sau khi đặt thành công
+            // 3. Xóa Session giỏ hàng
             HttpContext.Session.Remove("Cart");
 
+            // Chuyển hướng đến trang lịch sử
             return RedirectToAction(nameof(History));
         }
-        // GET: Order/History (Khách hàng xem lịch sử đơn của mình)
+
         public async Task<IActionResult> History()
         {
-            // Lấy ID User hiện tại
             var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null) return RedirectToAction("Login", "User");
+            if (userIdClaim == null) return RedirectToAction("Login", "Account");
 
             int userId = int.Parse(userIdClaim.Value);
 
-            // Chỉ lấy đơn hàng CỦA USER ĐÓ
             var myOrders = await _context.Orders
-                .Include(o => o.User)
+                .Include(o => o.OrderDetails) // Nên Include thêm chi tiết nếu muốn xem sâu hơn
+                .ThenInclude(od => od.FastFood) // Include tên món ăn để hiển thị
                 .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.DateCreated) // Đơn mới nhất lên đầu
+                .OrderByDescending(o => o.DateCreated)
                 .ToListAsync();
 
             return View(myOrders);

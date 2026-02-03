@@ -143,11 +143,24 @@ namespace WebBanThucAnNhanh.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var theme = await _context.Themes.FindAsync(id);
-            if (theme != null)
+            if (theme == null)
             {
-                _context.Themes.Remove(theme);
+                return RedirectToAction(nameof(Index));
             }
 
+            // 1. KIỂM TRA AN TOÀN: Có món ăn nào đang thuộc Theme này không?
+            bool isInUse = await _context.FastFoods.AnyAsync(f => f.IdTheme == id);
+
+            if (isInUse)
+            {
+                // Nếu đang dùng thì không cho xóa và báo lỗi ra View
+                // Bạn cần thêm dòng này vào View Delete.cshtml: <div class="text-danger">@ViewBag.Error</div>
+                ViewBag.Error = "Không thể xóa chủ đề này vì đang có món ăn thuộc về nó. Hãy xóa hoặc chuyển món ăn sang chủ đề khác trước.";
+                return View("Delete", theme);
+            }
+
+            // 2. Nếu an toàn thì mới xóa
+            _context.Themes.Remove(theme);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

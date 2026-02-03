@@ -1,72 +1,67 @@
 @model WebBanThucAnNhanh.Models.FastFood
 @{
-    ViewData["Title"] = "Quản lý người dùng";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Trỏ về layout admin mới tạo
-}
-@{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Cập nhật món ăn";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>FastFood</h4>
+<h1>Cập nhật món ăn</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-6">
+        @* THÊM enctype *@
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdFastFood" />
-            <div class="form-group">
+
+            @* Giữ lại các input text bình thường ... *@
+            <div class="form-group mb-3">
                 <label asp-for="NameFastFood" class="control-label"></label>
                 <input asp-for="NameFastFood" class="form-control" />
                 <span asp-validation-for="NameFastFood" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Price" class="control-label"></label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Quantity" class="control-label"></label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+
+            @* HIỂN THỊ ẢNH CŨ VÀ CHO UPLOAD ẢNH MỚI *@
+            <div class="form-group mb-3">
+                <label class="control-label">Hình ảnh hiện tại</label><br />
+                <img src="~/images/@Model.Image" style="width: 150px; margin-bottom: 10px;" />
+                <input type="hidden" asp-for="Image" /> @* Giữ tên ảnh cũ nếu không đổi *@
+
+                <label class="control-label d-block">Đổi ảnh mới (nếu cần)</label>
+                <input type="file" name="imageFile" class="form-control" />
             </div>
-            <div class="form-group form-check">
+
+            @* ... Các field còn lại ... *@
+            <div class="form-group form-check mb-3">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
                 </label>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="IdTypeOfFastFood" class="control-label"></label>
                 <select asp-for="IdTypeOfFastFood" class="form-control" asp-items="ViewBag.IdTypeOfFastFood"></select>
-                <span asp-validation-for="IdTypeOfFastFood" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="IdTheme" class="control-label"></label>
                 <select asp-for="IdTheme" class="form-control" asp-items="ViewBag.IdTheme"></select>
-                <span asp-validation-for="IdTheme" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

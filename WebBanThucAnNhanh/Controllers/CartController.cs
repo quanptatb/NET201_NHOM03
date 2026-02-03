@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
-using Newtonsoft.Json; 
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization; // Thêm nếu muốn chặn khách xem giỏ (tùy chọn)
 
 namespace WebBanThucAnNhanh.Controllers
 {
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
+        // 1. Khai báo hằng số cho Key Session để tránh gõ sai
+        public const string CART_KEY = "Cart";
 
         public CartController(AppDbContext context)
         {
@@ -17,7 +20,7 @@ namespace WebBanThucAnNhanh.Controllers
         // Lấy danh sách giỏ hàng từ Session
         public List<CartItem> GetCart()
         {
-            var sessionCart = HttpContext.Session.GetString("Cart");
+            var sessionCart = HttpContext.Session.GetString(CART_KEY);
             if (sessionCart != null)
             {
                 return JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
@@ -29,13 +32,14 @@ namespace WebBanThucAnNhanh.Controllers
         public void SaveCart(List<CartItem> cart)
         {
             var sessionCart = JsonConvert.SerializeObject(cart);
-            HttpContext.Session.SetString("Cart", sessionCart);
+            HttpContext.Session.SetString(CART_KEY, sessionCart);
         }
 
         public IActionResult Index()
         {
             var cart = GetCart();
-            ViewBag.TotalAmount = cart.Sum(item => item.Total);
+            // Tính tổng tiền để hiển thị (Nếu CartItem chưa có property Total)
+            ViewBag.TotalAmount = cart.Sum(item => item.Price * item.Quantity);
             return View(cart);
         }
 
@@ -64,7 +68,10 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             SaveCart(cart);
-            return RedirectToAction("Index");
+
+            // 2. Cải thiện UX: Ở lại trang hiện tại thay vì bay về trang giỏ hàng
+            // Nếu muốn về giỏ hàng ngay thì giữ nguyên: return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Remove(int id)
@@ -86,15 +93,19 @@ namespace WebBanThucAnNhanh.Controllers
             if (item != null)
             {
                 item.Quantity = quantity;
-                if(item.Quantity <= 0) cart.Remove(item);
+                // Nếu số lượng <= 0 thì xóa luôn sản phẩm
+                if (item.Quantity <= 0)
+                {
+                    cart.Remove(item);
+                }
                 SaveCart(cart);
             }
             return RedirectToAction("Index");
         }
-        
+
         public IActionResult Clear()
         {
-            HttpContext.Session.Remove("Cart");
+            HttpContext.Session.Remove(CART_KEY);
             return RedirectToAction("Index", "Home");
         }
     }

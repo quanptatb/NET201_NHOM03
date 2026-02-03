@@ -5,8 +5,13 @@ namespace WebBanThucAnNhanh.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
-        public double Price { get; set; }
+
+        // SỬA DÒNG NÀY: đổi double thành decimal
+        public decimal Price { get; set; }
+
         public int Quantity { get; set; }
-        public double Total => Price * Quantity;
+
+        // Nếu có thuộc tính Total, cũng đổi thành decimal
+        public decimal Total => Price * Quantity;
     }
 }

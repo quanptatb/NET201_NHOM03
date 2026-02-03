@@ -1,5 +1,4 @@
 @model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
-
 @{
     ViewData["Title"] = "Kết quả tìm kiếm";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,47 +10,51 @@
             <h2>Kết Quả <span class="highlight">Tìm Kiếm</span></h2>
         </div>
 
-        @* --- FORM TÌM KIẾM (Để khách tìm lại nếu muốn) --- *@
+        @* Form tìm kiếm lại *@
         <div class="advanced-search-container">
-            <form method="get" action="@Url.Action("Search", "Home")" class="search-form">
-                <div class="search-row">
-                    <div class="search-group search-keyword">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên món..." />
+            <form method="get" asp-action="Search" asp-controller="Home" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" name="keyword" class="form-control" placeholder="Tìm tên món..."
+                            value="@ViewBag.Keyword">
                     </div>
-                    <div class="search-group">
-                        <select name="themeId">
+                    <div class="col-md-3">
+                        <select name="themeId" class="form-control">
                             <option value="">-- Chọn Chủ đề --</option>
                             @if (ViewBag.Themes != null)
                             {
                                 foreach (var theme in ViewBag.Themes)
                                 {
-                                    // Logic để giữ lại option đã chọn
-                                    var isSelected = (int?)ViewBag.CurrentTheme == theme.IdTheme ? "selected" : "";
-                                    <option value="@theme.IdTheme">@theme.NameTheme</option>
+                                    if (ViewBag.CurrentTheme == theme.IdTheme)
+                                    {
+                                        <option value="@theme.IdTheme" selected>@theme.NameTheme</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@theme.IdTheme">@theme.NameTheme</option>
+                                    }
                                 }
                             }
                         </select>
                     </div>
-                </div>
-                <div class="search-row">
-                    <div class="search-group price-range">
-                        <label>Giá:</label>
-                        <input type="number" name="minPrice" value="@ViewBag.MinPrice" placeholder="Từ" />
-                        <span>-</span>
-                        <input type="number" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Đến" />
+                    <div class="col-md-2">
+                        <input type="number" name="minPrice" class="form-control" placeholder="Giá từ"
+                            value="@ViewBag.MinPrice">
                     </div>
-                    <div class="search-group search-btn-group">
-                        <button type="submit" class="btn btn-search"><i class="fas fa-filter"></i> Lọc</button>
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-reset"><i class="fas fa-sync"></i></a>
+                    <div class="col-md-2">
+                        <input type="number" name="maxPrice" class="form-control" placeholder="Đến giá"
+                            value="@ViewBag.MaxPrice">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        @* --- HIỂN THỊ KẾT QUẢ --- *@
+        @* Hiển thị kết quả *@
         <div style="margin-top: 30px;">
-            @if (Model.Count() == 0)
+            @if (Model == null || !Model.Any())
             {
                 <div class="text-center">
                     <p class="text-muted">Không tìm thấy món ăn nào phù hợp.</p>
@@ -65,7 +68,7 @@
                     {
                         <div class="menu-item animate-on-scroll">
                             <div class="menu-item-img">
-                                <img src="@Url.Content("~/images/" + item.Image)" alt="@item.NameFastFood" />
+                                <img src="~/images/@item.Image" alt="@item.NameFastFood" />
                             </div>
                             <div class="menu-item-content">
                                 <div class="menu-item-title">
@@ -77,20 +80,15 @@
                                     @item.Description
                                 </p>
                                 <div class="menu-item-order">
-                                    @* Phần đánh giá sao bên trái *@
                                     <div class="menu-item-rating">
-                                        <i class="fas fa-star" style="color: #ffc107;"></i>
-                                        <i class="fas fa-star" style="color: #ffc107;"></i>
-                                        <i class="fas fa-star" style="color: #ffc107;"></i>
-                                        <i class="fas fa-star" style="color: #ffc107;"></i>
-                                        <i class="fas fa-star" style="color: #ffc107;"></i>
+                                        <i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
+                                            class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
+                                            class="fas fa-star text-warning"></i>
                                     </div>
-
-                                    @* Phần hành động bên phải: Số lượng + Nút Thêm *@
                                     <div class="action-group">
-                                        <input type="number" class="qty-input" value="1" min="1" max="99" />
-
-                                        <a href="#" class="btn-sm-custom" onclick="return false;">
+                                        @* NÚT THÊM VÀO GIỎ *@
+                                        <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })"
+                                            class="btn-sm-custom">
                                             <i class="fas fa-cart-plus"></i> Thêm
                                         </a>
                                     </div>

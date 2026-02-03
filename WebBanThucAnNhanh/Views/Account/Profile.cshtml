@@ -1,37 +1,50 @@
-@* @{
+@{
     ViewData["Title"] = "Hồ sơ cá nhân";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
+@using System.Security.Claims
 
 <section class="auth-section">
     <div class="container">
         <div class="auth-card text-center animate-on-scroll">
-            
+
             <div style="margin-bottom: 20px;">
-                <img src="https://randomuser.me/api/portraits/lego/1.jpg" 
-                     alt="Avatar" 
-                     style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f35f2a;">
+                <img src="~/images/hung.png" alt="Avatar"
+                    style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f35f2a;">
             </div>
 
-            <h3>Xin chào, <span class="highlight">@HttpContextAccessor.HttpContext?.Session.GetString("CustomerName")</span>!</h3>
-            <p class="text-muted">Thành viên thân thiết</p>
+            @* Lấy tên từ Cookie Authentication *@
+            <h3>Xin chào, <span class="highlight">@User.Identity.Name</span>!</h3>
+
+            @{
+                var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Khách hàng";
+                var fullName = User.FindFirst("FullName")?.Value ?? "Chưa cập nhật";
+            }
+            <p class="text-muted">Vai trò: @role</p>
 
             <div style="margin: 30px 0; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 10px;">
-                <p><strong><i class="fas fa-user"></i> ID:</strong> @HttpContextAccessor.HttpContext?.Session.GetInt32("CustomerId")</p>
+                <p><strong><i class="fas fa-user"></i> Họ tên:</strong> @fullName</p>
                 <p><strong><i class="fas fa-clock"></i> Trạng thái:</strong> Đang hoạt động</p>
             </div>
 
-            <a href="@Url.Action("Logout", "Customer")" class="btn btn-large" style="background: #333;">
+            @* SỬA: Logout về AccountController *@
+            <a href="@Url.Action("Logout", "Account")" class="btn btn-large" style="background: #333;">
                 <i class="fas fa-sign-out-alt"></i> Đăng xuất
             </a>
-            
-            <a href="@Url.Action("Index", "Home")" class="btn btn-large shine-effect">
-                <i class="fas fa-hamburger"></i> Đặt món ngay
-            </a>
+
+            @if (role == "Admin")
+            {
+                <a href="@Url.Action("Index", "FastFood", new { area = "" })" class="btn btn-large shine-effect">
+                    <i class="fas fa-cogs"></i> Quản lý Admin
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Home")" class="btn btn-large shine-effect">
+                    <i class="fas fa-hamburger"></i> Đặt món ngay
+                </a>
+            }
 
         </div>
     </div>
 </section>
-chỉ sử dụng trang này khi đã có chức năng đăng nhập *@

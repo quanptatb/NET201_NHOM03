@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using System.Security.Cryptography;
 using System.Text;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims; // Để lấy ID người đang đăng nhập
 
 namespace WebBanThucAnNhanh.Controllers
 {
@@ -25,7 +22,8 @@ namespace WebBanThucAnNhanh.Controllers
         {
             _context = context;
         }
-        // GET: User (Danh sách User)
+
+        // GET: User
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
@@ -40,7 +38,7 @@ namespace WebBanThucAnNhanh.Controllers
             return View(user);
         }
 
-        // GET: User/Create (Admin tạo user thủ công)
+        // GET: User/Create
         public IActionResult Create()
         {
             return View();
@@ -51,9 +49,20 @@ namespace WebBanThucAnNhanh.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(User user)
         {
+            // 1. Kiểm tra trùng lặp
+            if (_context.Users.Any(u => u.Username == user.Username || u.Email == user.Email))
+            {
+                ModelState.AddModelError("", "Tên đăng nhập hoặc Email đã tồn tại!");
+                return View(user);
+            }
+
             if (ModelState.IsValid)
             {
-                user.Password = GetMD5(user.Password); // Nhớ mã hóa cả khi Admin tạo
+                // Mã hóa mật khẩu
+                user.Password = GetMD5(user.Password);
+                // Mặc định Status là true nếu chưa set
+                user.Status = true;
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -73,17 +82,34 @@ namespace WebBanThucAnNhanh.Controllers
         // POST: User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Email,FullName,PhoneNumber,Address,Role,Status")] User user)
+        public async Task<IActionResult> Edit(int id, User user)
         {
             if (id != user.Id) return NotFound();
+
+            // Loại bỏ validate Password vì nếu không đổi pass thì ô này để trống
+            ModelState.Remove("Password");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Logic xử lý password khi edit:
-                    // Nếu user nhập pass mới -> mã hóa lại. Nếu để trống -> giữ nguyên pass cũ.
-                    // (Đoạn này cần query pass cũ để check, code mẫu đang update thẳng)
+                    // 2. Lấy thông tin cũ từ Database (dùng AsNoTracking để không bị lock)
+                    var existingUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+
+                    if (existingUser != null)
+                    {
+                        // Logic xử lý Password thông minh:
+                        if (!string.IsNullOrEmpty(user.Password))
+                        {
+                            // Nếu Admin nhập pass mới -> Mã hóa pass mới
+                            user.Password = GetMD5(user.Password);
+                        }
+                        else
+                        {
+                            // Nếu để trống -> Giữ nguyên pass cũ
+                            user.Password = existingUser.Password;
+                        }
+                    }
 
                     _context.Update(user);
                     await _context.SaveChangesAsync();
@@ -112,12 +138,30 @@ namespace WebBanThucAnNhanh.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // 3. Ngăn chặn tự xóa chính mình
+            var currentUserId = User.FindFirst("UserId")?.Value;
+            if (currentUserId != null && int.Parse(currentUserId) == id)
+            {
+                // Báo lỗi ra view (cần hiển thị ViewBag.Error bên View Delete)
+                ViewBag.Error = "Bạn không thể xóa chính tài khoản đang đăng nhập!";
+                var selfUser = await _context.Users.FindAsync(id);
+                return View(selfUser);
+            }
+
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
+                // Kiểm tra ràng buộc (nếu User đã có đơn hàng thì nên Soft Delete - Khóa tài khoản thay vì Xóa vĩnh viễn)
+                bool hasOrders = await _context.Orders.AnyAsync(o => o.UserId == id);
+                if (hasOrders)
+                {
+                    ViewBag.Error = "User này đã có đơn hàng, không thể xóa. Hãy chuyển trạng thái sang Vô hiệu hóa (Status = false).";
+                    return View(user);
+                }
+
                 _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -126,9 +170,6 @@ namespace WebBanThucAnNhanh.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        /// <summary>
-        /// Hàm mã hóa chuỗi sang MD5
-        /// </summary>
         public static string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())

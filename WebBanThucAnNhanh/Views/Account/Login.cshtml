@@ -4,18 +4,15 @@
 }
 
 <section class="auth-section">
-    <div class="floating-bg float-left"></div>
-    <div class="floating-bg float-right"></div>
-
     <div class="container">
         <div class="auth-card animate-on-scroll">
-            
             <div class="section-title text-center" style="margin-bottom: 30px;">
                 <h2>Đăng Nhập</h2>
                 <p>Chào mừng bạn quay trở lại!</p>
             </div>
 
-            <form action="@Url.Action("Login", "Customer")" method="post">
+            @* SỬA: Chuyển controller từ Customer sang Account *@
+            <form action="@Url.Action("Login", "Account")" method="post">
                 @if (ViewBag.Error != null)
                 {
                     <div class="alert alert-danger text-center">@ViewBag.Error</div>
@@ -44,8 +41,8 @@
                 </div>
 
                 <div class="auth-links">
+                    @* SỬA: Link đăng ký trỏ về Account *@
                     <p>Chưa có tài khoản? <a href="@Url.Action("Register", "Account")">Đăng ký ngay</a></p>
-                    <p style="margin-top: 10px;"><a href="#" style="color: #999; font-size: 0.9em;">Quên mật khẩu?</a></p>
                 </div>
             </form>
         </div>

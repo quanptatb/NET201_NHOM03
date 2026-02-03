@@ -142,11 +142,25 @@ namespace WebBanThucAnNhanh.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var typeOfFastFood = await _context.TypeOfFastFoods.FindAsync(id);
-            if (typeOfFastFood != null)
+            if (typeOfFastFood == null)
             {
-                _context.TypeOfFastFoods.Remove(typeOfFastFood);
+                return RedirectToAction(nameof(Index));
             }
 
+            // 1. KIỂM TRA AN TOÀN: Có món ăn nào đang thuộc Loại này không?
+            // Kiểm tra trong bảng FastFoods xem có ai dùng IdTypeOfFastFood này không
+            bool isInUse = await _context.FastFoods.AnyAsync(f => f.IdTypeOfFastFood == id);
+
+            if (isInUse)
+            {
+                // Nếu đang có món ăn dùng loại này thì không cho xóa
+                // Bạn cần thêm dòng này vào View Delete.cshtml để hiện lỗi: <div class="text-danger">@ViewBag.Error</div>
+                ViewBag.Error = "Không thể xóa loại thức ăn này vì đang có món ăn thuộc về nó. Hãy xóa các món ăn đó trước.";
+                return View("Delete", typeOfFastFood);
+            }
+
+            // 2. Nếu không có ai dùng thì mới xóa
+            _context.TypeOfFastFoods.Remove(typeOfFastFood);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
@@ -14,37 +13,31 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace WebBanThucAnNhanh.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    // 1. XÓA [Authorize(Roles = "Admin")] Ở ĐÂY ĐỂ KHÁCH CÓ THỂ TRUY CẬP
     public class AccountController : Controller
     {
-
         private readonly AppDbContext _context;
 
         public AccountController(AppDbContext context)
         {
             _context = context;
         }
-        // 1. Mở trang Đăng Ký
-        // URL: /Customer/Register
+
+        // ... Các hàm Register giữ nguyên ...
         public IActionResult Register()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
-        // POST: User/Register
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("Username,Password,Email,FullName,PhoneNumber,Address,Role")] User user)
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra Email hoặc Username đã tồn tại chưa
                 var check = await _context.Users.FirstOrDefaultAsync(s => s.Email == user.Email || s.Username == user.Username);
                 if (check != null)
                 {
@@ -52,14 +45,11 @@ namespace WebBanThucAnNhanh.Controllers
                     return View(user);
                 }
 
-                // Mã hóa mật khẩu
                 user.Password = GetMD5(user.Password);
-
                 user.Status = true;
-                if (string.IsNullOrEmpty(user.Role))
-                {
-                    user.Role = "Customer";
-                }
+
+                // Logic gán Role mặc định
+                if (string.IsNullOrEmpty(user.Role)) user.Role = "Customer";
 
                 _context.Add(user);
                 await _context.SaveChangesAsync();
@@ -67,19 +57,18 @@ namespace WebBanThucAnNhanh.Controllers
             }
             return View(user);
         }
-        // GET: User/Login
+
+        // ... Hàm Login GET giữ nguyên ...
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
+
         // POST: Account/Login
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password) // Hoặc dùng Model LoginViewModel
+        public async Task<IActionResult> Login(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -87,43 +76,37 @@ namespace WebBanThucAnNhanh.Controllers
                 return View();
             }
 
-            // Mã hóa password nhập vào để so sánh với DB (vì Register bạn dùng GetMD5)
             string f_password = GetMD5(password);
-
-            // Tìm user trong DB
             var user = await _context.Users.FirstOrDefaultAsync(s => (s.Username == username || s.Email == username) && s.Password == f_password);
 
             if (user != null)
             {
-                // Kiểm tra trạng thái hoạt động
                 if (user.Status == false)
                 {
                     ViewBag.Error = "Tài khoản đang bị khóa.";
                     return View();
                 }
 
-                // Tạo danh sách quyền (Claims)
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.Role), // Quan trọng: Lấy Role từ DB (Admin/Customer)
-            new Claim("FullName", user.FullName ?? "") // Lưu thêm thông tin phụ nếu cần
-        };
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("FullName", user.FullName ?? ""),
+                    new Claim("UserId", user.Id.ToString())
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties(); // Có thể cấu hình Remember Me tại đây
+                var authProperties = new AuthenticationProperties();
 
-                // Ghi Cookie xác thực
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                // Lưu Session hiển thị tên (giữ logic cũ của bạn để hiển thị trên Layout)
                 HttpContext.Session.SetString("UserName", user.Username);
 
-                // Điều hướng dựa trên Role
                 if (user.Role == "Admin")
                 {
-                    return RedirectToAction("Index", "User", new { area = "Admin" }); // Hoặc Controller Admin cụ thể
-                                                                                      // Ví dụ: return RedirectToAction("Index", "User"); // Nếu Controller User nằm chung
+                    // Đảm bảo bạn đã cấu hình Area trong Program.cs
+                    return RedirectToAction("Index", "Home", new { area = "Admin" });
+                    // Lưu ý: Thường Admin sẽ về Home/Index của Admin hoặc Dashboard
                 }
                 else
                 {
@@ -137,31 +120,30 @@ namespace WebBanThucAnNhanh.Controllers
             }
         }
 
-        // Action trang từ chối truy cập (nếu User cố vào trang Admin)
-        public IActionResult AccessDenied()
-        {
-            return View(); //thông báo "Bạn không có quyền truy cập"
-        }
-        // LOGOUT
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "User");
-        }
+        // 2. CHỈ BẢO VỆ CÁC TRANG CẦN ĐĂNG NHẬP
+        [Authorize]
         public IActionResult Profile()
         {
             return View();
         }
-        private bool UserExists(int id)
+
+        public async Task<IActionResult> Logout()
         {
-            return _context.Users.Any(e => e.Id == id);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Remove("UserName"); // Xóa session hiển thị tên
+            // 3. SỬA LẠI REDIRECT VỀ Account/Login
+            return RedirectToAction("Login", "Account");
         }
 
-        /// <summary>
-        /// Hàm mã hóa chuỗi sang MD5
-        /// </summary>
+        // ... Các hàm khác giữ nguyên ...
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         public static string GetMD5(string str)
         {
+            // ... (Giữ nguyên code MD5 của bạn) ...
             using (MD5 md5 = MD5.Create())
             {
                 byte[] fromData = Encoding.UTF8.GetBytes(str);

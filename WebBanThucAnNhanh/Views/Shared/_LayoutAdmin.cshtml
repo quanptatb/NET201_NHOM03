@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        /* CSS đơn giản cho Sidebar */
         .admin-wrapper {
             display: flex;
             min-height: 100vh;
@@ -19,23 +18,45 @@
             background: #343a40;
             color: #fff;
             padding: 20px;
+            flex-shrink: 0;
         }
 
         .sidebar a {
             color: #cfd8dc;
             display: block;
-            padding: 10px;
+            padding: 10px 15px;
             text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
         }
 
         .sidebar a:hover {
             background: #495057;
             color: #fff;
+            transform: translateX(5px);
+            transition: 0.2s;
+        }
+
+        .sidebar a.active {
+            background: #007bff;
+            color: white;
         }
 
         .content {
             flex: 1;
             padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -43,23 +64,34 @@
 <body>
     <div class="admin-wrapper">
         <div class="sidebar">
-            <h3 class="text-center text-warning">Admin Panel</h3>
+            <h3 class="text-center text-warning mb-4"><i class="fas fa-user-shield"></i> Admin</h3>
+
+            <div class="mb-2 text-muted small text-uppercase fw-bold">Quản lý cửa hàng</div>
+            <a asp-controller="FastFood" asp-action="Index"><i class="fas fa-hamburger me-2"></i> Món ăn</a>
+            @* BỔ SUNG LINK CÒN THIẾU *@
+            <a asp-controller="TypeOfFastFood" asp-action="Index"><i class="fas fa-list me-2"></i> Loại món ăn</a>
+            <a asp-controller="Theme" asp-action="Index"><i class="fas fa-tags me-2"></i> Chủ đề</a>
+
             <hr />
-            <a href="@Url.Action("Index", "User")"><i class="fas fa-users"></i> Quản lý User</a>
-            <a href="@Url.Action("Index", "FastFood")"><i class="fas fa-hamburger"></i> Quản lý Món ăn</a>
-            <a href="@Url.Action("Index", "Order")"><i class="fas fa-file-invoice"></i> Quản lý Đơn hàng</a>
+
+            <div class="mb-2 text-muted small text-uppercase fw-bold">Quản lý hệ thống</div>
+            <a asp-controller="Order" asp-action="Index"><i class="fas fa-file-invoice me-2"></i> Đơn hàng</a>
+            <a asp-controller="User" asp-action="Index"><i class="fas fa-users me-2"></i> Người dùng</a>
+
             <hr />
-            <a href="@Url.Action("Index", "Home")">Về trang chủ</a>
-            <a href="@Url.Action("Logout", "Account")">Đăng xuất</a>
+            <a asp-controller="Home" asp-action="Index" class="text-warning"><i class="fas fa-home me-2"></i> Về trang
+                chủ</a>
+            <a asp-controller="Account" asp-action="Logout" class="text-danger"><i class="fas fa-sign-out-alt me-2"></i>
+                Đăng xuất</a>
         </div>
 
         <div class="content">
-            <nav class="navbar navbar-light bg-light mb-4 shadow-sm">
-                <div class="container-fluid">
-                    <span class="navbar-brand">Xin chào, @Context.User.Identity.Name</span>
-                </div>
-            </nav>
-            <main role="main">
+            <div class="admin-header">
+                <span class="fw-bold text-secondary">Hệ thống quản trị WebBanThucAnNhanh</span>
+                <span>Xin chào, <strong>@User.Identity.Name</strong></span>
+            </div>
+
+            <main role="main" class="bg-white p-4 rounded shadow-sm">
                 @RenderBody()
             </main>
         </div>
