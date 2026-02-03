@@ -20,6 +20,75 @@ namespace WebBanThucAnNhanh.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // SEED DATA (Y1)
+            // 1. Tạo loại món ăn mẫu
+            modelBuilder.Entity<TypeOfFastFood>().HasData(
+                new TypeOfFastFood { IdTypeOfFastFood = 1, NameTypeOfFastFood = "Đồ ăn nhanh" },
+                new TypeOfFastFood { IdTypeOfFastFood = 2, NameTypeOfFastFood = "Đồ uống" }
+            );
+
+            // 2. Tạo chủ đề mẫu
+            modelBuilder.Entity<Theme>().HasData(
+                new Theme { IdTheme = 1, NameTheme = "Bữa sáng" },
+                new Theme { IdTheme = 2, NameTheme = "Tiệc tùng" }
+            );
+
+            // 3. Tạo tài khoản Admin mặc định
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Password = "202cb962ac59075b964b07152d234b70", // Mã hóa MD5 của "123"
+                    FullName = "Administrator",
+                    Email = "admin@fastfood.com",
+                    Role = "Admin",
+                    Status = true,
+                    Address = "Hà Nội",
+                    PhoneNumber = "0123456789"
+                }
+            );
+            // 4. Tạo một số món ăn nhanh mẫu
+            modelBuilder.Entity<FastFood>().HasData(
+                new FastFood
+                {
+                    IdFastFood = 1,
+                    NameFastFood = "Burger Bò",
+                    Price = 50000m,
+                    Quantity = 100,
+                    Image = "burger_bo.jpg",
+                    Status = true,
+                    Description = "Burger bò ngon tuyệt vời",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+                new FastFood
+                {
+                    IdFastFood = 2,
+                    NameFastFood = "Coca Cola",
+                    Price = 15000m,
+                    Quantity = 200,
+                    Image = "coca_cola.jpg",
+                    Status = true,
+                    Description = "Nước ngọt giải khát",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 3,
+                    NameFastFood = "Gà Rán",
+                    Price = 75000m,
+                    Quantity = 150,
+                    Image = "ga_ran.jpg",
+                    Status = true,
+                    Description = "Gà rán giòn rụm",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                }
+            );
+
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
                 .Property(o => o.DateCreated)

@@ -43,6 +43,7 @@ namespace WebBanThucAnNhanh.Controllers
             return View(cart);
         }
 
+        [Authorize] 
         public async Task<IActionResult> AddToCart(int id)
         {
             var product = await _context.FastFoods.FindAsync(id);
@@ -68,9 +69,6 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             SaveCart(cart);
-
-            // 2. Cải thiện UX: Ở lại trang hiện tại thay vì bay về trang giỏ hàng
-            // Nếu muốn về giỏ hàng ngay thì giữ nguyên: return RedirectToAction("Index");
             return RedirectToAction("Index", "Home");
         }
 

@@ -1,6 +1,10 @@
 using WebBanThucAnNhanh.Models;
 using WebBanThucAnNhanh.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Mvc;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login"; // Đường dẫn khi chưa đăng nhập
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Đường dẫn khi không đúng quyền
-    });
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
 
 // 1. THÊM DỊCH VỤ SESSION VÀ HTTPCONTEXTACCESSOR
 builder.Services.AddDistributedMemoryCache(); // Cần cho Session
@@ -27,6 +24,28 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddHttpContextAccessor(); // Để dùng Session trong View (_Layout)
 // ============================================================
+
+// Gộp tất cả cấu hình xác thực vào đây
+builder.Services.AddAuthentication(options =>
+{
+    // Đặt scheme mặc định là Cookies
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    // Lưu ý: Dòng dưới sẽ chuyển hướng người dùng chưa đăng nhập thẳng sang Google.
+    // Nếu bạn muốn họ vào trang đăng nhập của web mình trước, hãy bỏ dòng này đi.
+options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;})
+.AddCookie(options =>
+{
+    // Cấu hình cho Cookie
+    options.LoginPath = "/Account/Login"; // Đường dẫn khi chưa đăng nhập
+    options.AccessDeniedPath = "/Account/AccessDenied"; // Đường dẫn khi không đúng quyền
+})
+.AddGoogle(options =>
+{
+    // Cấu hình Google
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.SaveTokens = true; // Thêm dòng này để lưu token
+});
 
 var app = builder.Build();
 

@@ -14,16 +14,16 @@ namespace WebBanThucAnNhanh.Models
         // Liên kết Order
         public int OrderId { get; set; }
         [ForeignKey("OrderId")]
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         // Liên kết FastFood (Có thể null nếu khách mua Combo)
         public int? FastFoodId { get; set; }
         [ForeignKey("FastFoodId")]
-        public FastFood? FastFood { get; set; }
+        public virtual FastFood? FastFood { get; set; }
 
         // Liên kết Combo (Có thể null nếu khách mua Món lẻ)
         public int? ComboId { get; set; }
         [ForeignKey("ComboId")]
-        public Combo? Combo { get; set; }
+        public virtual Combo? Combo { get; set; }
     }
 }
