@@ -48,6 +48,46 @@ namespace WebBanThucAnNhanh.Data
                     PhoneNumber = "0123456789"
                 }
             );
+            // 4. Tạo một số món ăn nhanh mẫu
+            modelBuilder.Entity<FastFood>().HasData(
+                new FastFood
+                {
+                    IdFastFood = 1,
+                    NameFastFood = "Burger Bò",
+                    Price = 50000m,
+                    Quantity = 100,
+                    Image = "burger_bo.jpg",
+                    Status = true,
+                    Description = "Burger bò ngon tuyệt vời",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+                new FastFood
+                {
+                    IdFastFood = 2,
+                    NameFastFood = "Coca Cola",
+                    Price = 15000m,
+                    Quantity = 200,
+                    Image = "coca_cola.jpg",
+                    Status = true,
+                    Description = "Nước ngọt giải khát",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 3,
+                    NameFastFood = "Gà Rán",
+                    Price = 75000m,
+                    Quantity = 150,
+                    Image = "ga_ran.jpg",
+                    Status = true,
+                    Description = "Gà rán giòn rụm",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                }
+            );
 
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
