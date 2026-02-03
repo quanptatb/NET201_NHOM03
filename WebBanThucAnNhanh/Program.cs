@@ -32,8 +32,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     // Lưu ý: Dòng dưới sẽ chuyển hướng người dùng chưa đăng nhập thẳng sang Google.
     // Nếu bạn muốn họ vào trang đăng nhập của web mình trước, hãy bỏ dòng này đi.
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
+options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;})
 .AddCookie(options =>
 {
     // Cấu hình cho Cookie
@@ -45,6 +44,7 @@ builder.Services.AddAuthentication(options =>
     // Cấu hình Google
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.SaveTokens = true; // Thêm dòng này để lưu token
 });
 
 var app = builder.Build();
