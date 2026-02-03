@@ -1236,6 +1236,46 @@ html, body {
     padding: 10px 16px;
     border-radius: 12px;       /* bo tròn mềm hơn */
 }
+/* ADMIN PAGE */
+.admin-page {
+    padding: 20px;
+}
+
+.admin-title {
+    font-weight: 700;
+    margin: 0;
+}
+
+/* CARD */
+.admin-card {
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* IMAGE */
+.food-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+/* TABLE */
+.table th {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* BUTTON */
+.btn i {
+    margin-right: 0;
+}
 
 
 
