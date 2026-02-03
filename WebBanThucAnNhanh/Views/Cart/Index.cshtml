@@ -59,7 +59,7 @@
                                     </form>
                                 </td>
                                 <td class="text-end fw-bold text-danger">
-                                    @((item.Price * item.Quantity).ToString("n0")) đ
+                                    @item.Total.ToString("n0") đ
                                 </td>
                                 <td class="text-center">
                                     <a href="@Url.Action("Remove", "Cart", new { id = item.Id })" class="btn btn-sm btn-danger"

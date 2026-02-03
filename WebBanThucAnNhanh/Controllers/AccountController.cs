@@ -92,7 +92,7 @@ namespace WebBanThucAnNhanh.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Name, user.FullName ?? user.Email),                    
                     new Claim(ClaimTypes.Role, user.Role),
                     new Claim("FullName", user.FullName ?? ""),
                     new Claim("UserId", user.Id.ToString())
@@ -154,70 +154,82 @@ namespace WebBanThucAnNhanh.Controllers
         }
 
         // 2. Nhận phản hồi từ Google và Đăng nhập vào hệ thống
-        public async Task<IActionResult> GoogleResponse()
+public async Task<IActionResult> GoogleResponse()
+{
+    // Lấy thông tin xác thực từ Google
+    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    
+    // Nếu thất bại thì quay về trang Login
+    if (!result.Succeeded) return RedirectToAction("Login");
+
+    // Lấy danh sách claims từ Google trả về
+    var claims = result.Principal.Identities.FirstOrDefault().Claims;
+    
+    var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+    
+    // Lấy tên từ Google (thử nhiều kiểu claim khác nhau để chắc chắn lấy được)
+    var googleName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value 
+                     ?? claims.FirstOrDefault(c => c.Type == "name")?.Value
+                     ?? "Google User"; // Nếu không lấy được thì đặt mặc định
+
+    if (string.IsNullOrEmpty(email)) return RedirectToAction("Login");
+
+    // --- XỬ LÝ DATABASE ---
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+    if (user == null)
+    {
+        // Nếu chưa có tài khoản -> Tạo mới
+        user = new User
         {
-            // Lấy thông tin từ Google trả về
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
-            // Nếu lỗi hoặc không lấy được thông tin -> Về trang login
-            if (!result.Succeeded) return RedirectToAction("Login");
-
-            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
-            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login");
-
-            // --- XỬ LÝ DATABASE ---
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            // Tìm đoạn code trong phương thức GoogleResponse
-            if (user == null)
-            {
-                // Y4: Nếu chưa có thì tự động đăng ký
-                user = new User
-                {
-                    Email = email,
-                    Username = email,
-                    FullName = name,
-                    Password = "GoogleLoginDefault",
-                    Role = "Customer",
-                    Status = true,
-                    // --- THÊM 2 DÒNG DƯỚI ĐÂY ---
-                    Address = "Chưa cập nhật", // Gán địa chỉ mặc định để tránh lỗi database
-                    PhoneNumber = ""           // Gán chuỗi rỗng nếu database không cho phép null
-                };
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                // Nếu tài khoản bị khóa
-                if (user.Status == false) return RedirectToAction("Login");
-            }
-
-            // --- QUAN TRỌNG: TẠO COOKIE ĐĂNG NHẬP HỆ THỐNG ---
-            // Phải tạo Claims giống hệt hàm Login thường để dùng chung logic
-            var userClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role),
-                new Claim("FullName", user.FullName ?? ""),
-                new Claim("UserId", user.Id.ToString()) // Rất quan trọng cho Giỏ hàng/Thanh toán
-            };
-
-            var identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            // Đăng nhập (Ghi đè Cookie cũ của Google bằng Cookie của App)
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Xóa cookie tạm
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal); // Ghi cookie chính
-
-            // Lưu Session bổ trợ (như bạn đang làm)
-            HttpContext.Session.SetString("UserName", user.Username);
-
-            return RedirectToAction("Index", "Home");
+            Email = email,
+            Username = email, 
+            FullName = googleName, // Lưu tên lấy từ Google
+            Password = "", 
+            Role = "Customer",
+            PhoneNumber = "",
+            Address = "",
+            Status = true 
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+    }
+    else
+    {
+        // --- LOGIC SỬA LỖI HIỂN THỊ EMAIL ---
+        // Nếu FullName đang trống HOẶC FullName đang bị lưu là Email -> Cập nhật lại tên đúng
+        if (string.IsNullOrEmpty(user.FullName) || user.FullName == email)
+        {
+            user.FullName = googleName;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
+        
+        // Kiểm tra khóa tài khoản
+        if (user.Status == false) return RedirectToAction("Login");
+    }
+
+    // --- TẠO COOKIE ĐĂNG NHẬP HỆ THỐNG ---
+    var userClaims = new List<Claim>
+    {
+        // QUAN TRỌNG: Dòng này quyết định hiển thị trên thanh menu
+        // Buộc hệ thống phải dùng FullName làm tên hiển thị
+        new Claim(ClaimTypes.Name, user.FullName ?? "User"), 
+        
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim("Id", user.Id.ToString()),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
+
+    var identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    // Đăng xuất cookie tạm của Google và đăng nhập cookie chính
+    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return RedirectToAction("Index", "Home");
+}
         public static string GetMD5(string str)
         {
             // ... (Giữ nguyên code MD5 của bạn) ...
