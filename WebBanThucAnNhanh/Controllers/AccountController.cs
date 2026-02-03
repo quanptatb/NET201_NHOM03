@@ -162,17 +162,21 @@ namespace WebBanThucAnNhanh.Controllers
             // Logic: Kiểm tra email này đã có trong DB chưa
             var user = _context.Users.FirstOrDefault(u => u.Email == email);
 
+            // Tìm đoạn code trong phương thức GoogleResponse
             if (user == null)
             {
-                // Y4: Nếu chưa có thì tự động đăng ký (hoặc chuyển trang đăng ký)
+                // Y4: Nếu chưa có thì tự động đăng ký
                 user = new User
                 {
                     Email = email,
-                    Username = email, // Dùng email làm user tạm
+                    Username = email,
                     FullName = name,
-                    Password = "GoogleLoginDefault", // Set pass ngẫu nhiên hoặc cờ đánh dấu
+                    Password = "GoogleLoginDefault",
                     Role = "Customer",
-                    Status = true
+                    Status = true,
+                    // --- THÊM 2 DÒNG DƯỚI ĐÂY ---
+                    Address = "Chưa cập nhật", // Gán địa chỉ mặc định để tránh lỗi database
+                    PhoneNumber = ""           // Gán chuỗi rỗng nếu database không cho phép null
                 };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
