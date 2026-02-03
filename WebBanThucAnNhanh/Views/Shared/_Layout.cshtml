@@ -95,7 +95,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-check" style="color: #ff4757;"></i> Chào, @User.Identity.Name
+                                <i class="fas fa-user-check" style="color: #ff4757;"></i> Xin chào, @User.Identity.Name
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Hồ sơ</a></li>
