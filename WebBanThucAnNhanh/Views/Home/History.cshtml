@@ -1,0 +1,45 @@
+@model IEnumerable<WebBanThucAnNhanh.Models.Order>
+@{ ViewData["Title"] = "Lịch sử đơn hàng"; }
+
+<h2>Lịch sử mua hàng của bạn</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã đơn</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Địa chỉ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+        <tr>
+            <td>@item.IdOrder</td>
+            <td>@item.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@item.TotalPrice.ToString("N0") VNĐ</td>
+            <td>
+                @* --- SỬA LỖI HIỂN THỊ TẠI ĐÂY --- *@
+                @if(item.Status == 0) 
+                { 
+                    <span class="badge bg-warning text-dark">Đang xử lý</span> 
+                }
+                else if(item.Status == 1) 
+                { 
+                    <span class="badge bg-success">Đã giao</span> 
+                }
+                else if(item.Status == 2) 
+                { 
+                    <span class="badge bg-danger">Đã hủy</span> 
+                }
+                else 
+                { 
+                    <span class="badge bg-secondary">Khác</span> 
+                }
+            </td>
+            <td>@item.ShippingAddress</td>
+        </tr>
+        }
+    </tbody>
+</table>
