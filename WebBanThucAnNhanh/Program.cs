@@ -40,12 +40,12 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Account/Login"; // Đường dẫn khi chưa đăng nhập
     options.AccessDeniedPath = "/Account/AccessDenied"; // Đường dẫn khi không đúng quyền
 })
-// .AddGoogle(options =>
-// {
-//     // Cấu hình Google
-//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-// });
+.AddGoogle(options =>
+{
+    // Cấu hình Google
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
 
 var app = builder.Build();
 
