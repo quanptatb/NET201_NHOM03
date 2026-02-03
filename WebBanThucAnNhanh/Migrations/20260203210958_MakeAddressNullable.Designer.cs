@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260203210958_MakeAddressNullable")]
+    partial class MakeAddressNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,128 +104,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.HasIndex("IdTypeOfFastFood");
 
                     b.ToTable("FastFoods");
-
-                    b.HasData(
-                        new
-                        {
-                            IdFastFood = 1,
-                            Description = "Burger bò ngon tuyệt vời",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "burger_bo.jpg",
-                            NameFastFood = "Burger Bò",
-                            Price = 50000m,
-                            Quantity = 100,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 2,
-                            Description = "Nước ngọt giải khát",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "coca_cola.jpg",
-                            NameFastFood = "Coca Cola",
-                            Price = 15000m,
-                            Quantity = 200,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 3,
-                            Description = "Gà rán giòn rụm",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "ga_ran.jpg",
-                            NameFastFood = "Gà Rán",
-                            Price = 75000m,
-                            Quantity = 150,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 4,
-                            Description = "Trà sữa thơm ngon",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 2,
-                            Image = "tra_sua.jpg",
-                            NameFastFood = "Trà Sữa",
-                            Price = 30000m,
-                            Quantity = 180,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 5,
-                            Description = "Khoai tây chiên giòn tan",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "khoai_tay_chien.jpg",
-                            NameFastFood = "Khoai Tây Chiên",
-                            Price = 25000m,
-                            Quantity = 120,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 6,
-                            Description = "Nước cam ép tươi mát",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "nuoc_cam_ep.jpg",
-                            NameFastFood = "Nước Cam Ép",
-                            Price = 20000m,
-                            Quantity = 160,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 7,
-                            Description = "Pizza hải sản hấp dẫn",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "pizza_hai_san.jpg",
-                            NameFastFood = "Pizza Hải Sản",
-                            Price = 120000m,
-                            Quantity = 100,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 8,
-                            Description = "Sinh tố bơ béo ngậy",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "sinh_to_bo.jpg",
-                            NameFastFood = "Sinh Tố Bơ",
-                            Price = 35000m,
-                            Quantity = 140,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 9,
-                            Description = "Mì Ý sốt cà chua",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "mi_y.jpg",
-                            NameFastFood = "Mì Ý",
-                            Price = 80000m,
-                            Quantity = 110,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 10,
-                            Description = "Trà đào mát lạnh",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "tra_dao.jpg",
-                            NameFastFood = "Trà Đào",
-                            Price = 30000m,
-                            Quantity = 170,
-                            Status = true
-                        });
                 });
 
             modelBuilder.Entity("WebBanThucAnNhanh.Models.Order", b =>

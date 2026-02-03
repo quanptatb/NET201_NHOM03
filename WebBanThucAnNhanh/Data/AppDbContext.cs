@@ -48,6 +48,137 @@ namespace WebBanThucAnNhanh.Data
                     PhoneNumber = "0123456789"
                 }
             );
+            // 4. Tạo một số món ăn nhanh mẫu
+            modelBuilder.Entity<FastFood>().HasData(
+                new FastFood
+                {
+                    IdFastFood = 1,
+                    NameFastFood = "Burger Bò",
+                    Price = 50000m,
+                    Quantity = 100,
+                    Image = "burger_bo.jpg",
+                    Status = true,
+                    Description = "Burger bò ngon tuyệt vời",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+                new FastFood
+                {
+                    IdFastFood = 2,
+                    NameFastFood = "Coca Cola",
+                    Price = 15000m,
+                    Quantity = 200,
+                    Image = "coca_cola.jpg",
+                    Status = true,
+                    Description = "Nước ngọt giải khát",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 3,
+                    NameFastFood = "Gà Rán",
+                    Price = 75000m,
+                    Quantity = 150,
+                    Image = "ga_ran.jpg",
+                    Status = true,
+                    Description = "Gà rán giòn rụm",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 4,
+                    NameFastFood = "Trà Sữa",
+                    Price = 30000m,
+                    Quantity = 180,
+                    Image = "tra_sua.jpg",
+                    Status = true,
+                    Description = "Trà sữa thơm ngon",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 5,
+                    NameFastFood = "Khoai Tây Chiên",
+                    Price = 25000m,
+                    Quantity = 120,
+                    Image = "khoai_tay_chien.jpg",
+                    Status = true,
+                    Description = "Khoai tây chiên giòn tan",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 6,
+                    NameFastFood = "Nước Cam Ép",
+                    Price = 20000m,
+                    Quantity = 160,
+                    Image = "nuoc_cam_ep.jpg",
+                    Status = true,
+                    Description = "Nước cam ép tươi mát",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 7,
+                    NameFastFood = "Pizza Hải Sản",
+                    Price = 120000m,
+                    Quantity = 100,
+                    Image = "pizza_hai_san.jpg",
+                    Status = true,
+                    Description = "Pizza hải sản hấp dẫn",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 8,
+                    NameFastFood = "Sinh Tố Bơ",
+                    Price = 35000m,
+                    Quantity = 140,
+                    Image = "sinh_to_bo.jpg",
+                    Status = true,
+                    Description = "Sinh tố bơ béo ngậy",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 9,
+                    NameFastFood = "Mì Ý",
+                    Price = 80000m,
+                    Quantity = 110,
+                    Image = "mi_y.jpg",
+                    Status = true,
+                    Description = "Mì Ý sốt cà chua",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 10,
+                    NameFastFood = "Trà Đào",
+                    Price = 30000m,
+                    Quantity = 170,
+                    Image = "tra_dao.jpg",
+                    Status = true,
+                    Description = "Trà đào mát lạnh",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                }
+            );
 
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()

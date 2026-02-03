@@ -79,7 +79,7 @@
                                 countCart = cart.Sum(x => x.Quantity);
                             }
                         }
-                        <a href="@Url.Action("Index", "Cart")" class="position-relative">
+                          <a href="@Url.Action("Index", "Cart")" class="position-relative">
                             <i class="fas fa-shopping-cart"></i> Giỏ hàng
                             @if (countCart > 0)
                             {
@@ -96,7 +96,7 @@
                         {
                             <a href="#" class="dropdown-toggle user-avatar-wrap" data-bs-toggle="dropdown">
                                 <img src="~/images/avtdefault.png" class="user-avatar" />
-                                <span class="username">@User.Identity.Name</span>
+                                <span>@User.Identity.Name</span>
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-end">
