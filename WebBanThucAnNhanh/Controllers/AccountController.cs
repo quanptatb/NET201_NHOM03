@@ -169,7 +169,7 @@ namespace WebBanThucAnNhanh.Controllers
                 user = new User
                 {
                     Email = email,
-                    Username = email,
+                    Username = name,
                     FullName = name,
                     Password = "GoogleLoginDefault",
                     Role = "Customer",
