@@ -1174,3 +1174,39 @@ footer {
     gap: 5px;
     white-space: nowrap; /* Không cho chữ xuống dòng */
 }
+.user-avatar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;        /* làm vùng click to hơn */
+}
+
+.user-avatar {
+    width: 44px;              /* ⬅️ TĂNG SIZE ẢNH */
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid #ff4757;
+    cursor: pointer;
+}
+
+/* TÊN USER */
+.user-avatar-wrap span,
+.user-avatar-wrap .username {
+    font-size: 16px;          /* ⬅️ TĂNG CHỮ */
+    font-weight: 600;
+    color: #ff4757;
+}
+
+/* Dropdown */
+.user-menu-item .dropdown-menu {
+    margin-top: 12px;
+}
+
+/* Ẩn caret bootstrap */
+.user-avatar-wrap::after {
+    display: none !important;
+}
+
+
+
