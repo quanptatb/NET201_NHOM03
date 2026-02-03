@@ -115,6 +115,20 @@ namespace WebBanThucAnNhanh.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmOrder(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order != null && order.Status == 0)
+            {
+                order.Status = 1; // Chuyển sang trạng thái Đang giao
+                _context.Update(order);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         // Bỏ hàm Create vì Admin không nên tạo đơn hàng thủ công (Đơn hàng phải từ Checkout)
         // Nếu cần test thì giữ lại, nhưng thực tế ít dùng.
 
