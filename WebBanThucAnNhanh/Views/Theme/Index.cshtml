@@ -1,38 +1,58 @@
 @model IEnumerable<WebBanThucAnNhanh.Models.Theme>
+
 @{
-    ViewData["Title"] = "Quản lý người dùng";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Trỏ về layout admin mới tạo
-}
-@{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý chủ đề";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
+<div class="admin-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title">Quản lý chủ đề</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm chủ đề
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameTheme)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameTheme)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTheme">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTheme">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTheme">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card admin-card">
+        <div class="card-body">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tên chủ đề</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.NameTheme</td>
+                            <td class="text-end">
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.IdTheme"
+                                   class="btn btn-outline-primary btn-sm me-1"
+                                   title="Chỉnh sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.IdTheme"
+                                   class="btn btn-outline-info btn-sm me-1"
+                                   title="Xem chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.IdTheme"
+                                   class="btn btn-outline-danger btn-sm"
+                                   title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

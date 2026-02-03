@@ -1,80 +1,110 @@
 @model IEnumerable<WebBanThucAnNhanh.Models.FastFood>
+
 @{
-    ViewData["Title"] = "Quản lý người dùng";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Trỏ về layout admin mới tạo
-}
-@{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý món ăn";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
+<div class="admin-page">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameFastFood)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TypeOfFastFood)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Theme)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameFastFood)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeOfFastFood.NameTypeOfFastFood)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Theme.NameTheme)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdFastFood">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdFastFood">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdFastFood">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <!-- HEADER -->
+    <div class="admin-header d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title">Quản lý món ăn</h2>
+
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-person-plus"></i> Thêm người dùng
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card admin-card">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Tên món</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        <th>Loại</th>
+                        <th>Theme</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="~/images/@item.Image"
+                                     class="food-thumb"
+                                     alt="@item.NameFastFood" />
+                            </td>
+
+                            <td class="fw-bold">
+                                @item.NameFastFood
+                            </td>
+
+                            <td class="text-danger fw-semibold">
+                                @item.Price.ToString("N0") đ
+                            </td>
+
+                            <td>
+                                @item.Quantity
+                            </td>
+
+                            <td>
+                                @if (item.Status)
+                                {
+                                    <span class="badge bg-success">Còn hàng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                }
+                            </td>
+
+                            <td>
+                                @item.TypeOfFastFood?.NameTypeOfFastFood
+                            </td>
+
+                            <td>
+                                @item.Theme?.NameTheme
+                            </td>
+
+                            <td class="text-center">
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.IdFastFood"
+                                   class="btn btn-sm btn-outline-primary me-1"
+                                   title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.IdFastFood"
+                                   class="btn btn-sm btn-outline-info me-1"
+                                   title="Chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.IdFastFood"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Bạn chắc chắn muốn xóa món này?');"
+                                   title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
