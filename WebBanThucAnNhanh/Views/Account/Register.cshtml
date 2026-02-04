@@ -73,9 +73,15 @@
                     </div>
                     <div class="form-group" style="flex: 1; min-width: 280px;">
                         <label>Mật khẩu</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position: relative;">
                             <i class="fas fa-lock"></i>
-                            <input asp-for="Password" type="password" placeholder="******" required />
+                            @* Thêm id="PasswordInput" để Script điều khiển *@
+                            <input asp-for="Password" type="password" id="PasswordInput" placeholder="******" required style="padding-right: 40px;" />
+
+                            @* Nút con mắt nằm ở đây *@
+                            <span id="togglePassword" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </span>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
@@ -99,4 +105,24 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.querySelector("#PasswordInput");
+            const togglePassword = document.querySelector("#togglePassword");
+            const eyeIcon = document.querySelector("#eyeIcon");
+
+            if (togglePassword) {
+                togglePassword.addEventListener("click", function () {
+                    // Thay đổi kiểu hiển thị từ password sang text và ngược lại
+                    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                    passwordInput.setAttribute("type", type);
+
+                    // Đổi icon con mắt
+                    eyeIcon.classList.toggle("fa-eye");
+                    eyeIcon.classList.toggle("fa-eye-slash");
+                });
+            }
+        });
+    </script>
 }

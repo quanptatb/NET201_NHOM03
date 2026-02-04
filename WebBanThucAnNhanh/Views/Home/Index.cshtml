@@ -73,13 +73,7 @@
             </form>
         </div>
 
-        @* MENU TAB *@
-        <div class="menu-tabs">
-            <button class="menu-tab active" data-target="burgers">Burgers</button>
-            <button class="menu-tab" data-target="drinks">Nước Uống</button>
-            <button class="menu-tab" data-target="chicken">Gà Rán</button>
-            <button class="menu-tab" data-target="sides">Món Phụ</button>
-        </div>
+        
 
         @* Hàm hiển thị danh sách món (Helper local function để đỡ lặp code) *@
         @{
@@ -117,36 +111,21 @@
             }
         }
 
-        @* TAB 1: BURGERS *@
-        <div class="menu-content active-content" id="burgers" style="display: grid;">
-            @{
-                // SỬA 2: Thêm await khi gọi hàm
-                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 2));
-            }
-        </div>
+        @* Chỉ hiển thị 2 loại món ăn theo đúng database *@
+        <div id="product-container">
+            @* KHỐI LOẠI 2: Mặc định hiển thị *@
+            <div class="menu-content active-content" id="type-2" style="display: grid;">
+                @{
+                    await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 2));
+                }
+            </div>
 
-        @* TAB 2: NƯỚC UỐNG *@
-        <div class="menu-content" id="drinks" style="display: none;">
-            @{
-                // SỬA 2: Thêm await khi gọi hàm
-                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 3));
-            }
-        </div>
-
-        @* TAB 3: GÀ RÁN *@
-        <div class="menu-content" id="chicken" style="display: none;">
-            @{
-                // SỬA 2: Thêm await khi gọi hàm
-                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 4));
-            }
-        </div>
-
-        @* TAB 4: MÓN PHỤ *@
-        <div class="menu-content" id="sides" style="display: none;">
-            @{
-                // SỬA 2: Thêm await khi gọi hàm
-                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 5));
-            }
+            @* KHỐI LOẠI 3: Mặc định ẩn *@
+            <div class="menu-content" id="type-3" style="display: none;">
+                @{
+                    await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 3));
+                }
+            </div>
         </div>
 
     </div>
@@ -241,3 +220,30 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll('.menu-tab');
+        const contents = document.querySelectorAll('.menu-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('data-target');
+
+                // 1. Đổi màu nút được chọn
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // 2. Hiện danh sách món ăn tương ứng, ẩn danh sách còn lại
+                contents.forEach(content => {
+                    if (content.id === target) {
+                        content.style.display = 'grid';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+
