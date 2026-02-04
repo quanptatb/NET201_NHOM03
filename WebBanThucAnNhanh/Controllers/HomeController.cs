@@ -15,15 +15,26 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string keyword, int? themeId)
     {
-        // Include cả Theme và TypeOfFastFood để hiển thị đầy đủ thông tin trang chủ
-        var allFoods = await _context.FastFoods
+        var query = _context.FastFoods
             .Include(f => f.TypeOfFastFood)
-            .Include(f => f.Theme) // Nên Include thêm Theme nếu trang chủ có hiển thị
-            .ToListAsync();
+            .Include(f => f.Theme)
+            .AsQueryable();
+
+        // Thực hiện lọc nếu có tham số
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            query = query.Where(f => f.NameFastFood.Contains(keyword) || f.Description.Contains(keyword));
+        }
+
+        if (themeId.HasValue)
+        {
+            query = query.Where(f => f.IdTheme == themeId.Value);
+        }
 
         ViewBag.Themes = await _context.Themes.ToListAsync();
+        var allFoods = await query.ToListAsync();
 
         return View(allFoods);
     }

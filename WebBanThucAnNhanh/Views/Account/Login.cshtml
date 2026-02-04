@@ -27,12 +27,21 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password" placeholder="Nhập mật khẩu" required />
-                    </div>
-                </div>
+    <label>Mật khẩu</label>
+    <div class="input-with-icon" style="position: relative; display: flex; align-items: center;">
+        <i class="fas fa-lock" style="position: absolute; left: 15px;"></i>
+        @* Thêm id="LoginPassword" *@
+        <input type="password" name="password" id="LoginPassword" 
+               placeholder="Nhập mật khẩu" required 
+               style="padding-right: 45px; width: 100%;" />
+        
+        @* Nút con mắt nằm ở góc phải *@
+        <span id="toggleLoginPassword" 
+              style="position: absolute; right: 40px; cursor: pointer; color: #888; transition: color 0.3s;">
+            <i class="fas fa-eye" id="eyeIconLogin"></i>
+        </span>
+    </div>
+</div>
 
                 <div class="d-grid gap-2 mt-4">
                     <button class="btn btn-primary btn-lg fw-bold" type="submit">
@@ -69,3 +78,28 @@
     </div>
     @* ĐÃ XÓA: Thẻ </div> thừa ở đây *@
 </section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.querySelector("#LoginPassword");
+            const togglePassword = document.querySelector("#toggleLoginPassword");
+            const eyeIcon = document.querySelector("#eyeIconLogin");
+
+            if (togglePassword) {
+                togglePassword.addEventListener("click", function () {
+                    // Chuyển đổi qua lại giữa password và text
+                    const isPassword = passwordInput.getAttribute("type") === "password";
+                    passwordInput.setAttribute("type", isPassword ? "text" : "password");
+
+                    // Đổi icon con mắt
+                    eyeIcon.classList.toggle("fa-eye");
+                    eyeIcon.classList.toggle("fa-eye-slash");
+                    
+                    // Đổi màu để làm nổi bật khi đang hiện mật khẩu
+                    this.style.color = isPassword ? "#ff4757" : "#888";
+                });
+            }
+        });
+    </script>
+}
