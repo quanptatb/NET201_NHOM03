@@ -1221,7 +1221,7 @@ html, body {
 
 .content {
     flex: 1;
-    padding-top: 0px; /* bù cho header fixed */
+    padding-top: 80px; /* bù cho header fixed */
 }
 
 
@@ -1275,6 +1275,36 @@ html, body {
 /* BUTTON */
 .btn i {
     margin-right: 0;
+}
+
+/* Đảm bảo khung trang web luôn cao bằng màn hình */
+.min-vh-100 {
+    min-height: 100vh !important;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
+
+/* Đảm bảo toàn bộ trang web cao ít nhất bằng màn hình trình duyệt */
+body.min-vh-100 {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Phần nội dung chính sẽ lấy hết khoảng trống còn lại */
+.flex-grow-1 {
+    flex: 1 0 auto;
+}
+
+/* Đẩy nội dung xuống để tránh bị Navbar (fixed-top) che mất */
+.content {
+    padding-top: 90px; /* Điều chỉnh con số này tùy theo độ cao Navbar của bạn */
+}
+
+.flex-grow-1 {
+    flex: 1 0 auto !important;
 }
 
 
