@@ -64,28 +64,37 @@ namespace WebBanThucAnNhanh.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        // 2. Thêm tham số IFormFile imageFile để nhận file upload
         public async Task<IActionResult> Create(FastFood fastFood, IFormFile imageFile)
         {
+            // LOẠI BỎ VALIDATION CHO CÁC TRƯỜNG KHÔNG GỬI TỪ VIEW
+            ModelState.Remove("imageFile");
+            ModelState.Remove("Image");
+            ModelState.Remove("TypeOfFastFood");
+            ModelState.Remove("Theme");
+            ModelState.Remove("OrderDetails"); // Nếu model có thuộc tính này
+
             if (ModelState.IsValid)
             {
                 // Xử lý Upload hình ảnh
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    // Tạo tên file độc nhất để tránh trùng
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
                     var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
+
+                    // Đảm bảo thư mục tồn tại
+                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "images")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "images"));
+                    }
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await imageFile.CopyToAsync(stream);
                     }
-                    // Lưu tên file vào database
                     fastFood.Image = fileName;
                 }
                 else
                 {
-                    // Đặt ảnh mặc định nếu không upload
                     fastFood.Image = "default.png";
                 }
 
@@ -93,20 +102,8 @@ namespace WebBanThucAnNhanh.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
-            ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
-            return View(fastFood);
-        }
 
-        // GET: FastFood/Edit/5
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var fastFood = await _context.FastFoods.FindAsync(id);
-            if (fastFood == null) return NotFound();
-
+            // Nếu quay lại View do lỗi, cần nạp lại SelectList
             ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
             return View(fastFood);
@@ -116,21 +113,25 @@ namespace WebBanThucAnNhanh.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        // Thêm IFormFile để cho phép đổi ảnh
         public async Task<IActionResult> Edit(int id, FastFood fastFood, IFormFile imageFile)
         {
             if (id != fastFood.IdFastFood) return NotFound();
+
+            // LOẠI BỎ VALIDATION TƯƠNG TỰ CREATE
+            ModelState.Remove("imageFile");
+            ModelState.Remove("Image");
+            ModelState.Remove("TypeOfFastFood");
+            ModelState.Remove("Theme");
+            ModelState.Remove("OrderDetails");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Lấy thông tin cũ để giữ nguyên ảnh nếu không upload mới
                     var oldFood = await _context.FastFoods.AsNoTracking().FirstOrDefaultAsync(x => x.IdFastFood == id);
 
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        // Upload ảnh mới
                         var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
                         var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
                         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -141,7 +142,6 @@ namespace WebBanThucAnNhanh.Controllers
                     }
                     else
                     {
-                        // Giữ nguyên ảnh cũ
                         fastFood.Image = oldFood.Image;
                     }
 
