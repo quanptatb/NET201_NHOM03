@@ -77,32 +77,61 @@
 
         @* Hàm hiển thị danh sách món (Helper local function để đỡ lặp code) *@
         @{
-            // SỬA 1: Đổi void thành async Task
             async Task RenderProductList(IEnumerable<WebBanThucAnNhanh.Models.FastFood> products)
             {
                 foreach (var item in products)
                 {
                     <div class="menu-item animate-on-scroll">
+                        @* IMAGE SECTION WITH BADGES *@
                         <div class="menu-item-img">
-                            <img src="~/images/@item.Image" alt="@item.NameFastFood" />
+                            @if (item.Quantity <= 0 || !item.Status)
+                            {
+                                <div class="menu-item-badge badge-soldout">Hết hàng</div>
+                            }
+                            else if (item.Price > 50000) @* Giả sử món trên 50k là Hot *@
+                            {
+                                <div class="menu-item-badge badge-hot">Bán chạy</div>
+                            }
+                            
+                            <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
                         </div>
+
+                        @* CONTENT SECTION *@
                         <div class="menu-item-content">
                             <div class="menu-item-title">
                                 <h4>@item.NameFastFood</h4>
                                 <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
                             </div>
-                            <p class="menu-item-text">@item.Description</p>
+                            
+                            <p class="menu-item-text" title="@item.Description">@item.Description</p>
+                            
                             <div class="menu-item-order">
                                 <div class="menu-item-rating">
-                                    <i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
-                                        class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i
-                                        class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
                                 </div>
                                 <div class="action-group">
-                                    @* NÚT THÊM VÀO GIỎ CHÍNH THỨC *@
-                                    <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
-                                        <i class="fas fa-cart-plus"></i> Thêm
+                                    @* NÚT XEM CHI TIẾT *@
+                                    <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                        <i class="fas fa-eye"></i><span>Xem</span>
                                     </a>
+                                    
+                                    @* NÚT THÊM VÀO GIỎ *@
+                                    @if (item.Quantity > 0 && item.Status)
+                                    {
+                                        <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                            <i class="fas fa-cart-plus"></i><span>Thêm</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                            <i class="fas fa-ban"></i><span>Hết</span>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>

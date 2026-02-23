@@ -83,6 +83,28 @@ public class HomeController : Controller
         return View("Search", result);
     }
 
+    // GET: Home/Details/5 - Trang chi tiết sản phẩm cho User
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var fastFood = await _context.FastFoods
+            .Include(f => f.Theme)
+            .Include(f => f.TypeOfFastFood)
+            .FirstOrDefaultAsync(m => m.IdFastFood == id);
+
+        if (fastFood == null) return NotFound();
+
+        // Lấy các sản phẩm liên quan (cùng loại, trừ sản phẩm hiện tại)
+        ViewBag.RelatedProducts = await _context.FastFoods
+            .Include(f => f.TypeOfFastFood)
+            .Where(f => f.IdTypeOfFastFood == fastFood.IdTypeOfFastFood && f.IdFastFood != id)
+            .Take(4)
+            .ToListAsync();
+
+        return View(fastFood);
+    }
+
     public IActionResult Privacy()
     {
         return View();

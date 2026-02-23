@@ -1,0 +1,191 @@
+@model WebBanThucAnNhanh.Models.FastFood
+@{
+    ViewData["Title"] = Model.NameFastFood + " - Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="product-detail-section">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="product-breadcrumb">
+            <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Trang chủ</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="@Url.Action("Index", "Home")#menu">Thực đơn</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>@Model.NameFastFood</span>
+        </nav>
+
+        <!-- Product Detail Card -->
+        <div class="product-detail-card">
+            <div class="product-detail-grid">
+                <!-- Image Section -->
+                <div class="product-detail-image">
+                    <div class="image-wrapper">
+                        @if (!string.IsNullOrEmpty(Model.Image))
+                        {
+                            <img src="~/images/@Model.Image" alt="@Model.NameFastFood" />
+                        }
+                        else
+                        {
+                            <div class="no-image">
+                                <i class="fas fa-hamburger"></i>
+                                <span>Chưa có hình ảnh</span>
+                            </div>
+                        }
+                    </div>
+                    @if (Model.Theme != null)
+                    {
+                        <div class="product-theme-badge">
+                            <i class="fas fa-fire"></i> @Model.Theme.NameTheme
+                        </div>
+                    }
+                </div>
+
+                <!-- Info Section -->
+                <div class="product-detail-info">
+                    <div class="product-category-tag">
+                        <i class="fas fa-tag"></i>
+                        @Html.DisplayFor(model => model.TypeOfFastFood.NameTypeOfFastFood)
+                    </div>
+
+                    <h1 class="product-detail-name">@Model.NameFastFood</h1>
+
+                    <div class="product-detail-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0 (Đánh giá tuyệt vời)</span>
+                    </div>
+
+                    <div class="product-detail-price">
+                        <span class="price-value">@Model.Price.ToString("#,##0") đ</span>
+                    </div>
+
+                    <div class="product-detail-desc">
+                        <h3><i class="fas fa-info-circle"></i> Mô tả sản phẩm</h3>
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <p>@Model.Description</p>
+                        }
+                        else
+                        {
+                            <p class="no-desc"><i>Đang cập nhật mô tả...</i></p>
+                        }
+                    </div>
+
+                    <div class="product-detail-status">
+                        <div class="status-item">
+                            <i class="fas fa-box"></i>
+                            <div>
+                                <span class="status-label">Tình trạng</span>
+                                @if (Model.Status && Model.Quantity > 0)
+                                {
+                                    <span class="status-value in-stock"><i class="fas fa-check-circle"></i> Còn hàng</span>
+                                }
+                                else
+                                {
+                                    <span class="status-value out-of-stock"><i class="fas fa-times-circle"></i> Hết hàng</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-truck"></i>
+                            <div>
+                                <span class="status-label">Giao hàng</span>
+                                <span class="status-value">Miễn phí trong 30 phút</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-actions">
+                        @if (Model.Status && Model.Quantity > 0)
+                        {
+                            <a href="@Url.Action("AddToCart", "Cart", new { id = Model.IdFastFood })" class="btn-add-cart">
+                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn-add-cart disabled" disabled>
+                                <i class="fas fa-ban"></i> Tạm hết hàng
+                            </button>
+                        }
+                        <a href="@Url.Action("Index", "Home")#menu" class="btn-back-menu">
+                            <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        @if (ViewBag.RelatedProducts != null && ((IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts).Any())
+        {
+            <div class="related-products-section">
+                <div class="section-title text-center">
+                    <h2>Sản Phẩm <span class="highlight">Liên Quan</span></h2>
+                </div>
+                <div class="menu-content active-content" style="display: grid;">
+                    @foreach (var item in (IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts)
+                    {
+                        <div class="menu-item animate-on-scroll">
+                            @* IMAGE SECTION WITH BADGES *@
+                            <div class="menu-item-img">
+                                @if (item.Quantity <= 0 || !item.Status)
+                                {
+                                    <div class="menu-item-badge badge-soldout">Hết hàng</div>
+                                }
+                                else if (item.Price > 50000)
+                                {
+                                    <div class="menu-item-badge badge-hot">Bán chạy</div>
+                                }
+                                <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
+                            </div>
+
+                            @* CONTENT SECTION *@
+                            <div class="menu-item-content">
+                                <div class="menu-item-title">
+                                    <h4>@item.NameFastFood</h4>
+                                    <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
+                                </div>
+                                <p class="menu-item-text" title="@item.Description">@item.Description</p>
+                                <div class="menu-item-order">
+                                    <div class="menu-item-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="action-group">
+                                        @* NÚT XEM CHI TIẾT *@
+                                        <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                            <i class="fas fa-eye"></i><span>Xem</span>
+                                        </a>
+                                        @* NÚT THÊM VÀO GIỎ *@
+                                        @if (item.Quantity > 0 && item.Status)
+                                        {
+                                            <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                                <i class="fas fa-cart-plus"></i><span>Thêm</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                                <i class="fas fa-ban"></i><span>Hết</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
