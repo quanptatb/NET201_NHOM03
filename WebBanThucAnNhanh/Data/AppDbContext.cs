@@ -9,6 +9,7 @@ namespace WebBanThucAnNhanh.Data
         {
         }
 
+        public DbSet<Topping> Toppings { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TypeOfFastFood> TypeOfFastFoods { get; set; }
         public DbSet<FastFood> FastFoods { get; set; }
@@ -26,6 +27,15 @@ namespace WebBanThucAnNhanh.Data
                 new TypeOfFastFood { IdTypeOfFastFood = 1, NameTypeOfFastFood = "Đồ ăn nhanh" },
                 new TypeOfFastFood { IdTypeOfFastFood = 2, NameTypeOfFastFood = "Đồ uống" }
             );
+            modelBuilder.Entity<Topping>().HasData(
+                new Topping { IdTopping = 1, Name = "Size L", Price = 10000m },
+                new Topping { IdTopping = 2, Name = "Size M", Price = 0m },
+                new Topping { IdTopping = 3, Name = "Thêm trân châu đen", Price = 5000m },
+                new Topping { IdTopping = 4, Name = "Thêm phô mai", Price = 8000m }
+);
+
+            // Cấu hình kiểu dữ liệu
+            modelBuilder.Entity<Topping>().Property(p => p.Price).HasColumnType("decimal(18,2)");
 
             // 2. Tạo chủ đề mẫu
             modelBuilder.Entity<Theme>().HasData(

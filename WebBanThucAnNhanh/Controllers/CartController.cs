@@ -43,33 +43,53 @@ namespace WebBanThucAnNhanh.Controllers
             return View(cart);
         }
 
-        [Authorize] 
-        public async Task<IActionResult> AddToCart(int id)
+        [HttpPost] // Đổi thành HttpPost vì có gửi mảng dữ liệu Topping lên
+        [Authorize]
+        public async Task<IActionResult> AddToCart(int id, List<int> selectedToppingIds, int quantity = 1)
         {
             var product = await _context.FastFoods.FindAsync(id);
             if (product == null) return NotFound();
 
-            var cart = GetCart();
-            var cartItem = cart.FirstOrDefault(p => p.Id == id);
+            // 1. Lấy thông tin các Topping khách đã chọn từ Database 
+            // (Giả sử bạn đã tạo bảng Toppings trong AppDbContext, nếu chưa xem phần 3)
+            var toppings = _context.Toppings
+                .Where(t => selectedToppingIds.Contains(t.IdTopping))
+                .Select(t => new CartTopping { Id = t.IdTopping, Name = t.Name, Price = t.Price })
+                .ToList();
 
-            if (cartItem != null)
+            var cart = GetCart();
+
+            // 2. Tạo một Item tạm để lấy chữ ký (CartItemKey)
+            var tempItem = new CartItem
             {
-                cartItem.Quantity++;
+                Id = product.IdFastFood,
+                SelectedToppings = toppings
+            };
+
+            // 3. THUẬT TOÁN GỘP/TÁCH: Tìm xem trong giỏ đã có dòng nào trùng Key chưa
+            var existingItem = cart.FirstOrDefault(p => p.CartItemKey == tempItem.CartItemKey);
+
+            if (existingItem != null)
+            {
+                // CÙNG size/topping -> GỘP (Chỉ tăng số lượng)
+                existingItem.Quantity += quantity;
             }
             else
             {
+                // KHÁC size/topping hoặc món mới -> TÁCH (Thêm dòng mới)
                 cart.Add(new CartItem
                 {
                     Id = product.IdFastFood,
                     Name = product.NameFastFood,
                     Price = product.Price,
                     Image = product.Image,
-                    Quantity = 1
+                    Quantity = quantity,
+                    SelectedToppings = toppings
                 });
             }
 
             SaveCart(cart);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index"); // Chuyển thẳng về trang Giỏ hàng để khách xem
         }
 
         public IActionResult Remove(int id)
