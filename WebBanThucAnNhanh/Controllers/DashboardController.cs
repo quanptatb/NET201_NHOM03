@@ -52,12 +52,55 @@ namespace WebBanThucAnNhanh.Controllers
                 successRate = (double)successOrdersCount / totalProcessed * 100;
             }
 
+            // 5. Chart Data: Revenue for the last 7 days including today
+            var last7Days = Enumerable.Range(0, 7).Select(i => today.AddDays(-i)).Reverse().ToList();
+            var chartLabels = last7Days.Select(d => d.ToString("dd/MM")).ToList();
+            var chartData = new List<decimal>();
+
+            foreach (var d in last7Days)
+            {
+                var dailyTotal = orders
+                    .Where(o => o.DateCreated.Date == d && o.Status != 3)
+                    .Sum(o => o.TotalPrice);
+                chartData.Add(dailyTotal);
+            }
+
+            ViewBag.ChartLabels = System.Text.Json.JsonSerializer.Serialize(chartLabels);
+            ViewBag.ChartData = System.Text.Json.JsonSerializer.Serialize(chartData);
+
+            ViewBag.DailyRevenue = dailyRevenue;
+            ViewBag.MonthlyRevenue = monthlyRevenue;
+            ViewBag.NewOrdersCount = newOrdersCount;
+            ViewBag.SuccessRate = Math.Round(successRate, 1);
+            ViewBag.SuccessOrdersCount = successOrdersCount;
             ViewBag.DailyRevenue = dailyRevenue;
             ViewBag.MonthlyRevenue = monthlyRevenue;
             ViewBag.NewOrdersCount = newOrdersCount;
             ViewBag.SuccessRate = Math.Round(successRate, 1);
             ViewBag.SuccessOrdersCount = successOrdersCount;
             ViewBag.CancelledOrdersCount = cancelledOrdersCount;
+
+            // 6. Top Products (By Quantity Sold, ignoring cancelled orders)
+            // Lấy danh sách OrderId của các đơn không bị hủy
+            var validOrderIds = orders.Where(o => o.Status != 3).Select(o => o.IdOrder).ToList();
+            
+            // Query các OrderDetail thuộc các đơn hàng hợp lệ, group theo mòn ăn
+            var topProducts = await _context.OrderDetails
+                .Where(od => validOrderIds.Contains(od.OrderId) && od.FastFoodId != null)
+                .GroupBy(od => new { od.FastFoodId, od.FastFood.NameFastFood, od.FastFood.Image })
+                .Select(g => new
+                {
+                    FastFoodId = g.Key.FastFoodId,
+                    Name = g.Key.NameFastFood,
+                    Image = g.Key.Image,
+                    TotalQuantity = g.Sum(od => od.Quantity),
+                    TotalRevenue = g.Sum(od => od.Quantity * od.Price)
+                })
+                .OrderByDescending(x => x.TotalQuantity)
+                .Take(5)
+                .ToListAsync();
+
+            ViewBag.TopProducts = topProducts;
 
             return View();
         }

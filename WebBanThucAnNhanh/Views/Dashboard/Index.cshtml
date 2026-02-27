@@ -82,7 +82,143 @@
             </div>
         </div>
     </div>
+
+    <!-- Revenue Chart -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Biểu đồ Doanh thu (7 ngày gần nhất)</h5>
+                    <canvas id="revenueChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Top 5 Sản Phẩm Bán Chạy Nhất</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Hình ảnh</th>
+                                    <th scope="col">Tên món</th>
+                                    <th scope="col">Đã bán</th>
+                                    <th scope="col">Doanh thu mang lại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var topProducts = ViewBag.TopProducts as IEnumerable<dynamic>;
+                                    int rank = 1;
+                                    if (topProducts != null && topProducts.Any())
+                                    {
+                                        foreach (var item in topProducts)
+                                        {
+                                            <tr>
+                                                <th scope="row">@rank</th>
+                                                <td>
+                                                    <img src="~/images/@item.Image" alt="@item.Name" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                                </td>
+                                                <td class="fw-bold">@item.Name</td>
+                                                <td><span class="badge bg-success rounded-pill px-3 py-2">@item.TotalQuantity</span></td>
+                                                <td class="text-danger fw-bold">@item.TotalRevenue.ToString("#,##0") đ</td>
+                                            </tr>
+                                            rank++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">Chưa có dữ liệu sản phẩm bán ra.</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            var labels = @Html.Raw(ViewBag.ChartLabels);
+            var data = @Html.Raw(ViewBag.ChartData);
+
+            var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(243, 95, 42, 0.5)');
+            gradient.addColorStop(1, 'rgba(243, 95, 42, 0.05)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: data,
+                        borderColor: '#F35F2A',
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#F35F2A',
+                        pointHoverBackgroundColor: '#F35F2A',
+                        pointHoverBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    if(value >= 1000000) return (value / 1000000) + ' Tr';
+                                    if(value >= 1000) return (value / 1000) + ' k';
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
 
 <style>
     .rounded-pills-custom {
