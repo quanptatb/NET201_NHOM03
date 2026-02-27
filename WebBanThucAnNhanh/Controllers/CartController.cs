@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // Thêm thư viện này
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using Newtonsoft.Json;
@@ -44,62 +45,110 @@ namespace WebBanThucAnNhanh.Controllers
         }
 
         [Authorize] 
-        public async Task<IActionResult> AddToCart(int id)
+        public async Task<IActionResult> AddToCart(int id, int quantity = 1, List<int> selectedOptionIds = null)
         {
             var product = await _context.FastFoods.FindAsync(id);
             if (product == null) return NotFound();
 
-            var cart = GetCart();
-            var cartItem = cart.FirstOrDefault(p => p.Id == id);
-
-            if (cartItem != null)
+            // 1. Khởi tạo danh sách option cho item này
+            var cartItemOptions = new List<CartItemOption>();
+            
+            if (selectedOptionIds != null && selectedOptionIds.Any())
             {
-                cartItem.Quantity++;
+                // Lấy thông tin giá, tên của các option từ DB
+                var options = await _context.OptionItems
+                                            .Where(o => selectedOptionIds.Contains(o.Id))
+                                            .ToListAsync();
+                foreach (var opt in options)
+                {
+                    cartItemOptions.Add(new CartItemOption
+                    {
+                        OptionItemId = opt.Id,
+                        OptionName = opt.Name,
+                        AdditionalPrice = opt.AdditionalPrice
+                    });
+                }
+            }
+
+            var cart = GetCart();
+
+            // 2. Tạo một đối tượng giả lập để sinh ra chữ ký (Signature)
+            var tempItem = new CartItem 
+            { 
+                Id = product.IdFastFood, 
+                SelectedOptions = cartItemOptions 
+            };
+            string targetSignature = tempItem.CartItemSignature;
+
+            // 3. THUẬT TOÁN CỐT LÕI: Kiểm tra trùng chữ ký
+            // Tìm trong giỏ xem có sản phẩm nào CÙNG MÃ MÓN và CÙNG ĐÚNG CÁC OPTION hay không
+            var existingItem = cart.FirstOrDefault(p => p.CartItemSignature == targetSignature);
+
+            if (existingItem != null)
+            {
+                // TRƯỜNG HỢP GỘP DÒNG: Cùng món, cùng size/topping -> Chỉ tăng số lượng
+                existingItem.Quantity += quantity;
             }
             else
             {
+                // TRƯỜNG HỢP TÁCH DÒNG: Khác size/topping -> Thêm 1 dòng mới hoàn toàn
                 cart.Add(new CartItem
                 {
                     Id = product.IdFastFood,
                     Name = product.NameFastFood,
-                    Price = product.Price,
+                    BasePrice = product.Price, // Đổi từ Price thành BasePrice theo model mới
                     Image = product.Image,
-                    Quantity = 1
+                    Quantity = quantity,
+                    SelectedOptions = cartItemOptions // Lưu danh sách topping đi kèm
                 });
             }
 
             SaveCart(cart);
-            return RedirectToAction("Index", "Home");
+            
+            // Nếu gọi qua AJAX có thể trả về JSON
+            // return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
+            return RedirectToAction("Index", "Cart"); 
         }
 
-        public IActionResult Remove(int id)
-        {
-            var cart = GetCart();
-            var item = cart.FirstOrDefault(p => p.Id == id);
-            if (item != null)
-            {
-                cart.Remove(item);
-                SaveCart(cart);
-            }
-            return RedirectToAction("Index");
-        }
+        // --- LƯU Ý KHI UPDATE & REMOVE ---
+        // Khi xóa (Remove) hoặc Cập nhật (UpdateCart), bạn không nên tìm qua p.Id nữa
+        // mà phải truyền Signature vào để tìm chính xác dòng nào cần xóa.
 
-        public IActionResult UpdateCart(int id, int quantity)
+[HttpPost] // Nên dùng HttpPost cho các hành động thay đổi dữ liệu
+public IActionResult Remove(string signature)
+{
+    var cart = GetCart();
+    // Tìm chính xác dòng cần xóa thông qua chữ ký duy nhất
+    var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
+    
+    if (item != null)
+    {
+        cart.Remove(item);
+        SaveCart(cart);
+    }
+    return RedirectToAction("Index");
+}
+
+[HttpPost]
+public IActionResult UpdateCart(string signature, int quantity)
+{
+    var cart = GetCart();
+    // Tìm chính xác dòng cần cập nhật thông qua chữ ký
+    var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
+    
+    if (item != null)
+    {
+        item.Quantity = quantity;
+        
+        // Nếu số lượng <= 0 thì xóa luôn sản phẩm khỏi giỏ
+        if (item.Quantity <= 0)
         {
-            var cart = GetCart();
-            var item = cart.FirstOrDefault(p => p.Id == id);
-            if (item != null)
-            {
-                item.Quantity = quantity;
-                // Nếu số lượng <= 0 thì xóa luôn sản phẩm
-                if (item.Quantity <= 0)
-                {
-                    cart.Remove(item);
-                }
-                SaveCart(cart);
-            }
-            return RedirectToAction("Index");
+            cart.Remove(item);
         }
+        SaveCart(cart);
+    }
+    return RedirectToAction("Index");
+}
 
         public IActionResult Clear()
         {

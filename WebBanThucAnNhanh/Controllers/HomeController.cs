@@ -84,6 +84,7 @@ public class HomeController : Controller
     }
 
     // GET: Home/Details/5 - Trang chi tiết sản phẩm cho User
+    // GET: Home/Details/5 - Trang chi tiết sản phẩm cho User
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null) return NotFound();
@@ -95,7 +96,16 @@ public class HomeController : Controller
 
         if (fastFood == null) return NotFound();
 
-        // Lấy các sản phẩm liên quan (cùng loại, trừ sản phẩm hiện tại)
+        // 1. LẤY DANH SÁCH TOPPING / SIZE truyền sang View
+        var options = await _context.FastFoodOptionGroups
+            .Where(fog => fog.FastFoodId == id)
+            .Select(fog => fog.OptionGroup)
+            .Include(g => g.OptionItems)
+            .ToListAsync();
+            
+        ViewBag.Options = options;
+
+        // 2. Lấy các sản phẩm liên quan (cùng loại, trừ sản phẩm hiện tại)
         ViewBag.RelatedProducts = await _context.FastFoods
             .Include(f => f.TypeOfFastFood)
             .Where(f => f.IdTypeOfFastFood == fastFood.IdTypeOfFastFood && f.IdFastFood != id)

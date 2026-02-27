@@ -37,9 +37,13 @@ namespace WebBanThucAnNhanh.Controllers
         {
             if (id == null) return NotFound();
 
+            // Sửa lại chuỗi Include/ThenInclude
             var fastFood = await _context.FastFoods
                 .Include(f => f.Theme)
                 .Include(f => f.TypeOfFastFood)
+                .Include(f => f.FastFoodOptionGroups)             // 1. Nạp danh sách liên kết
+                    .ThenInclude(fog => fog.OptionGroup)          // 2. Nạp nhóm (OptionGroup)
+                        .ThenInclude(og => og.OptionItems)        // 3. Nạp các món con (OptionItems)
                 .FirstOrDefaultAsync(m => m.IdFastFood == id);
 
             if (fastFood == null) return NotFound();

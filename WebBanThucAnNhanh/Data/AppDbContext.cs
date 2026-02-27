@@ -9,6 +9,9 @@ namespace WebBanThucAnNhanh.Data
         {
         }
 
+        public DbSet<OptionGroup> OptionGroups { get; set; }
+        public DbSet<OptionItem> OptionItems { get; set; }
+        public DbSet<FastFoodOptionGroup> FastFoodOptionGroups { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TypeOfFastFood> TypeOfFastFoods { get; set; }
         public DbSet<FastFood> FastFoods { get; set; }
@@ -21,6 +24,8 @@ namespace WebBanThucAnNhanh.Data
             base.OnModelCreating(modelBuilder);
 
             // SEED DATA (Y1)
+            modelBuilder.Entity<FastFoodOptionGroup>()
+    .HasKey(fog => new { fog.FastFoodId, fog.OptionGroupId });
             // 1. Tạo loại món ăn mẫu
             modelBuilder.Entity<TypeOfFastFood>().HasData(
                 new TypeOfFastFood { IdTypeOfFastFood = 1, NameTypeOfFastFood = "Đồ ăn nhanh" },

@@ -7,6 +7,8 @@ namespace WebBanThucAnNhanh.Models
 {
     public class FastFood
     {
+        // Liên kết với bảng trung gian để lấy các nhóm tùy chọn (Size, Topping...)
+        public virtual ICollection<FastFoodOptionGroup> FastFoodOptionGroups { get; set; }
         [Key]
         public int IdFastFood { get; set; }
 
