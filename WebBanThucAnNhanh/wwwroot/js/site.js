@@ -32,13 +32,23 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /**
+   * Auto-apply scrolled header for pages without hero section
+   */
+  const mainContent = document.querySelector(".content");
+  const hasHero = mainContent && mainContent.classList.contains("has-hero");
+  if (!hasHero) {
+    header.classList.add("scrolled");
+  }
+
+  /**
    * Sticky Header on Scroll and Highlight Active Section
    */
   window.addEventListener("scroll", function () {
     // Sticky Header
     if (window.scrollY > 10) {
       header.classList.add("scrolled");
-    } else {
+    } else if (hasHero) {
+      // Only remove scrolled on hero pages (homepage)
       header.classList.remove("scrolled");
     }
 
