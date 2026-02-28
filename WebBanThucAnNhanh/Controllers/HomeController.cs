@@ -34,6 +34,7 @@ public class HomeController : Controller
         }
 
         ViewBag.Themes = await _context.Themes.ToListAsync();
+        ViewBag.Types = await _context.TypeOfFastFoods.ToListAsync();
         var allFoods = await query.ToListAsync();
 
         return View(allFoods);
@@ -99,8 +100,9 @@ public class HomeController : Controller
         // 1. LẤY DANH SÁCH TOPPING / SIZE truyền sang View
         var options = await _context.FastFoodOptionGroups
             .Where(fog => fog.FastFoodId == id)
+            .Include(fog => fog.OptionGroup)
+                .ThenInclude(g => g.OptionItems)
             .Select(fog => fog.OptionGroup)
-            .Include(g => g.OptionItems)
             .ToListAsync();
             
         ViewBag.Options = options;

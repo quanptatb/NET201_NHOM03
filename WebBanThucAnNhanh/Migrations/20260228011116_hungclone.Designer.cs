@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228011116_hungclone")]
+    partial class hungclone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,174 +222,6 @@ namespace WebBanThucAnNhanh.Migrations
                             NameFastFood = "Trà Đào",
                             Price = 30000m,
                             Quantity = 170,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 11,
-                            Description = "Hot dog truyền thống với xúc xích, mù tạt và tương cà",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "hotdog.png",
-                            NameFastFood = "Hot Dog",
-                            Price = 45000m,
-                            Quantity = 120,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 12,
-                            Description = "Gà viên chiên giòn rụm kèm sốt chấm đặc biệt",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "chicken_nuggets.png",
-                            NameFastFood = "Gà Viên Chiên",
-                            Price = 55000m,
-                            Quantity = 130,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 13,
-                            Description = "Salad Caesar tươi mát với rau xà lách, phô mai và sốt đặc trưng",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "salad_caesar.png",
-                            NameFastFood = "Salad Caesar",
-                            Price = 60000m,
-                            Quantity = 90,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 14,
-                            Description = "Taco nhân thịt bò xào rau củ tươi ngon kiểu Mexico",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "taco_bo.png",
-                            NameFastFood = "Taco Bò",
-                            Price = 65000m,
-                            Quantity = 100,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 15,
-                            Description = "Hành tây chiên giòn vàng ươm thơm phức",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "onion_rings.png",
-                            NameFastFood = "Hành Tây Chiên",
-                            Price = 30000m,
-                            Quantity = 150,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 16,
-                            Description = "Sandwich gà nướng với rau xà lách, cà chua và phô mai",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "sandwich_ga.png",
-                            NameFastFood = "Sandwich Gà",
-                            Price = 55000m,
-                            Quantity = 110,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 17,
-                            Description = "Cánh gà chiên giòn sốt cay đậm đà",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "canh_ga.png",
-                            NameFastFood = "Cánh Gà Chiên",
-                            Price = 70000m,
-                            Quantity = 120,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 18,
-                            Description = "Matcha latte thơm ngon, vị trà xanh thanh mát",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 2,
-                            Image = "matcha_latte.png",
-                            NameFastFood = "Matcha Latte",
-                            Price = 40000m,
-                            Quantity = 160,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 19,
-                            Description = "Cơm gà Hải Nam thơm dẻo với gà luộc mềm ngọt",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "com_ga.png",
-                            NameFastFood = "Cơm Gà",
-                            Price = 55000m,
-                            Quantity = 100,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 20,
-                            Description = "Cà phê sữa đá truyền thống Việt Nam đậm đà",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 2,
-                            Image = "cafe_sua_da.png",
-                            NameFastFood = "Cà Phê Sữa Đá",
-                            Price = 25000m,
-                            Quantity = 200,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 21,
-                            Description = "Bánh mì thịt truyền thống Việt Nam với patê, thịt nguội và rau sống",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "banh_mi_thit.jpg",
-                            NameFastFood = "Bánh Mì Thịt",
-                            Price = 35000m,
-                            Quantity = 150,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 22,
-                            Description = "Xúc xích nướng than hoa thơm lừng kèm mù tạt",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "xuc_xich_nuong.jpg",
-                            NameFastFood = "Xúc Xích Nướng",
-                            Price = 40000m,
-                            Quantity = 130,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 23,
-                            Description = "Nước chanh dây tươi mát, chua ngọt tự nhiên",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "nuoc_chanh_day.jpg",
-                            NameFastFood = "Nước Chanh Dây",
-                            Price = 25000m,
-                            Quantity = 180,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 24,
-                            Description = "Trà vải thanh mát, hương vải thơm ngọt tự nhiên",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 2,
-                            Image = "tra_vai.jpg",
-                            NameFastFood = "Trà Vải",
-                            Price = 30000m,
-                            Quantity = 160,
                             Status = true
                         });
                 });

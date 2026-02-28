@@ -65,11 +65,46 @@ namespace WebBanThucAnNhanh.Controllers
         public async Task<IActionResult> Edit(int id, int Status)
         {
             // Tìm đơn hàng gốc trong DB
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.IdOrder == id);
             if (order == null) return NotFound();
+
+            int oldStatus = order.Status;
 
             // Chỉ cập nhật trạng thái
             order.Status = Status; // Ví dụ: 0=Mới, 1=Đang giao, 2=Hoàn tất, 3=Hủy
+
+            // Trừ kho khi xác nhận đơn (chuyển từ trạng thái 0 sang 1)
+            if (oldStatus == 0 && Status == 1)
+            {
+                foreach (var detail in order.OrderDetails)
+                {
+                    var product = await _context.FastFoods.FindAsync(detail.FastFoodId);
+                    if (product != null)
+                    {
+                        product.Quantity -= detail.Quantity;
+                        if (product.Quantity < 0) product.Quantity = 0;
+                    }
+                }
+            }
+
+            // Hoàn kho khi hủy đơn (chuyển sang trạng thái 3)
+            if (oldStatus != 3 && Status == 3)
+            {
+                // Chỉ hoàn kho nếu đơn đã được xác nhận trước đó (đã trừ kho)
+                if (oldStatus >= 1)
+                {
+                    foreach (var detail in order.OrderDetails)
+                    {
+                        var product = await _context.FastFoods.FindAsync(detail.FastFoodId);
+                        if (product != null)
+                        {
+                            product.Quantity += detail.Quantity;
+                        }
+                    }
+                }
+            }
 
             try
             {
@@ -119,10 +154,24 @@ namespace WebBanThucAnNhanh.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmOrder(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.IdOrder == id);
             if (order != null && order.Status == 0)
             {
                 order.Status = 1; // Chuyển sang trạng thái Đang giao
+
+                // Trừ số lượng sản phẩm trong kho
+                foreach (var detail in order.OrderDetails)
+                {
+                    var product = await _context.FastFoods.FindAsync(detail.FastFoodId);
+                    if (product != null)
+                    {
+                        product.Quantity -= detail.Quantity;
+                        if (product.Quantity < 0) product.Quantity = 0;
+                    }
+                }
+
                 _context.Update(order);
                 await _context.SaveChangesAsync();
             }

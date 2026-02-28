@@ -88,163 +88,160 @@
                                 }
                                 else
                                 {
-                                    <span class="status-value out-of-stock"><i class="fas fa-times-circle"></i> Hết
-                                        hàng</span>
+                                    <span class="status-value out-of-stock"><i class="fas fa-times-circle"></i> Hết hàng</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-truck"></i>
+                            <div>
+                                <span class="status-label">Giao hàng</span>
+                                <span class="status-value">Miễn phí trong 30 phút</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-actions">
+                        @if (Model.Status && Model.Quantity > 0)
+                        {
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100">
+                                <input type="hidden" name="id" value="@Model.IdFastFood" />
+
+                                <div class="options-section mb-4 text-start">
+                                    @if (ViewBag.Options != null)
+                                    {
+                                        foreach (var group in ViewBag.Options)
+                                        {
+                                            <div class="option-group mb-3 p-3 border rounded shadow-sm bg-light">
+                                                <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                                                    <i class="fas fa-list-ul text-warning me-2"></i>@group.Name
+                                                    @if (group.IsMultiSelect)
+                                                    {
+                                                        <small class="text-muted fw-normal">(Có thể chọn nhiều)</small>
+                                                    }
+                                                </h6>
+                                                <div class="row">
+                                                    @foreach (var item in group.OptionItems)
+                                                    {
+                                                        <div class="col-sm-6 mb-2">
+                                                            <div class="form-check custom-checkbox">
+                                                                <input class="form-check-input"
+                                                                       type="@(group.IsMultiSelect ? "checkbox" : "radio")"
+                                                                       name="@(group.IsMultiSelect ? "selectedOptionIds" : $"group_{group.Id}")"
+                                                                       value="@item.Id" id="option_@item.Id" />
+                                                                <label class="form-check-label d-flex justify-content-between w-100"
+                                                                       for="option_@item.Id" style="cursor:pointer;">
+                                                                    <span>@item.Name</span>
+                                                                    @if (item.AdditionalPrice > 0)
+                                                                    {
+                                                                        <span class="text-danger fw-bold">+@item.AdditionalPrice.ToString("#,##0")đ</span>
+                                                                    }
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
                                     }
                                 </div>
-                            </div>
-                            <div class="status-item">
-                                <i class="fas fa-truck"></i>
-                                <div>
-                                    <span class="status-label">Giao hàng</span>
-                                    <span class="status-value">Miễn phí trong 30 phút</span>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="product-detail-actions">
-                            @if (Model.Status && Model.Quantity > 0)
-                            {
-                                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100">
-                                    <input type="hidden" name="id" value="@Model.IdFastFood" />
+                                <div class="d-flex align-items-center mb-3">
+                                    <label class="fw-bold me-3 text-nowrap">Số lượng:</label>
+                                    <div class="input-group w-25 me-3">
+                                        <input type="number" name="quantity" class="form-control text-center" value="1"
+                                               min="1" max="@Model.Quantity" />
+                                    </div>
 
-                                    <div class="options-section mb-4 text-start">
-                                        @if (ViewBag.Options != null)
-                                        {
-                                            foreach (var group in ViewBag.Options)
-                                            {
-                                                <div class="option-group mb-3 p-3 border rounded shadow-sm bg-light">
-                                                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
-                                                        <i class="fas fa-list-ul text-warning me-2"></i>@group.Name
-                                                        @if (group.IsMultiSelect)
-                                                        {
-                                                            <small class="text-muted fw-normal">(Có thể chọn
-                                                                nhiều)</small>
-                                                            }
-                                                        </h6>
-                                                        <div class="row">
-                                                            @foreach (var item in group.OptionItems)
-                                                            {
-                                                                <div class="col-sm-6 mb-2">
-                                                                    <div class="form-check custom-checkbox">
-                                                                        <input class="form-check-input"
-                                                                               type="@(group.IsMultiSelect ? "checkbox" : "radio")"
-                                                                               name="@(group.IsMultiSelect ? "selectedOptionIds" : $"group_{group.Id}")"
-                                                                               value="@item.Id" id="option_@item.Id" />
-                                                                        <label class="form-check-label d-flex justify-content-between w-100"
-                                                                               for="option_@item.Id" style="cursor:pointer;">
-                                                                            <span>@item.Name</span>
-                                                                            @if (item.AdditionalPrice > 0)
-                                                                            {
-                                                                                <span
-                                                                                class="text-danger fw-bold">+@item.AdditionalPrice.ToString("#,##0")đ</span>
-                                                                            }
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                }
-                                            }
-                                        </div>
-
-                                        <div class="d-flex align-items-center mb-3">
-                                            <label class="fw-bold me-3 text-nowrap">Số lượng:</label>
-                                            <div class="input-group w-25 me-3">
-                                                <input type="number" name="quantity" class="form-control text-center" value="1"
-                                                       min="1" max="@Model.Quantity" />
-                                            </div>
-
-                                            <button type="submit" class="btn-add-cart border-0 flex-grow-1" style="height: 45px;">
-                                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ
-                                            </button>
-                                        </div>
-                                    </form>
-                                }
-                        else
-                                {
-                                    <button class="btn-add-cart disabled w-100 mb-3" disabled>
-                                        <i class="fas fa-ban"></i> Tạm hết hàng
+                                    <button type="submit" class="btn-add-cart border-0 flex-grow-1" style="height: 45px;">
+                                        <i class="fas fa-cart-plus"></i> Thêm vào giỏ
                                     </button>
-                                }
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn-add-cart disabled w-100 mb-3" disabled>
+                                <i class="fas fa-ban"></i> Tạm hết hàng
+                            </button>
+                        }
 
-                                <a href="@Url.Action("Index", "Home")#menu"
-                                       class="btn-back-menu d-block text-center mt-2 w-100">
-                                    <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
-                                </a>
-                            </div>
-                        </div>
+                        <a href="@Url.Action("Index", "Home")#menu"
+                           class="btn-back-menu d-block text-center mt-2 w-100">
+                            <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
+                        </a>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Related Products -->
-                @if (ViewBag.RelatedProducts != null &&
-                        ((IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts).Any())
-                {
-                    <div class="related-products-section">
-                        <div class="section-title text-center">
-                            <h2>Sản Phẩm <span class="highlight">Liên Quan</span></h2>
-                        </div>
-                        <div class="menu-content active-content" style="display: grid;">
-                            @foreach (var item in (IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts)
-                            {
-                                <div class="menu-item animate-on-scroll">
-                                    @* IMAGE SECTION WITH BADGES *@
-                                    <div class="menu-item-img">
-                                        @if (item.Quantity <= 0 || !item.Status)
-                                        {
-                                            <div class="menu-item-badge badge-soldout">Hết hàng</div>
-                                        }
-                                        else if (item.Price > 50000)
-                                        {
-                                            <div class="menu-item-badge badge-hot">Bán chạy</div>
-                                        }
-                                        <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
+        <!-- Related Products -->
+        @if (ViewBag.RelatedProducts != null &&
+                ((IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts).Any())
+        {
+            <div class="related-products-section">
+                <div class="section-title text-center">
+                    <h2>Sản Phẩm <span class="highlight">Liên Quan</span></h2>
+                </div>
+                <div class="menu-content active-content" style="display: grid;">
+                    @foreach (var item in (IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts)
+                    {
+                        <div class="menu-item animate-on-scroll">
+                            @* IMAGE SECTION WITH BADGES *@
+                            <div class="menu-item-img">
+                                @if (item.Quantity <= 0 || !item.Status)
+                                {
+                                    <div class="menu-item-badge badge-soldout">Hết hàng</div>
+                                }
+                                else if (item.Price > 50000)
+                                {
+                                    <div class="menu-item-badge badge-hot">Bán chạy</div>
+                                }
+                                <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
+                            </div>
+
+                            @* CONTENT SECTION *@
+                            <div class="menu-item-content">
+                                <div class="menu-item-title">
+                                    <h4>@item.NameFastFood</h4>
+                                    <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
+                                </div>
+                                <p class="menu-item-text" title="@item.Description">@item.Description</p>
+                                <div class="menu-item-order">
+                                    <div class="menu-item-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
                                     </div>
-
-                                    @* CONTENT SECTION *@
-                                    <div class="menu-item-content">
-                                        <div class="menu-item-title">
-                                            <h4>@item.NameFastFood</h4>
-                                            <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                                        </div>
-                                        <p class="menu-item-text" title="@item.Description">@item.Description</p>
-                                        <div class="menu-item-order">
-                                            <div class="menu-item-rating">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                            <div class="action-group">
-                                                @* NÚT XEM CHI TIẾT *@
-                                                <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })"
-                                                       class="btn-sm-custom">
-                                                    <i class="fas fa-eye"></i><span>Xem</span>
-                                                </a>
-                                                @* NÚT THÊM VÀO GIỎ *@
-                                                @if (item.Quantity > 0 && item.Status)
-                                                {
-                                                    <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })"
-                                                           class="btn-sm-custom">
-                                                        <i class="fas fa-cart-plus"></i><span>Thêm</span>
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
-                                                        <i class="fas fa-ban"></i><span>Hết</span>
-                                                    </button>
-                                                }
-                                            </div>
-                                        </div>
+                                    <div class="action-group">
+                                        @* NÚT XEM CHI TIẾT *@
+                                        <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })"
+                                           class="btn-sm-custom">
+                                            <i class="fas fa-eye"></i><span>Xem</span>
+                                        </a>
+                                        @* NÚT THÊM VÀO GIỎ *@
+                                        @if (item.Quantity > 0 && item.Status)
+                                        {
+                                            <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })"
+                                               class="btn-sm-custom">
+                                                <i class="fas fa-cart-plus"></i><span>Thêm</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                                <i class="fas fa-ban"></i><span>Hết</span>
+                                            </button>
+                                        }
                                     </div>
                                 </div>
-                            }
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </section>
+        }
+    </div>
+</section>

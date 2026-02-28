@@ -182,6 +182,188 @@ namespace WebBanThucAnNhanh.Data
                     Description = "Trà đào mát lạnh",
                     IdTypeOfFastFood = 2,
                     IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 11,
+                    NameFastFood = "Hot Dog",
+                    Price = 45000m,
+                    Quantity = 120,
+                    Image = "hotdog.png",
+                    Status = true,
+                    Description = "Hot dog truyền thống với xúc xích, mù tạt và tương cà",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 12,
+                    NameFastFood = "Gà Viên Chiên",
+                    Price = 55000m,
+                    Quantity = 130,
+                    Image = "chicken_nuggets.png",
+                    Status = true,
+                    Description = "Gà viên chiên giòn rụm kèm sốt chấm đặc biệt",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 13,
+                    NameFastFood = "Salad Caesar",
+                    Price = 60000m,
+                    Quantity = 90,
+                    Image = "salad_caesar.png",
+                    Status = true,
+                    Description = "Salad Caesar tươi mát với rau xà lách, phô mai và sốt đặc trưng",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 14,
+                    NameFastFood = "Taco Bò",
+                    Price = 65000m,
+                    Quantity = 100,
+                    Image = "taco_bo.png",
+                    Status = true,
+                    Description = "Taco nhân thịt bò xào rau củ tươi ngon kiểu Mexico",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 15,
+                    NameFastFood = "Hành Tây Chiên",
+                    Price = 30000m,
+                    Quantity = 150,
+                    Image = "onion_rings.png",
+                    Status = true,
+                    Description = "Hành tây chiên giòn vàng ươm thơm phức",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 16,
+                    NameFastFood = "Sandwich Gà",
+                    Price = 55000m,
+                    Quantity = 110,
+                    Image = "sandwich_ga.png",
+                    Status = true,
+                    Description = "Sandwich gà nướng với rau xà lách, cà chua và phô mai",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 17,
+                    NameFastFood = "Cánh Gà Chiên",
+                    Price = 70000m,
+                    Quantity = 120,
+                    Image = "canh_ga.png",
+                    Status = true,
+                    Description = "Cánh gà chiên giòn sốt cay đậm đà",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 18,
+                    NameFastFood = "Matcha Latte",
+                    Price = 40000m,
+                    Quantity = 160,
+                    Image = "matcha_latte.png",
+                    Status = true,
+                    Description = "Matcha latte thơm ngon, vị trà xanh thanh mát",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 19,
+                    NameFastFood = "Cơm Gà",
+                    Price = 55000m,
+                    Quantity = 100,
+                    Image = "com_ga.png",
+                    Status = true,
+                    Description = "Cơm gà Hải Nam thơm dẻo với gà luộc mềm ngọt",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 20,
+                    NameFastFood = "Cà Phê Sữa Đá",
+                    Price = 25000m,
+                    Quantity = 200,
+                    Image = "cafe_sua_da.png",
+                    Status = true,
+                    Description = "Cà phê sữa đá truyền thống Việt Nam đậm đà",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 21,
+                    NameFastFood = "Bánh Mì Thịt",
+                    Price = 35000m,
+                    Quantity = 150,
+                    Image = "banh_mi_thit.jpg",
+                    Status = true,
+                    Description = "Bánh mì thịt truyền thống Việt Nam với patê, thịt nguội và rau sống",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 1
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 22,
+                    NameFastFood = "Xúc Xích Nướng",
+                    Price = 40000m,
+                    Quantity = 130,
+                    Image = "xuc_xich_nuong.jpg",
+                    Status = true,
+                    Description = "Xúc xích nướng than hoa thơm lừng kèm mù tạt",
+                    IdTypeOfFastFood = 1,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 23,
+                    NameFastFood = "Nước Chanh Dây",
+                    Price = 25000m,
+                    Quantity = 180,
+                    Image = "nuoc_chanh_day.jpg",
+                    Status = true,
+                    Description = "Nước chanh dây tươi mát, chua ngọt tự nhiên",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 2
+                },
+
+                new FastFood
+                {
+                    IdFastFood = 24,
+                    NameFastFood = "Trà Vải",
+                    Price = 30000m,
+                    Quantity = 160,
+                    Image = "tra_vai.jpg",
+                    Status = true,
+                    Description = "Trà vải thanh mát, hương vải thơm ngọt tự nhiên",
+                    IdTypeOfFastFood = 2,
+                    IdTheme = 1
                 }
             );
 

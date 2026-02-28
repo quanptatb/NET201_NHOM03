@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228013344_AddTenNewFoodItems")]
+    partial class AddTenNewFoodItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,54 +342,6 @@ namespace WebBanThucAnNhanh.Migrations
                             NameFastFood = "Cà Phê Sữa Đá",
                             Price = 25000m,
                             Quantity = 200,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 21,
-                            Description = "Bánh mì thịt truyền thống Việt Nam với patê, thịt nguội và rau sống",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 1,
-                            Image = "banh_mi_thit.jpg",
-                            NameFastFood = "Bánh Mì Thịt",
-                            Price = 35000m,
-                            Quantity = 150,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 22,
-                            Description = "Xúc xích nướng than hoa thơm lừng kèm mù tạt",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 1,
-                            Image = "xuc_xich_nuong.jpg",
-                            NameFastFood = "Xúc Xích Nướng",
-                            Price = 40000m,
-                            Quantity = 130,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 23,
-                            Description = "Nước chanh dây tươi mát, chua ngọt tự nhiên",
-                            IdTheme = 2,
-                            IdTypeOfFastFood = 2,
-                            Image = "nuoc_chanh_day.jpg",
-                            NameFastFood = "Nước Chanh Dây",
-                            Price = 25000m,
-                            Quantity = 180,
-                            Status = true
-                        },
-                        new
-                        {
-                            IdFastFood = 24,
-                            Description = "Trà vải thanh mát, hương vải thơm ngọt tự nhiên",
-                            IdTheme = 1,
-                            IdTypeOfFastFood = 2,
-                            Image = "tra_vai.jpg",
-                            NameFastFood = "Trà Vải",
-                            Price = 30000m,
-                            Quantity = 160,
                             Status = true
                         });
                 });

@@ -140,22 +140,43 @@
             }
         }
 
-        @* Chỉ hiển thị 2 loại món ăn theo đúng database *@
-        <div id="product-container">
-            @* KHỐI LOẠI 2: Mặc định hiển thị *@
-            <div class="menu-content active-content" id="type-2" style="display: grid;">
-                @{
-                    await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 2));
+        @* Dynamic tabs - Tự động lấy danh sách loại từ database Admin *@
+        @{
+            var types = ViewBag.Types as List<WebBanThucAnNhanh.Models.TypeOfFastFood>;
+            bool isFirstTab = true;
+        }
+
+        @if (types != null && types.Any())
+        {
+            @* Tab buttons *@
+            <div class="menu-tabs text-center mb-4" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                @foreach (var type in types)
+                {
+                    <button class="menu-tab btn @(isFirstTab ? "active" : "")" data-target="type-@type.IdTypeOfFastFood"
+                            style="padding: 10px 24px; border-radius: 30px; font-weight: 600; border: 2px solid #f35f2a; background: @(isFirstTab ? "#f35f2a" : "transparent"); color: @(isFirstTab ? "#fff" : "#f35f2a"); cursor: pointer; transition: all 0.3s;">
+                        @type.NameTypeOfFastFood
+                    </button>
+                    isFirstTab = false;
                 }
             </div>
 
-            @* KHỐI LOẠI 3: Mặc định ẩn *@
-            <div class="menu-content" id="type-3" style="display: none;">
+            @* Tab contents *@
+            <div id="product-container">
                 @{
-                    await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == 3));
+                    isFirstTab = true;
+                }
+                @foreach (var type in types)
+                {
+                    <div class="menu-content @(isFirstTab ? "active-content" : "")" id="type-@type.IdTypeOfFastFood"
+                         style="display: @(isFirstTab ? "grid" : "none");">
+                        @{
+                            await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == type.IdTypeOfFastFood));
+                        }
+                    </div>
+                    isFirstTab = false;
                 }
             </div>
-        </div>
+        }
 
     </div>
 </section>
@@ -260,8 +281,14 @@
                 const target = this.getAttribute('data-target');
 
                 // 1. Đổi màu nút được chọn
-                tabs.forEach(t => t.classList.remove('active'));
+                tabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.style.background = 'transparent';
+                    t.style.color = '#f35f2a';
+                });
                 this.classList.add('active');
+                this.style.background = '#f35f2a';
+                this.style.color = '#fff';
 
                 // 2. Hiện danh sách món ăn tương ứng, ẩn danh sách còn lại
                 contents.forEach(content => {
