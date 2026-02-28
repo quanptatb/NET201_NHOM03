@@ -435,7 +435,7 @@
 /* 2. MENU ITEM IMAGES (CHỐNG MÉO & ĐỀU NHAU)              */
 /* ======================================================= */
 .menu-item-img {
-    height: 220px;
+    height: 260px;
     width: 100%;
     overflow: hidden;
     display: flex;
@@ -464,7 +464,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 15px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.menu-item-order .menu-item-rating {
+    flex: 0 0 auto;
+}
+
+.menu-item-order .action-group {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .action-group {
@@ -494,7 +506,7 @@
 
 .btn-sm-custom {
     height: 48px;
-    padding: 0 35px;
+    padding: 0 20px;
     font-size: 1.15rem;
     font-weight: 700;
     text-transform: uppercase;

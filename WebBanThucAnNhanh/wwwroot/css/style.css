@@ -757,7 +757,7 @@ nav ul li a.btn::after {
 
 .menu-item-img {
   position: relative;
-  height: 22rem;
+  height: 26rem;
   overflow: hidden;
   background-color: #f9f9f9;
 }
@@ -852,13 +852,16 @@ nav ul li a.btn::after {
   margin-top: auto;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
+  width: 100%;
+  gap: 1rem;
 }
 
 .menu-item-rating {
   display: flex;
   color: #ffc107;
-  font-size: 1.2rem;
-  gap: 2px;
+  font-size: 1.4rem;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 /* Testimonials Section */
@@ -1674,7 +1677,7 @@ body.min-vh-100 {
    PRODUCT DETAIL PAGE - User Facing
    =================================================================== */
 .product-detail-section {
-  padding-top: 140px;
+  padding-top: 2rem;
   padding-bottom: 8rem;
   background: linear-gradient(135deg, #fdf6f0 0%, #fff5ee 50%, #fff 100%);
   min-height: 100vh;
