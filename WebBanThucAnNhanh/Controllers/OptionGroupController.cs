@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace WebBanThucAnNhanh.Controllers
 {
-    // Bạn có thể thêm [Authorize(Roles = "Admin")] để bảo mật trang này
+    [Authorize(Roles = "Admin")]
     public class OptionGroupController : Controller
     {
         private readonly AppDbContext _context;
@@ -65,6 +67,72 @@ namespace WebBanThucAnNhanh.Controllers
             return View(optionItem);
         }
 
+        // ==========================================
+        // THÊM CHỨC NĂNG SỬA (UPDATE)
+        // ==========================================
+
+        // 6. Sửa Nhóm tùy chọn (Group)
+        public async Task<IActionResult> EditGroup(int id)
+        {
+            var group = await _context.OptionGroups.FindAsync(id);
+            if (group == null) return NotFound();
+            return View(group);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditGroup(int id, OptionGroup optionGroup)
+        {
+            if (id != optionGroup.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(optionGroup);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.OptionGroups.Any(e => e.Id == id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(optionGroup);
+        }
+
+        // 7. Sửa Tùy chọn con (Item)
+        public async Task<IActionResult> EditItem(int id)
+        {
+            var item = await _context.OptionItems.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditItem(int id, OptionItem optionItem)
+        {
+            if (id != optionItem.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(optionItem);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.OptionItems.Any(e => e.Id == id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(optionItem);
+        }
+
         // 4. Xóa tùy chọn con
         [HttpPost]
         public async Task<IActionResult> DeleteItem(int id)
@@ -89,6 +157,14 @@ namespace WebBanThucAnNhanh.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Menu()
+        {
+            // Lấy danh sách để hiển thị cho khách
+            var optionGroups = await _context.OptionGroups
+                .Include(o => o.OptionItems)
+                .ToListAsync();
+            return View(optionGroups);
         }
     }
 }
