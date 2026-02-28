@@ -126,7 +126,7 @@
         </div>
     </header>
 
-    <main class="content flex-grow-1">
+    <main class="content flex-grow-1 @(ViewData["HasHero"] != null ? "has-hero" : "")">
             @RenderBody()
         </main> 
 

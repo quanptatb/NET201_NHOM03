@@ -1576,6 +1576,11 @@ body {
   /* bù cho header fixed */
 }
 
+/* Khi trang có hero banner, bỏ padding-top để banner chui lên sau header */
+.content.has-hero {
+  padding-top: 0;
+}
+
 
 
 .cart-section {
