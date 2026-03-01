@@ -148,20 +148,6 @@ namespace WebBanThucAnNhanh.Controllers
             return View(fastFood);
         }
 
-        // GET: FastFood/Edit/5
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var fastFood = await _context.FastFoods.FindAsync(id);
-            if (fastFood == null) return NotFound();
-
-            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
-            ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
-            return View(fastFood);
-        }
-
         // POST: FastFood/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
