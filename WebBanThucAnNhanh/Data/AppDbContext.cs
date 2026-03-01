@@ -19,6 +19,10 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
+
+        // === LUCKY WHEEL ===
+        public DbSet<WheelPrize> WheelPrizes { get; set; }
+        public DbSet<UserReward> UserRewards { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -50,7 +54,9 @@ namespace WebBanThucAnNhanh.Data
                     Role = "Admin",
                     Status = true,
                     Address = "Hà Nội",
-                    PhoneNumber = "0123456789"
+                    PhoneNumber = "0123456789",
+                    DrinkSpins = 0,
+                    FoodSpins = 0
                 }
             );
             // 4. Tạo một số món ăn nhanh mẫu
@@ -367,6 +373,29 @@ namespace WebBanThucAnNhanh.Data
                 }
             );
 
+            // 5. Seed Data cho Giải thưởng Vòng quay
+            modelBuilder.Entity<WheelPrize>().HasData(
+                // === VÒNG QUAY NƯỚC (PrizeType = 1) ===
+                new WheelPrize { Id = 1, PrizeName = "Coca Cola miễn phí", PrizeType = 1, FastFoodId = 2, Probability = 15, RemainingQuantity = 50, IsActive = true },
+                new WheelPrize { Id = 2, PrizeName = "Trà Sữa miễn phí", PrizeType = 1, FastFoodId = 4, Probability = 12, RemainingQuantity = 40, IsActive = true },
+                new WheelPrize { Id = 3, PrizeName = "Nước Cam Ép miễn phí", PrizeType = 1, FastFoodId = 6, Probability = 14, RemainingQuantity = 45, IsActive = true },
+                new WheelPrize { Id = 4, PrizeName = "Sinh Tố Bơ miễn phí", PrizeType = 1, FastFoodId = 8, Probability = 8, RemainingQuantity = 30, IsActive = true },
+                new WheelPrize { Id = 5, PrizeName = "Trà Đào miễn phí", PrizeType = 1, FastFoodId = 10, Probability = 12, RemainingQuantity = 40, IsActive = true },
+                new WheelPrize { Id = 6, PrizeName = "Matcha Latte miễn phí", PrizeType = 1, FastFoodId = 18, Probability = 7, RemainingQuantity = 25, IsActive = true },
+                new WheelPrize { Id = 7, PrizeName = "Cà Phê Sữa Đá miễn phí", PrizeType = 1, FastFoodId = 20, Probability = 12, RemainingQuantity = 45, IsActive = true },
+                new WheelPrize { Id = 8, PrizeName = "Chúc may mắn lần sau!", PrizeType = 1, FastFoodId = null, Probability = 20, RemainingQuantity = 9999, IsActive = true },
+
+                // === VÒNG QUAY ĐỒ ĂN (PrizeType = 2) ===
+                new WheelPrize { Id = 9, PrizeName = "Burger Bò miễn phí", PrizeType = 2, FastFoodId = 1, Probability = 10, RemainingQuantity = 30, IsActive = true },
+                new WheelPrize { Id = 10, PrizeName = "Gà Rán miễn phí", PrizeType = 2, FastFoodId = 3, Probability = 8, RemainingQuantity = 25, IsActive = true },
+                new WheelPrize { Id = 11, PrizeName = "Khoai Tây Chiên miễn phí", PrizeType = 2, FastFoodId = 5, Probability = 14, RemainingQuantity = 50, IsActive = true },
+                new WheelPrize { Id = 12, PrizeName = "Pizza Hải Sản miễn phí", PrizeType = 2, FastFoodId = 7, Probability = 4, RemainingQuantity = 15, IsActive = true },
+                new WheelPrize { Id = 13, PrizeName = "Hot Dog miễn phí", PrizeType = 2, FastFoodId = 11, Probability = 12, RemainingQuantity = 40, IsActive = true },
+                new WheelPrize { Id = 14, PrizeName = "Gà Viên Chiên miễn phí", PrizeType = 2, FastFoodId = 12, Probability = 10, RemainingQuantity = 35, IsActive = true },
+                new WheelPrize { Id = 15, PrizeName = "Sandwich Gà miễn phí", PrizeType = 2, FastFoodId = 16, Probability = 10, RemainingQuantity = 30, IsActive = true },
+                new WheelPrize { Id = 16, PrizeName = "Chúc may mắn lần sau!", PrizeType = 2, FastFoodId = null, Probability = 32, RemainingQuantity = 9999, IsActive = true }
+            );
+
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
                 .Property(o => o.DateCreated)
@@ -396,6 +425,34 @@ namespace WebBanThucAnNhanh.Data
                 .HasForeignKey(od => od.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
             // ^ CASCADE: Nếu xóa Đơn hàng, thì xóa luôn các Chi tiết của đơn đó (Hợp lý).
+
+            // === CẤU HÌNH LUCKY WHEEL ===
+
+            // Quan hệ: WheelPrize -> FastFood (nullable)
+            modelBuilder.Entity<WheelPrize>()
+                .HasOne(wp => wp.FastFood)
+                .WithMany()
+                .HasForeignKey(wp => wp.FastFoodId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Quan hệ: UserReward -> User
+            modelBuilder.Entity<UserReward>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRewards)
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ: UserReward -> WheelPrize
+            modelBuilder.Entity<UserReward>()
+                .HasOne(ur => ur.WheelPrize)
+                .WithMany()
+                .HasForeignKey(ur => ur.PrizeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Giá trị mặc định cho DateWon
+            modelBuilder.Entity<UserReward>()
+                .Property(ur => ur.DateWon)
+                .HasDefaultValueSql("GETDATE()");
         }
     }
 }

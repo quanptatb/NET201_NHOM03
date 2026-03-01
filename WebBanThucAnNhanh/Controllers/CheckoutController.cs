@@ -97,11 +97,36 @@ namespace WebBanThucAnNhanh.Controllers
                     OrderId = order.IdOrder,
                     FastFoodId = item.Id,
                     Quantity = item.Quantity,
-                    Price = item.Price // Giá tại thời điểm mua
+                    Price = item.Price, // Giá tại thời điểm mua (0đ nếu là quà)
+                    IsReward = item.IsReward,
+                    Note = item.IsReward ? "🎁 Quà tặng từ Vòng quay may mắn" : null
                 };
                 _context.OrderDetails.Add(detail);
             }
             await _context.SaveChangesAsync();
+
+            // === LUCKY WHEEL: Tích lũy lượt quay ===
+            var currentUser = await _context.Users.FindAsync(order.UserId);
+            if (currentUser != null)
+            {
+                // Tính lượt quay tỷ lệ thuận với tổng đơn
+                // Mỗi 300K → +1 quay Đồ ăn + 1 quay Nước
+                // Phần dư >= 100K → +1 quay Nước
+                int foodSpinCount = (int)(order.TotalPrice / 300000);
+                int remainder = (int)(order.TotalPrice % 300000);
+
+                if (foodSpinCount > 0)
+                {
+                    currentUser.FoodSpins += foodSpinCount;
+                    currentUser.DrinkSpins += foodSpinCount;
+                }
+
+                if (remainder >= 100000)
+                {
+                    currentUser.DrinkSpins += 1;
+                }
+                await _context.SaveChangesAsync();
+            }
 
             // 3. Xóa Session giỏ hàng
             HttpContext.Session.Remove("Cart");
