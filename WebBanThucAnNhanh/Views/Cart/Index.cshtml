@@ -50,7 +50,7 @@
                                     @* Form cập nhật số lượng *@
                                     <form asp-action="UpdateCart" asp-controller="Cart" method="post"
                                         class="d-flex justify-content-center">
-                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="hidden" name="signature" value="@item.CartItemSignature" />
                                         <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
                                             class="form-control text-center me-2" style="width: 70px;" />
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" title="Cập nhật">
@@ -62,10 +62,13 @@
                                     @item.Total.ToString("n0") đ
                                 </td>
                                 <td class="text-center">
-                                    <a href="@Url.Action("Remove", "Cart", new { id = item.Id })" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Bạn có chắc muốn xóa món này?');">
-                                        <i class="fas fa-trash-alt"></i> Xóa
-                                    </a>
+                                    <form asp-action="Remove" asp-controller="Cart" method="post" style="display:inline;">
+                                        <input type="hidden" name="signature" value="@item.CartItemSignature" />
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Bạn có chắc muốn xóa món này?');">
+                                            <i class="fas fa-trash-alt"></i> Xóa
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
