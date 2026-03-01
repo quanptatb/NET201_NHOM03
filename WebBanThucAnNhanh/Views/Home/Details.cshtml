@@ -104,7 +104,7 @@
                     <div class="product-detail-actions">
                         @if (Model.Status && Model.Quantity > 0)
                         {
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100">
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100" id="addToCartForm">
                                 <input type="hidden" name="id" value="@Model.IdFastFood" />
 
                                 <div class="options-section mb-4 text-start">
@@ -125,10 +125,11 @@
                                                     {
                                                         <div class="col-sm-6 mb-2">
                                                             <div class="form-check custom-checkbox">
-                                                                <input class="form-check-input"
+                                                                <input class="form-check-input option-input"
                                                                        type="@(group.IsMultiSelect ? "checkbox" : "radio")"
                                                                        name="@(group.IsMultiSelect ? "selectedOptionIds" : $"group_{group.Id}")"
-                                                                       value="@item.Id" id="option_@item.Id" />
+                                                                       value="@item.Id" id="option_@item.Id"
+                                                                       data-price="@item.AdditionalPrice" />
                                                                 <label class="form-check-label d-flex justify-content-between w-100"
                                                                        for="option_@item.Id" style="cursor:pointer;">
                                                                     <span>@item.Name</span>
@@ -158,6 +159,22 @@
                                     </button>
                                 </div>
                             </form>
+
+                            <script>
+                                document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+                                    // Tìm tất cả radio button đang được chọn và tạo hidden input cho chúng
+                                    var radios = this.querySelectorAll('input[type="radio"]:checked');
+                                    radios.forEach(function(radio) {
+                                        if (radio.name !== 'selectedOptionIds') {
+                                            var hidden = document.createElement('input');
+                                            hidden.type = 'hidden';
+                                            hidden.name = 'selectedOptionIds';
+                                            hidden.value = radio.value;
+                                            e.target.appendChild(hidden);
+                                        }
+                                    });
+                                });
+                            </script>
                         }
                         else
                         {

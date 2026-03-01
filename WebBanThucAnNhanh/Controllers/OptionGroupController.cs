@@ -37,6 +37,7 @@ namespace WebBanThucAnNhanh.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateGroup(OptionGroup optionGroup)
         {
+            ModelState.Remove("OptionItems");
             if (ModelState.IsValid)
             {
                 _context.Add(optionGroup);
@@ -57,6 +58,7 @@ namespace WebBanThucAnNhanh.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateItem(OptionItem optionItem)
         {
+            ModelState.Remove("OptionGroup");
             if (ModelState.IsValid)
             {
                 _context.Add(optionItem);
@@ -85,6 +87,7 @@ namespace WebBanThucAnNhanh.Controllers
         {
             if (id != optionGroup.Id) return NotFound();
 
+            ModelState.Remove("OptionItems");
             if (ModelState.IsValid)
             {
                 try
@@ -116,6 +119,7 @@ namespace WebBanThucAnNhanh.Controllers
         {
             if (id != optionItem.Id) return NotFound();
 
+            ModelState.Remove("OptionGroup");
             if (ModelState.IsValid)
             {
                 try

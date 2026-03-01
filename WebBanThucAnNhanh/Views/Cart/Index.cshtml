@@ -44,13 +44,27 @@
                                 </td>
                                 <td>
                                     <strong>@item.Name</strong>
+                                    @if (item.SelectedOptions != null && item.SelectedOptions.Any())
+                                    {
+                                        <div class="mt-1">
+                                            @foreach (var opt in item.SelectedOptions)
+                                            {
+                                                <span class="badge bg-info text-dark me-1">@opt.OptionName
+                                                    @if (opt.AdditionalPrice > 0)
+                                                    {
+                                                        <small>(+@opt.AdditionalPrice.ToString("N0")đ)</small>
+                                                    }
+                                                </span>
+                                            }
+                                        </div>
+                                    }
                                 </td>
                                 <td class="text-end">@item.Price.ToString("n0") đ</td>
                                 <td>
                                     @* Form cập nhật số lượng *@
                                     <form asp-action="UpdateCart" asp-controller="Cart" method="post"
                                         class="d-flex justify-content-center">
-                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="hidden" name="signature" value="@item.CartItemSignature" />
                                         <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
                                             class="form-control text-center me-2" style="width: 70px;" />
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" title="Cập nhật">
@@ -62,10 +76,13 @@
                                     @item.Total.ToString("n0") đ
                                 </td>
                                 <td class="text-center">
-                                    <a href="@Url.Action("Remove", "Cart", new { id = item.Id })" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Bạn có chắc muốn xóa món này?');">
-                                        <i class="fas fa-trash-alt"></i> Xóa
-                                    </a>
+                                    <form asp-action="Remove" asp-controller="Cart" method="post"
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa món này?');">
+                                        <input type="hidden" name="signature" value="@item.CartItemSignature" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash-alt"></i> Xóa
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
@@ -74,7 +91,7 @@
                         <tr>
                             <td colspan="4" class="text-end fw-bold fs-5">Tổng cộng:</td>
                             <td class="text-end fw-bold fs-4 text-danger">
-                                @Model.Sum(x => x.Price * x.Quantity).ToString("n0") đ
+                                @Model.Sum(x => x.Total).ToString("n0") đ
                             </td>
                             <td></td>
                         </tr>
