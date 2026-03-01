@@ -57,10 +57,11 @@ namespace WebBanThucAnNhanh.Controllers
 
         // GET: FastFood/Create
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme");
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood");
+            ViewBag.OptionGroups = await _context.OptionGroups.ToListAsync();
             return View();
         }
 
@@ -68,14 +69,15 @@ namespace WebBanThucAnNhanh.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(FastFood fastFood, IFormFile imageFile)
+        public async Task<IActionResult> Create(FastFood fastFood, IFormFile imageFile, List<int> selectedOptionGroupIds)
         {
             // LOẠI BỎ VALIDATION CHO CÁC TRƯỜNG KHÔNG GỬI TỪ VIEW
             ModelState.Remove("imageFile");
             ModelState.Remove("Image");
             ModelState.Remove("TypeOfFastFood");
             ModelState.Remove("Theme");
-            ModelState.Remove("OrderDetails"); // Nếu model có thuộc tính này
+            ModelState.Remove("OrderDetails");
+            ModelState.Remove("FastFoodOptionGroups");
 
             if (ModelState.IsValid)
             {
@@ -85,7 +87,6 @@ namespace WebBanThucAnNhanh.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
                     var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
 
-                    // Đảm bảo thư mục tồn tại
                     if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "images")))
                     {
                         Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "images"));
@@ -104,12 +105,46 @@ namespace WebBanThucAnNhanh.Controllers
 
                 _context.Add(fastFood);
                 await _context.SaveChangesAsync();
+
+                // Lưu liên kết OptionGroup cho sản phẩm
+                if (selectedOptionGroupIds != null && selectedOptionGroupIds.Any())
+                {
+                    foreach (var groupId in selectedOptionGroupIds)
+                    {
+                        _context.FastFoodOptionGroups.Add(new FastFoodOptionGroup
+                        {
+                            FastFoodId = fastFood.IdFastFood,
+                            OptionGroupId = groupId
+                        });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nếu quay lại View do lỗi, cần nạp lại SelectList
             ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
+            ViewBag.OptionGroups = await _context.OptionGroups.ToListAsync();
+            return View(fastFood);
+        }
+
+        // GET: FastFood/Edit/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var fastFood = await _context.FastFoods.FindAsync(id);
+            if (fastFood == null) return NotFound();
+
+            ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
+            ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
+            ViewBag.OptionGroups = await _context.OptionGroups.ToListAsync();
+            ViewBag.SelectedOptionGroupIds = await _context.FastFoodOptionGroups
+                .Where(fog => fog.FastFoodId == id)
+                .Select(fog => fog.OptionGroupId)
+                .ToListAsync();
             return View(fastFood);
         }
 
@@ -131,16 +166,16 @@ namespace WebBanThucAnNhanh.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, FastFood fastFood, IFormFile imageFile)
+        public async Task<IActionResult> Edit(int id, FastFood fastFood, IFormFile imageFile, List<int> selectedOptionGroupIds)
         {
             if (id != fastFood.IdFastFood) return NotFound();
 
-            // LOẠI BỎ VALIDATION TƯƠNG TỰ CREATE
             ModelState.Remove("imageFile");
             ModelState.Remove("Image");
             ModelState.Remove("TypeOfFastFood");
             ModelState.Remove("Theme");
             ModelState.Remove("OrderDetails");
+            ModelState.Remove("FastFoodOptionGroups");
 
             if (ModelState.IsValid)
             {
@@ -164,6 +199,23 @@ namespace WebBanThucAnNhanh.Controllers
                     }
 
                     _context.Update(fastFood);
+
+                    // Xóa liên kết OptionGroup cũ và tạo lại
+                    var oldLinks = _context.FastFoodOptionGroups.Where(fog => fog.FastFoodId == id);
+                    _context.FastFoodOptionGroups.RemoveRange(oldLinks);
+
+                    if (selectedOptionGroupIds != null && selectedOptionGroupIds.Any())
+                    {
+                        foreach (var groupId in selectedOptionGroupIds)
+                        {
+                            _context.FastFoodOptionGroups.Add(new FastFoodOptionGroup
+                            {
+                                FastFoodId = id,
+                                OptionGroupId = groupId
+                            });
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -175,6 +227,11 @@ namespace WebBanThucAnNhanh.Controllers
             }
             ViewData["IdTheme"] = new SelectList(_context.Themes, "IdTheme", "NameTheme", fastFood.IdTheme);
             ViewData["IdTypeOfFastFood"] = new SelectList(_context.TypeOfFastFoods, "IdTypeOfFastFood", "NameTypeOfFastFood", fastFood.IdTypeOfFastFood);
+            ViewBag.OptionGroups = await _context.OptionGroups.ToListAsync();
+            ViewBag.SelectedOptionGroupIds = await _context.FastFoodOptionGroups
+                .Where(fog => fog.FastFoodId == id)
+                .Select(fog => fog.OptionGroupId)
+                .ToListAsync();
             return View(fastFood);
         }
 

@@ -40,7 +40,7 @@ namespace WebBanThucAnNhanh.Controllers
         {
             var cart = GetCart();
             // Tính tổng tiền để hiển thị (Nếu CartItem chưa có property Total)
-            ViewBag.TotalAmount = cart.Sum(item => item.Price * item.Quantity);
+            ViewBag.TotalAmount = cart.Sum(item => item.Total);
             return View(cart);
         }
 

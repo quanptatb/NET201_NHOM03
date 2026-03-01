@@ -58,6 +58,30 @@
                 <label asp-for="IdTheme" class="control-label"></label>
                 <select asp-for="IdTheme" class="form-control" asp-items="ViewBag.IdTheme"></select>
             </div>
+            @if (ViewBag.OptionGroups != null)
+            {
+                var selectedIds = (List<int>)(ViewBag.SelectedOptionGroupIds ?? new List<int>());
+                <div class="form-group mb-3">
+                    <label class="control-label fw-bold">Nhóm tùy chọn (Size, Topping...)</label>
+                    <div class="border rounded p-2">
+                        @foreach (var group in (IEnumerable<WebBanThucAnNhanh.Models.OptionGroup>)ViewBag.OptionGroups)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       name="selectedOptionGroupIds" value="@group.Id"
+                                       id="og_@group.Id"
+                                       @(selectedIds.Contains(group.Id) ? "checked" : "") />
+                                <label class="form-check-label" for="og_@group.Id">
+                                    @group.Name
+                                    <small class="text-muted">(@(group.IsMultiSelect ? "Chọn nhiều" : "Chọn một"))</small>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <small class="text-muted">Chọn các nhóm tùy chọn áp dụng cho sản phẩm này.</small>
+                </div>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
