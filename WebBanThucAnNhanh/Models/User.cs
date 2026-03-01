@@ -31,7 +31,18 @@ namespace WebBanThucAnNhanh.Models
 
         public string Role { get; set; } = "Customer"; // Customer, Admin
         public bool Status { get; set; } = true;
+
+        // === LUCKY WHEEL: Số lượt quay tích lũy ===
+        [Display(Name = "Lượt quay Nước")]
+        public int DrinkSpins { get; set; } = 0;
+
+        [Display(Name = "Lượt quay Đồ ăn")]
+        public int FoodSpins { get; set; } = 0;
+
         // Quan hệ 1-n: Một User có nhiều đơn hàng
         public virtual ICollection<Order>? Orders { get; set; }
+
+        // Quan hệ 1-n: Một User có nhiều phần thưởng đã trúng
+        public virtual ICollection<UserReward>? UserRewards { get; set; }
     }
 }

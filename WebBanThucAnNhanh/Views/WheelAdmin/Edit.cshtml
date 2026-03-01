@@ -1,0 +1,82 @@
+@model WebBanThucAnNhanh.Models.WheelPrize
+
+@{
+    ViewData["Title"] = "Sửa giải thưởng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="admin-page">
+    <div class="admin-header mb-4">
+        <h2 class="admin-title">🎡 Sửa giải thưởng: @Model.PrizeName</h2>
+    </div>
+
+    <div class="card admin-card">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PrizeName" class="form-label fw-bold"></label>
+                        <input asp-for="PrizeName" class="form-control" />
+                        <span asp-validation-for="PrizeName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PrizeType" class="form-label fw-bold"></label>
+                        <select asp-for="PrizeType" asp-items="@(ViewBag.PrizeTypeList as SelectList)" class="form-select">
+                        </select>
+                        <span asp-validation-for="PrizeType" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FastFoodId" class="form-label fw-bold"></label>
+                        <select asp-for="FastFoodId" asp-items="@(ViewBag.FastFoodList as SelectList)" class="form-select">
+                            <option value="">-- Không liên kết (Giải may mắn) --</option>
+                        </select>
+                        <span asp-validation-for="FastFoodId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label asp-for="Probability" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <input asp-for="Probability" class="form-control" type="number" step="0.1" min="0" max="100" />
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <span asp-validation-for="Probability" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label asp-for="RemainingQuantity" class="form-label fw-bold"></label>
+                        <input asp-for="RemainingQuantity" class="form-control" type="number" min="0" />
+                        <span asp-validation-for="RemainingQuantity" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label fw-bold">Kích hoạt giải thưởng</label>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Lưu thay đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
