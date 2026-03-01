@@ -103,6 +103,12 @@ namespace WebBanThucAnNhanh.Controllers
                     fastFood.Image = "default.png";
                 }
 
+                // Tự động đặt trạng thái hết hàng nếu số lượng <= 0
+                if (fastFood.Quantity <= 0)
+                {
+                    fastFood.Status = false;
+                }
+
                 _context.Add(fastFood);
                 await _context.SaveChangesAsync();
 
@@ -182,6 +188,12 @@ namespace WebBanThucAnNhanh.Controllers
                     else
                     {
                         fastFood.Image = oldFood.Image;
+                    }
+
+                    // Tự động đặt trạng thái hết hàng nếu số lượng <= 0
+                    if (fastFood.Quantity <= 0)
+                    {
+                        fastFood.Status = false;
                     }
 
                     _context.Update(fastFood);

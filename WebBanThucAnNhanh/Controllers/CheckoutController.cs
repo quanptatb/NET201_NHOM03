@@ -89,7 +89,7 @@ namespace WebBanThucAnNhanh.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync(); // Lưu để sinh ra OrderId
 
-            // 2. Lưu OrderDetail
+            // 2. Lưu OrderDetail + Trừ số lượng sản phẩm
             foreach (var item in cartItems)
             {
                 var detail = new OrderDetail
@@ -102,6 +102,18 @@ namespace WebBanThucAnNhanh.Controllers
                     Note = item.IsReward ? "🎁 Quà tặng từ Vòng quay may mắn" : null
                 };
                 _context.OrderDetails.Add(detail);
+
+                // Trừ số lượng tồn kho và tự động đặt hết hàng nếu hết
+                var product = await _context.FastFoods.FindAsync(item.Id);
+                if (product != null)
+                {
+                    product.Quantity -= item.Quantity;
+                    if (product.Quantity <= 0)
+                    {
+                        product.Quantity = 0;
+                        product.Status = false; // Hết hàng
+                    }
+                }
             }
             await _context.SaveChangesAsync();
 
