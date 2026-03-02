@@ -84,23 +84,38 @@
                         }
                     </a>
 
-                    @* GIỎ HÀNG *@
-                    @{
-                        var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies["Cart"];
-                        int countCart = 0;
-                        if (!string.IsNullOrEmpty(cookieCart))
-                        {
-                            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
-                            countCart = cart.Sum(x => x.Quantity);
+                    @* LOGIC GIỎ HÀNG *@
+                    <li>
+                        @{
+                            string currentUserName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+                            string safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(currentUserName));
+                            string currentCartKey = $"Cart_{safeUserName}";
+
+                            var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies[currentCartKey];
+                            int countCart = 0;
+                            if (!string.IsNullOrEmpty(cookieCart))
+                            {
+                                try 
+                                {
+                                    var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
+                                    if (cart != null)
+                                    {
+                                        countCart = cart.Sum(x => x.Quantity);
+                                    }
+                                }
+                                catch 
+                                {
+                                }
+                            }
                         }
-                    }
-                    <a href="@Url.Action("Index", "Cart")" class="nav-action-btn" title="Giỏ hàng">
-                        <i class="fas fa-shopping-bag"></i>
-                        @if (countCart > 0)
-                        {
-                            <span class="action-badge">@countCart</span>
-                        }
-                    </a>
+                        <a href="@Url.Action("Index", "Cart")" class="nav-cart-link">
+                            <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                            @if (countCart > 0)
+                            {
+                                <span class="cart-badge">@countCart</span>
+                            }
+                        </a>
+                    </li>
 
                     @* ĐĂNG NHẬP / USER *@
                     @if (User.Identity.IsAuthenticated)

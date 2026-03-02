@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore; // Thêm thư viện này
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization; // Thêm nếu muốn chặn khách xem giỏ (tùy chọn)
 
 namespace WebBanThucAnNhanh.Controllers
@@ -10,8 +11,17 @@ namespace WebBanThucAnNhanh.Controllers
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
-        // 1. Khai báo hằng số cho Key Session để tránh gõ sai
-        public const string CART_KEY = "Cart";
+        // 1. HÀM TẠO KEY RIÊNG CHO TỪNG ACC
+        // 1. HÀM TẠO KEY RIÊNG CHO TỪNG ACC
+        private string GetUserCartKey()
+        {
+            var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+
+            // Mã hóa tên đăng nhập thành chuỗi Hex (VD: "NhưBùi" -> "E1BBA..."). An toàn tuyệt đối 100%.
+            var safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(userName));
+
+            return $"Cart_{safeUserName}";
+        }
 
         public CartController(AppDbContext context)
         {
@@ -22,9 +32,8 @@ namespace WebBanThucAnNhanh.Controllers
         // Đọc giỏ hàng từ Cookie thay vì Session
         public List<CartItem> GetCart()
         {
-            // Đọc dữ liệu từ Cookie của trình duyệt
-            var cookieCart = Request.Cookies[CART_KEY];
-
+            // Lấy giỏ hàng theo đúng acc đang đăng nhập
+            var cookieCart = Request.Cookies[GetUserCartKey()];
             if (cookieCart != null)
             {
                 return JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
@@ -37,16 +46,14 @@ namespace WebBanThucAnNhanh.Controllers
         public void SaveCart(List<CartItem> cart)
         {
             var cartJson = JsonConvert.SerializeObject(cart);
-
-            // Cấu hình thời gian lưu trữ giỏ hàng trên máy khách (Ví dụ: 30 ngày)
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTime.Now.AddDays(30),
-                HttpOnly = true, // Tăng cường bảo mật
+                HttpOnly = true,
                 IsEssential = true
             };
-
-            Response.Cookies.Append(CART_KEY, cartJson, cookieOptions);
+            // Lưu giỏ hàng theo đúng acc
+            Response.Cookies.Append(GetUserCartKey(), cartJson, cookieOptions);
         }
 
         public IActionResult Index()
@@ -165,8 +172,8 @@ namespace WebBanThucAnNhanh.Controllers
 
         public IActionResult Clear()
         {
-            // Xóa Cookie chứa giỏ hàng
-            Response.Cookies.Delete(CART_KEY);
+            // Xóa đúng giỏ hàng của acc đó
+            Response.Cookies.Delete(GetUserCartKey());
             return RedirectToAction("Index", "Home");
         }
 
