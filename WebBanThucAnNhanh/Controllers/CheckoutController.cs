@@ -27,12 +27,12 @@ namespace WebBanThucAnNhanh.Controllers
         public IActionResult Index()
         {
             // Kiểm tra giỏ hàng
-            var sessionCart = HttpContext.Session.GetString("Cart");
+            var cookieCart = Request.Cookies["Cart"];
             List<CartItem> cartItems = new List<CartItem>();
 
-            if (sessionCart != null)
+            if (cookieCart != null)
             {
-                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
             }
 
             if (cartItems.Count == 0)
@@ -70,14 +70,14 @@ namespace WebBanThucAnNhanh.Controllers
             order.DateCreated = DateTime.Now;
             order.Status = 0; // 0: Chờ xử lý
 
-            // Kiểm tra lại giỏ hàng trong Session
-            var sessionCart = HttpContext.Session.GetString("Cart");
-            if (string.IsNullOrEmpty(sessionCart))
+            // Kiểm tra lại giỏ hàng trong Cookie
+            var cookieCart = Request.Cookies["Cart"];
+            if (string.IsNullOrEmpty(cookieCart))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
 
             // Tính toán lại tổng tiền ở Server (Bảo mật)
             order.TotalPrice = cartItems.Sum(x => x.Total);
@@ -146,8 +146,8 @@ namespace WebBanThucAnNhanh.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 3. Xóa Session giỏ hàng
-            HttpContext.Session.Remove("Cart");
+            // 3. Xóa Cookie giỏ hàng
+            Response.Cookies.Delete("Cart");
 
             // Chuyển hướng đến trang lịch sử
             return RedirectToAction(nameof(History));
