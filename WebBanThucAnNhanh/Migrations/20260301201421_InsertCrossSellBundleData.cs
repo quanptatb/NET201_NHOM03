@@ -10,6 +10,9 @@ namespace WebBanThucAnNhanh.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Xóa dữ liệu cũ trước khi insert để tránh lỗi duplicate key
+            migrationBuilder.Sql("DELETE FROM CrossSellBundles");
+
             migrationBuilder.InsertData(
                 table: "CrossSellBundles",
                 columns: new[] { "Id", "AddOnFastFoodId", "DiscountPercentage", "MainFastFoodId" },

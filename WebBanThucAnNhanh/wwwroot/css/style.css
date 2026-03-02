@@ -333,51 +333,52 @@ header.scrolled .nav-toggle span {
   transform: translateY(50%) rotate(-45deg);
 }
 
-/* Navigation */
-nav ul {
+/* Navigation - Minimalist Layout */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-main {
   display: flex;
   list-style: none;
   align-items: center;
   margin: 0;
   padding: 0;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
-nav ul li {
+.nav-main li {
   display: inline-flex;
   align-items: center;
 }
 
-nav ul li a {
+.nav-main li a {
   color: var(--white);
   text-decoration: none;
   font-weight: 600;
   font-size: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
-  padding: 0.7rem 1.4rem;
+  padding: 0.7rem 1.6rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
   border-radius: 5rem;
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 
-nav ul li a i {
-  font-size: 1.3rem;
-  transition: all 0.3s ease;
-}
-
-header.scrolled nav ul li a {
+header.scrolled .nav-main li a {
   color: var(--dark);
 }
 
 /* Underline hover effect */
-nav ul li a::after {
+.nav-main li a::after {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 0;
+  bottom: 2px;
   width: 0;
   height: 2px;
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
@@ -386,57 +387,76 @@ nav ul li a::after {
   border-radius: 2px;
 }
 
-nav ul li a:hover,
-nav ul li a.active {
+.nav-main li a:hover,
+.nav-main li a.active {
   color: var(--primary);
 }
 
-nav ul li a:hover::after,
-nav ul li a.active::after {
-  width: 60%;
+.nav-main li a:hover::after,
+.nav-main li a.active::after {
+  width: 50%;
 }
 
-nav ul li a:hover i {
-  transform: scale(1.15);
+/* Nav Actions (right side: icons + user) */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: 1.5rem;
 }
 
-/* Nav Divider */
-.nav-divider {
-  width: 1px;
-  height: 2rem;
-  background: rgba(255, 255, 255, 0.3);
-  margin: 0 0.8rem;
+/* Icon-only action buttons (Cart, Wheel) */
+.nav-action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.7rem;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-header.scrolled .nav-divider {
-  background: rgba(0, 0, 0, 0.1);
+.nav-action-btn:hover {
+  background: rgba(243, 95, 42, 0.15);
+  color: var(--primary);
+  transform: translateY(-2px);
 }
 
-/* Cart Link with Badge */
-.nav-cart-link {
-  position: relative !important;
+header.scrolled .nav-action-btn {
+  color: var(--dark);
+  background: rgba(0, 0, 0, 0.04);
 }
 
-.cart-badge {
+header.scrolled .nav-action-btn:hover {
+  background: rgba(243, 95, 42, 0.1);
+  color: var(--primary);
+}
+
+/* Action Badge (Cart/Spin count) */
+.action-badge {
   position: absolute;
-  top: -2px;
-  right: -4px;
+  top: 2px;
+  right: 2px;
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: white;
   font-size: 1rem;
   font-weight: 700;
-  min-width: 1.8rem;
-  height: 1.8rem;
-  line-height: 1.8rem;
+  min-width: 1.7rem;
+  height: 1.7rem;
+  line-height: 1.7rem;
   text-align: center;
   border-radius: 50%;
-  padding: 0 0.4rem;
+  padding: 0 0.3rem;
   box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
-  animation: cartPulse 2s infinite;
+  animation: badgePulse 2s infinite;
 }
 
-@keyframes cartPulse {
+@keyframes badgePulse {
 
   0%,
   100% {
@@ -450,13 +470,18 @@ header.scrolled .nav-divider {
 
 /* Login Button */
 .nav-login-btn {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
-  color: var(--white) !important;
-  padding: 0.7rem 2rem !important;
+  display: inline-flex !important;
+  align-items: center;
+  padding: 0.7rem 2.2rem !important;
   border-radius: 5rem !important;
   font-weight: 600 !important;
+  font-size: 1.4rem;
+  color: var(--white) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
   box-shadow: 0 4px 15px rgba(243, 95, 42, 0.3);
   transition: all 0.3s ease !important;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .nav-login-btn:hover {
@@ -469,26 +494,37 @@ header.scrolled .nav-divider {
   display: none !important;
 }
 
-/* User Avatar */
-.user-avatar-wrap {
+/* User Avatar Button */
+.nav-user-btn {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.8rem !important;
+  text-decoration: none !important;
+  padding: 0.3rem !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-user-btn::after {
+  display: none !important;
 }
 
 .user-avatar {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.6rem;
+  height: 3.6rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--primary);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(243, 95, 42, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.user-avatar-wrap:hover .user-avatar {
+header.scrolled .user-avatar {
+  border-color: var(--primary);
+}
+
+.nav-user-btn:hover .user-avatar {
   transform: scale(1.08);
-  border-color: var(--primary-light);
+  border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(243, 95, 42, 0.35);
 }
 
@@ -501,6 +537,7 @@ header.scrolled .nav-divider {
   margin-top: 0.8rem !important;
   overflow: hidden;
   animation: dropFade 0.25s ease;
+  min-width: 20rem;
 }
 
 @keyframes dropFade {
@@ -513,6 +550,28 @@ header.scrolled .nav-divider {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Dropdown User Info Header */
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.dropdown-avatar {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.dropdown-username {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
 }
 
 .dropdown-item {
@@ -539,21 +598,8 @@ header.scrolled .nav-divider {
 }
 
 /* Active state in navigation */
-nav ul li a.active {
+.nav-main li a.active {
   color: var(--primary);
-}
-
-/* Special styling for the Order Online button */
-nav ul li a.btn {
-  color: var(--white) !important;
-  padding: 0.8rem 2rem;
-  border-radius: 5rem;
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
-}
-
-nav ul li a.btn::after {
-  display: none;
 }
 
 /* Hero Section */
@@ -1369,41 +1415,49 @@ footer {
     box-shadow: var(--shadow);
     transition: var(--transition);
     z-index: 1000;
-    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
+    gap: 3rem;
   }
 
   nav.active {
     right: 0;
   }
 
-  nav ul {
+  .nav-main {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    gap: 0.5rem;
   }
 
-  nav ul li {
-    margin: 1.5rem 0;
-    text-align: center;
+  .nav-main li {
     width: 100%;
+    text-align: center;
   }
 
-  nav ul li a {
+  .nav-main li a {
     color: var(--dark) !important;
     font-size: 2rem;
     display: flex;
     justify-content: center;
     width: 100%;
+    padding: 1.2rem 1.6rem;
   }
 
-  .nav-divider {
-    width: 60%;
-    height: 1px;
-    margin: 0.5rem auto;
-    background: rgba(0, 0, 0, 0.08);
+  .nav-actions {
+    margin-left: 0;
+    gap: 1.2rem;
+  }
+
+  .nav-action-btn {
+    color: var(--dark) !important;
+    background: rgba(0, 0, 0, 0.05);
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.8rem;
   }
 
   .nav-login-btn {
@@ -1415,15 +1469,6 @@ footer {
 
   .brand-name {
     font-size: 2.2rem;
-  }
-
-  /* Adjust the button in mobile view */
-  nav ul li a.btn {
-    margin-top: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
-    padding: 1.2rem 3rem;
   }
 
   .hero-content h1 {
