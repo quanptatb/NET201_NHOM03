@@ -64,7 +64,7 @@ namespace WebBanThucAnNhanh.Controllers
             return View(cart);
         }
 
-        [Authorize]
+        [Authorize] 
         public async Task<IActionResult> AddToCart(int id, int quantity = 1, List<int> selectedOptionIds = null)
         {
             var product = await _context.FastFoods.FindAsync(id);
@@ -176,5 +176,93 @@ namespace WebBanThucAnNhanh.Controllers
             Response.Cookies.Delete(GetUserCartKey());
             return RedirectToAction("Index", "Home");
         }
+
+            [HttpPost]
+// Đổi tham số discount sang double để tránh lỗi sai định dạng văn hóa (culture) từ HTML bắn lên
+public async Task<IActionResult> AddBundle(int mainId, int addOnId, double discount)
+{
+    // 1. Tìm 2 sản phẩm trong Database
+    var mainFood = await _context.FastFoods.FindAsync(mainId);
+    var addOnFood = await _context.FastFoods.FindAsync(addOnId);
+
+    if (mainFood == null || addOnFood == null)
+    {
+        return NotFound("Không tìm thấy sản phẩm");
+    }
+
+    var cart = GetCart();
+
+    // =====================================
+    // 3. THÊM MÓN CHÍNH VÀO GIỎ (GIÁ GỐC)
+    // =====================================
+    var emptyOptions = new List<CartItemOption>();
+
+    // Mượn CartItem để sinh Signature cho món chính
+    var tempMain = new CartItem { Id = mainFood.IdFastFood, SelectedOptions = emptyOptions };
+    
+    // Tìm xem món chính (không topping) đã có trong giỏ chưa
+    var mainItem = cart.FirstOrDefault(c => c.CartItemSignature == tempMain.CartItemSignature);
+    if (mainItem != null)
+    {
+        mainItem.Quantity++; 
+    }
+    else
+    {
+        cart.Add(new CartItem
+        {
+            Id = mainFood.IdFastFood,
+            Name = mainFood.NameFastFood,
+            BasePrice = mainFood.Price,
+            Quantity = 1,
+            Image = mainFood.Image,
+            SelectedOptions = emptyOptions 
+        });
+    }
+
+    // =====================================
+    // 4. THÊM MÓN MUA KÈM (GIÁ ĐÃ GIẢM)
+    // =====================================
+    // Tính toán giá giảm an toàn bằng ép kiểu decimal
+    decimal originalPrice = Convert.ToDecimal(addOnFood.Price);
+    decimal discountPercent = Convert.ToDecimal(discount);
+    decimal discountedPrice = originalPrice - (originalPrice * discountPercent / 100m);
+
+    // THUẬT TOÁN MỚI: TẠO TOPPING ẢO ĐỂ LÀM UNIQUE SIGNATURE
+    var bundleOptions = new List<CartItemOption>
+    {
+        new CartItemOption
+        {
+            OptionItemId = -999, // Dùng ID âm để chắc chắn không đụng hàng với Option thật trong DB
+            OptionName = $"[Mua kèm giảm {discount}%]", // Label này sẽ tự động hiện ở giỏ hàng!
+            AdditionalPrice = 0 // Giá đã được trừ thẳng vào BasePrice nên topping ảo bằng 0đ
+        }
+    };
+
+    // Mượn CartItem để sinh Signature cho món mua kèm (Có chứa Topping ảo)
+    var tempAddOn = new CartItem { Id = addOnFood.IdFastFood, SelectedOptions = bundleOptions };
+
+    var addOnItem = cart.FirstOrDefault(c => c.CartItemSignature == tempAddOn.CartItemSignature);
+    if (addOnItem != null)
+    {
+        addOnItem.Quantity++;
+    }
+    else
+    {
+        cart.Add(new CartItem
+        {
+            Id = addOnFood.IdFastFood,
+            Name = addOnFood.NameFastFood, // Giữ nguyên tên món gốc
+            BasePrice = discountedPrice,   // Giá mới đã giảm
+            Quantity = 1,
+            Image = addOnFood.Image,
+            SelectedOptions = bundleOptions // Ném Topping ảo vào đây!
+        });
+    }
+
+    // 5. Lưu Session và chuyển qua Giỏ hàng
+    SaveCart(cart);
+
+    return RedirectToAction("Index", "Cart");
+}
     }
 }
