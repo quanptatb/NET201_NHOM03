@@ -88,15 +88,32 @@
                     @* LOGIC GIỎ HÀNG *@
                     <li>
                         @{
-                            // Sửa từ Session sang đọc từ Cookie
-                            var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies["Cart"];
+                            string currentUserName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+                            
+                            // Đồng bộ cách mã hóa Hex giống hệt bên Controller
+                            string safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(currentUserName));
+                            string currentCartKey = $"Cart_{safeUserName}";
+
+                            var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies[currentCartKey];
                             int countCart = 0;
+                            
                             if (!string.IsNullOrEmpty(cookieCart))
                             {
-                                var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
-                                countCart = cart.Sum(x => x.Quantity);
+                                try 
+                                {
+                                    var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
+                                    if (cart != null)
+                                    {
+                                        countCart = cart.Sum(x => x.Quantity);
+                                    }
+                                }
+                                catch 
+                                {
+                                    // Bỏ qua lỗi parse nếu cookie bị hỏng
+                                }
                             }
                         }
+                        
                         <a href="@Url.Action("Index", "Cart")" class="nav-cart-link">
                             <i class="fas fa-shopping-cart"></i> Giỏ hàng
                             @if (countCart > 0)
