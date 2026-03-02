@@ -88,11 +88,12 @@
                     @* LOGIC GIỎ HÀNG *@
                     <li>
                         @{
-                            var sessionCart = HttpContextAccessor.HttpContext.Session.GetString("Cart");
+                            // Sửa từ Session sang đọc từ Cookie
+                            var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies["Cart"];
                             int countCart = 0;
-                            if (sessionCart != null)
+                            if (!string.IsNullOrEmpty(cookieCart))
                             {
-                                var cart = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+                                var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
                                 countCart = cart.Sum(x => x.Quantity);
                             }
                         }

@@ -19,21 +19,34 @@ namespace WebBanThucAnNhanh.Controllers
         }
 
         // Lấy danh sách giỏ hàng từ Session
+        // Đọc giỏ hàng từ Cookie thay vì Session
         public List<CartItem> GetCart()
         {
-            var sessionCart = HttpContext.Session.GetString(CART_KEY);
-            if (sessionCart != null)
+            // Đọc dữ liệu từ Cookie của trình duyệt
+            var cookieCart = Request.Cookies[CART_KEY];
+
+            if (cookieCart != null)
             {
-                return JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+                return JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
             }
             return new List<CartItem>();
         }
 
         // Lưu danh sách giỏ hàng vào Session
+        // Lưu giỏ hàng vào Cookie thay vì Session
         public void SaveCart(List<CartItem> cart)
         {
-            var sessionCart = JsonConvert.SerializeObject(cart);
-            HttpContext.Session.SetString(CART_KEY, sessionCart);
+            var cartJson = JsonConvert.SerializeObject(cart);
+
+            // Cấu hình thời gian lưu trữ giỏ hàng trên máy khách (Ví dụ: 30 ngày)
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(30),
+                HttpOnly = true, // Tăng cường bảo mật
+                IsEssential = true
+            };
+
+            Response.Cookies.Append(CART_KEY, cartJson, cookieOptions);
         }
 
         public IActionResult Index()
@@ -44,7 +57,7 @@ namespace WebBanThucAnNhanh.Controllers
             return View(cart);
         }
 
-        [Authorize] 
+        [Authorize]
         public async Task<IActionResult> AddToCart(int id, int quantity = 1, List<int> selectedOptionIds = null)
         {
             var product = await _context.FastFoods.FindAsync(id);
@@ -52,7 +65,7 @@ namespace WebBanThucAnNhanh.Controllers
 
             // 1. Khởi tạo danh sách option cho item này
             var cartItemOptions = new List<CartItemOption>();
-            
+
             if (selectedOptionIds != null && selectedOptionIds.Any())
             {
                 // Lấy thông tin giá, tên của các option từ DB
@@ -73,10 +86,10 @@ namespace WebBanThucAnNhanh.Controllers
             var cart = GetCart();
 
             // 2. Tạo một đối tượng giả lập để sinh ra chữ ký (Signature)
-            var tempItem = new CartItem 
-            { 
-                Id = product.IdFastFood, 
-                SelectedOptions = cartItemOptions 
+            var tempItem = new CartItem
+            {
+                Id = product.IdFastFood,
+                SelectedOptions = cartItemOptions
             };
             string targetSignature = tempItem.CartItemSignature;
 
@@ -104,55 +117,56 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             SaveCart(cart);
-            
+
             // Nếu gọi qua AJAX có thể trả về JSON
             // return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
-            return RedirectToAction("Index", "Cart"); 
+            return RedirectToAction("Index", "Cart");
         }
 
         // --- LƯU Ý KHI UPDATE & REMOVE ---
         // Khi xóa (Remove) hoặc Cập nhật (UpdateCart), bạn không nên tìm qua p.Id nữa
         // mà phải truyền Signature vào để tìm chính xác dòng nào cần xóa.
 
-[HttpPost] // Nên dùng HttpPost cho các hành động thay đổi dữ liệu
-public IActionResult Remove(string signature)
-{
-    var cart = GetCart();
-    // Tìm chính xác dòng cần xóa thông qua chữ ký duy nhất
-    var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
-    
-    if (item != null)
-    {
-        cart.Remove(item);
-        SaveCart(cart);
-    }
-    return RedirectToAction("Index");
-}
-
-[HttpPost]
-public IActionResult UpdateCart(string signature, int quantity)
-{
-    var cart = GetCart();
-    // Tìm chính xác dòng cần cập nhật thông qua chữ ký
-    var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
-    
-    if (item != null)
-    {
-        item.Quantity = quantity;
-        
-        // Nếu số lượng <= 0 thì xóa luôn sản phẩm khỏi giỏ
-        if (item.Quantity <= 0)
+        [HttpPost] // Nên dùng HttpPost cho các hành động thay đổi dữ liệu
+        public IActionResult Remove(string signature)
         {
-            cart.Remove(item);
+            var cart = GetCart();
+            // Tìm chính xác dòng cần xóa thông qua chữ ký duy nhất
+            var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
+
+            if (item != null)
+            {
+                cart.Remove(item);
+                SaveCart(cart);
+            }
+            return RedirectToAction("Index");
         }
-        SaveCart(cart);
-    }
-    return RedirectToAction("Index");
-}
+
+        [HttpPost]
+        public IActionResult UpdateCart(string signature, int quantity)
+        {
+            var cart = GetCart();
+            // Tìm chính xác dòng cần cập nhật thông qua chữ ký
+            var item = cart.FirstOrDefault(p => p.CartItemSignature == signature);
+
+            if (item != null)
+            {
+                item.Quantity = quantity;
+
+                // Nếu số lượng <= 0 thì xóa luôn sản phẩm khỏi giỏ
+                if (item.Quantity <= 0)
+                {
+                    cart.Remove(item);
+                }
+                SaveCart(cart);
+            }
+            return RedirectToAction("Index");
+        }
 
         public IActionResult Clear()
         {
-            HttpContext.Session.Remove(CART_KEY);
+            // Xóa Cookie chứa giỏ hàng
+            Response.Cookies.Delete(CART_KEY);
             return RedirectToAction("Index", "Home");
         }
     }
