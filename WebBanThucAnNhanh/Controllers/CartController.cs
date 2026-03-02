@@ -19,21 +19,34 @@ namespace WebBanThucAnNhanh.Controllers
         }
 
         // Lấy danh sách giỏ hàng từ Session
+        // Đọc giỏ hàng từ Cookie thay vì Session
         public List<CartItem> GetCart()
         {
-            var sessionCart = HttpContext.Session.GetString(CART_KEY);
-            if (sessionCart != null)
+            // Đọc dữ liệu từ Cookie của trình duyệt
+            var cookieCart = Request.Cookies[CART_KEY];
+
+            if (cookieCart != null)
             {
-                return JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+                return JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
             }
             return new List<CartItem>();
         }
 
         // Lưu danh sách giỏ hàng vào Session
+        // Lưu giỏ hàng vào Cookie thay vì Session
         public void SaveCart(List<CartItem> cart)
         {
-            var sessionCart = JsonConvert.SerializeObject(cart);
-            HttpContext.Session.SetString(CART_KEY, sessionCart);
+            var cartJson = JsonConvert.SerializeObject(cart);
+
+            // Cấu hình thời gian lưu trữ giỏ hàng trên máy khách (Ví dụ: 30 ngày)
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(30),
+                HttpOnly = true, // Tăng cường bảo mật
+                IsEssential = true
+            };
+
+            Response.Cookies.Append(CART_KEY, cartJson, cookieOptions);
         }
 
         public IActionResult Index()
@@ -44,8 +57,8 @@ namespace WebBanThucAnNhanh.Controllers
             return View(cart);
         }
 
-        [Authorize]
-        public async Task<IActionResult> AddToCart(int id, int quantity = 1, List<int>? selectedOptionIds = null)
+        [Authorize] 
+        public async Task<IActionResult> AddToCart(int id, int quantity = 1, List<int> selectedOptionIds = null)
         {
             var product = await _context.FastFoods.FindAsync(id);
             if (product == null) return NotFound();
@@ -152,7 +165,8 @@ namespace WebBanThucAnNhanh.Controllers
 
         public IActionResult Clear()
         {
-            HttpContext.Session.Remove(CART_KEY);
+            // Xóa Cookie chứa giỏ hàng
+            Response.Cookies.Delete(CART_KEY);
             return RedirectToAction("Index", "Home");
         }
 

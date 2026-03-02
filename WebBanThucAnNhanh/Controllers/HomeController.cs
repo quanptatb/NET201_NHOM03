@@ -20,6 +20,7 @@ public class HomeController : Controller
         var query = _context.FastFoods
             .Include(f => f.TypeOfFastFood)
             .Include(f => f.Theme)
+            .Include(f => f.FastFoodOptionGroups)
             .AsQueryable();
 
         // Thực hiện lọc nếu có tham số
@@ -46,6 +47,7 @@ public class HomeController : Controller
         var query = _context.FastFoods
             .Include(f => f.TypeOfFastFood)
             .Include(f => f.Theme)
+            .Include(f => f.FastFoodOptionGroups)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(keyword))
@@ -140,6 +142,20 @@ public async Task<IActionResult> Details(int? id)
     return View(fastFood);
 }
 
+
+    public async Task<IActionResult> GetToppingForm(int id)
+    {
+        var fastFood = await _context.FastFoods
+            .Include(f => f.FastFoodOptionGroups)
+                .ThenInclude(fog => fog.OptionGroup)
+                    .ThenInclude(g => g.OptionItems)
+            .FirstOrDefaultAsync(m => m.IdFastFood == id);
+
+        if (fastFood == null) return NotFound();
+
+        // Trả về một file giao diện nhỏ (Partial View)
+        return PartialView("_ToppingModalPartial", fastFood);
+    }
 
     public IActionResult Privacy()
     {

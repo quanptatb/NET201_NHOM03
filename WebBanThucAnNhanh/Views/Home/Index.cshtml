@@ -11,296 +11,334 @@
             <h1>Thưởng thức món ngon <span class="highlight">Tuyệt hảo</span></h1>
             <p>Trải nghiệm những chiếc burger ngon nhất, xúc xích nóng hổi và gà rán giòn rụm. Giao hàng tận nơi chỉ
                 trong vòng 30 phút.</p>
-        </div>
-    </div>
-</section>
-
-<section class="about" id="about">
-    <div class="container">
-        <div class="section-title text-center">
-            <h2>Câu Chuyện Của Chúng Tôi</h2>
-        </div>
-        <div class="about-content">
-            <div class="about-text">
-                <h3>Phục vụ món ngon từ năm <span class="highlight">2010</span></h3>
-                <p>
-                    Được thành lập với niềm đam mê mang lại hương vị tuyệt vời và chất lượng,
-                    chúng tôi đã phục vụ thức ăn nhanh cao cấp hơn một thập kỷ qua.
-                </p>
-                <p>
-                    Điều làm chúng tôi khác biệt là cam kết về chất lượng và tốc độ.
-                    Các đầu bếp chuẩn bị bữa ăn với sự tỉ mỉ, đảm bảo từng miếng ăn là một trải nghiệm thú vị.
-                </p>
-                <a href="#menu" class="btn">Xem Thực Đơn</a>
-            </div>
-            <div class="about-image">
-                <img src="@Url.Content("~/images/burgers.jpg")" alt="Premium Burger" />
             </div>
         </div>
-    </div>
-</section>
-<section class="menu" id="menu">
-    <div class="container">
-        <div class="section-title text-center">
-            <h2>Thực Đơn <span class="highlight">Hấp Dẫn</span></h2>
-        </div>
+    </section>
 
-        @* Form Tìm kiếm (Chỉ giữ lại form đơn giản trỏ sang trang Search) *@
-        <div class="advanced-search-container animate-on-scroll">
-            <form method="get" action="@Url.Action("Search", "Home")" class="search-form">
-                <div class="search-row">
-                    <div class="search-group search-keyword">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="keyword" placeholder="Bạn muốn ăn gì hôm nay?..." />
-                    </div>
-                    <div class="search-group">
-                        <select name="themeId">
-                            <option value="">-- Tất cả chủ đề --</option>
-                            @if (ViewBag.Themes != null)
-                            {
-                                foreach (var theme in ViewBag.Themes)
-                                {
-                                    <option value="@theme.IdTheme">@theme.NameTheme</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="search-group search-btn-group">
-                        <button type="submit" class="btn btn-search">
-                            <i class="fas fa-filter"></i> Tìm Kiếm
-                        </button>
-                    </div>
+    <section class="about" id="about">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Câu Chuyện Của Chúng Tôi</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Phục vụ món ngon từ năm <span class="highlight">2010</span></h3>
+                    <p>
+                        Được thành lập với niềm đam mê mang lại hương vị tuyệt vời và chất lượng,
+                        chúng tôi đã phục vụ thức ăn nhanh cao cấp hơn một thập kỷ qua.
+                    </p>
+                    <p>
+                        Điều làm chúng tôi khác biệt là cam kết về chất lượng và tốc độ.
+                        Các đầu bếp chuẩn bị bữa ăn với sự tỉ mỉ, đảm bảo từng miếng ăn là một trải nghiệm thú vị.
+                    </p>
+                    <a href="#menu" class="btn">Xem Thực Đơn</a>
                 </div>
-            </form>
+                <div class="about-image">
+                    <img src="@Url.Content("~/images/burgers.jpg")" alt="Premium Burger" />
+                </div>
+            </div>
         </div>
+    </section>
+    <section class="menu" id="menu">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Thực Đơn <span class="highlight">Hấp Dẫn</span></h2>
+            </div>
 
-        
-
-        @* Hàm hiển thị danh sách món (Helper local function để đỡ lặp code) *@
-        @{
-            async Task RenderProductList(IEnumerable<WebBanThucAnNhanh.Models.FastFood> products)
-            {
-                foreach (var item in products)
-                {
-                    <div class="menu-item animate-on-scroll">
-                        @* IMAGE SECTION WITH BADGES *@
-                        <div class="menu-item-img">
-                            @if (item.Quantity <= 0 || !item.Status)
-                            {
-                                <div class="menu-item-badge badge-soldout">Hết hàng</div>
-                            }
-                            else if (item.Price > 50000) @* Giả sử món trên 50k là Hot *@
-                            {
-                                <div class="menu-item-badge badge-hot">Bán chạy</div>
-                            }
-                            
-                            <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
+            @* Form Tìm kiếm (Chỉ giữ lại form đơn giản trỏ sang trang Search) *@
+            <div class="advanced-search-container animate-on-scroll">
+                <form method="get" action="@Url.Action("Search", "Home")" class="search-form">
+                    <div class="search-row">
+                        <div class="search-group search-keyword">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="keyword" placeholder="Bạn muốn ăn gì hôm nay?..." />
                         </div>
-
-                        @* CONTENT SECTION *@
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">
-                                <h4>@item.NameFastFood</h4>
-                                <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
-                            </div>
-                            
-                            <p class="menu-item-text" title="@item.Description">@item.Description</p>
-                            
-                            <div class="menu-item-order">
-                                <div class="menu-item-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="action-group">
-                                    @* NÚT XEM CHI TIẾT *@
-                                    <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom">
-                                        <i class="fas fa-eye"></i><span>Xem</span>
-                                    </a>
-                                    
-                                    @* NÚT THÊM VÀO GIỎ *@
-                                    @if (item.Quantity > 0 && item.Status)
+                        <div class="search-group">
+                            <select name="themeId">
+                                <option value="">-- Tất cả chủ đề --</option>
+                                @if (ViewBag.Themes != null)
+                                {
+                                    foreach (var theme in ViewBag.Themes)
                                     {
-                                        <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
-                                            <i class="fas fa-cart-plus"></i><span>Thêm</span>
-                                        </a>
+                                        <option value="@theme.IdTheme">@theme.NameTheme</option>
                                     }
-                                    else
-                                    {
-                                        <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
-                                            <i class="fas fa-ban"></i><span>Hết</span>
-                                        </button>
-                                    }
-                                </div>
-                            </div>
+                                }
+                            </select>
+                        </div>
+                        <div class="search-group search-btn-group">
+                            <button type="submit" class="btn btn-search">
+                                <i class="fas fa-filter"></i> Tìm Kiếm
+                            </button>
                         </div>
                     </div>
+                </form>
+            </div>
+
+
+
+            @* Hàm hiển thị danh sách món (Helper local function để đỡ lặp code) *@
+            @{
+                async Task RenderProductList(IEnumerable<WebBanThucAnNhanh.Models.FastFood> products)
+                {
+                    foreach (var item in products)
+                    {
+                        <div class="menu-item animate-on-scroll">
+                            @* IMAGE SECTION WITH BADGES *@
+                            <div class="menu-item-img">
+                                @if (item.Quantity <= 0 || !item.Status)
+                                {
+                                    <div class="menu-item-badge badge-soldout">Hết hàng</div>
+                                }
+                                else if (item.Price > 50000)
+                                @* Giả sử món trên 50k là Hot *@
+                                {
+                                    <div class="menu-item-badge badge-hot">Bán chạy</div>
+                                }
+
+                                <img src="~/images/@item.Image" alt="@item.NameFastFood" loading="lazy" />
+                            </div>
+
+                            @* CONTENT SECTION *@
+                            <div class="menu-item-content">
+                                <div class="menu-item-title">
+                                    <h4>@item.NameFastFood</h4>
+                                    <div class="menu-item-price">@item.Price.ToString("#,##0") đ</div>
+                                </div>
+
+                                <p class="menu-item-text" title="@item.Description">@item.Description</p>
+
+                                <div class="menu-item-order">
+                                    <div class="menu-item-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="action-group">
+                                        @* NÚT XEM CHI TIẾT *@
+                                        <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                            <i class="fas fa-eye"></i><span>Xem</span>
+                                        </a>
+
+                                        @* NÚT THÊM VÀO GIỎ / CHỌN OPTION *@
+                                        @if (item.Quantity > 0 && item.Status)
+                                        {
+                                            // Kiểm tra: Nếu món này có cài đặt Size/Topping trong Database
+                                            @if (item.FastFoodOptionGroups != null && item.FastFoodOptionGroups.Any())
+                                            {
+                                                <button type="button" onclick="showToppingModal(@item.IdFastFood)" class="btn-sm-custom"
+                                                        style="background-color: #ff9800; border-color: #ff9800; color: #fff; border: none;">
+                                                    <i class="fas fa-tasks"></i><span>Tùy chọn</span>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                // Nếu món ăn bình thường không có Topping -> Bấm 1 phát thêm thẳng vào giỏ
+                                                <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
+                                                    <i class="fas fa-cart-plus"></i><span>Thêm</span>
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                                <i class="fas fa-ban"></i><span>Hết</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             }
-        }
 
-        @* Dynamic tabs - Tự động lấy danh sách loại từ database Admin *@
-        @{
-            var types = ViewBag.Types as List<WebBanThucAnNhanh.Models.TypeOfFastFood>;
-            bool isFirstTab = true;
-        }
+            @* Dynamic tabs - Tự động lấy danh sách loại từ database Admin *@
+            @{
+                var types = ViewBag.Types as List<WebBanThucAnNhanh.Models.TypeOfFastFood>;
+                bool isFirstTab = true;
+            }
 
-        @if (types != null && types.Any())
-        {
-            @* Tab buttons *@
-            <div class="menu-tabs text-center mb-4" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                @foreach (var type in types)
-                {
-                    <button class="menu-tab btn @(isFirstTab ? "active" : "")" data-target="type-@type.IdTypeOfFastFood"
-                            style="padding: 10px 24px; border-radius: 30px; font-weight: 600; border: 2px solid #f35f2a; background: @(isFirstTab ? "#f35f2a" : "transparent"); color: @(isFirstTab ? "#fff" : "#f35f2a"); cursor: pointer; transition: all 0.3s;">
-                        @type.NameTypeOfFastFood
-                    </button>
-                    isFirstTab = false;
-                }
-            </div>
-
-            @* Tab contents *@
-            <div id="product-container">
-                @{
-                    isFirstTab = true;
-                }
-                @foreach (var type in types)
-                {
-                    <div class="menu-content @(isFirstTab ? "active-content" : "")" id="type-@type.IdTypeOfFastFood"
-                         style="display: @(isFirstTab ? "grid" : "none");">
-                        @{
-                            await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == type.IdTypeOfFastFood));
-                        }
-                    </div>
-                    isFirstTab = false;
-                }
-            </div>
-        }
-
-    </div>
-</section>
-
-<section class="testimonials" id="testimonials">
-    <div class="container">
-        <div class="section-title text-center">
-            <h2>Những khách hàng thân thuộc của chúng tôi nói gì?</h2>
-            <p>Khám phá lý do tại sao khách hàng của chúng tôi luôn quay lại mua hàng lần nữa.</p>
-        </div>
-
-        <div class="testimonials-grid">
-
-            <div class="testimonial-card animate-on-scroll">
-                <div class="card-header-review">
-                    <div class="user-info">
-                        <img src="~/images/hung.png" alt="Hung" />
-                        <div>
-                            <h4>Hưng</h4>
-                            <span class="user-role">Người Ăn Nhiều</span>
-                            <div class="stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <i class="fas fa-quote-right quote-icon"></i>
-                </div>
-                <div class="card-body-review">
-                    <p>"Những chiếc burger ngon nhất trong thành phố!
-                        Tôi luôn bị ấn tượng bởi chất lượng và hương vị. Giao hàng lúc nào cũng đúng giờ, đồ ăn đến nơi
-                        vẫn nóng hổi và tươi ngon. Đây sẽ là món khoái khẩu của tôi. Tôi sẽ ăn burger để càng béo phì
-                        đến cuối đời”</p>
-                </div>
-                <div class="card-footer-review">
-                    February 15, 2025
-                </div>
-            </div>
-
-            <div class="testimonial-card animate-on-scroll">
-                <div class="card-header-review">
-                    <div class="user-info">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson" />
-                        <div>
-                            <h4>Sarah Johnson</h4>
-                            <span class="user-role">Blogger Thức Ăn</span>
-                            <div class="stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <i class="fas fa-quote-right quote-icon"></i>
-                </div>
-                <div class="card-body-review">
-                    <p>“Tôi đã thử rất nhiều quán đồ ăn nhanh, nhưng nơi này thực sự nổi bật!
-                        Bánh mì gà của họ ngon đến mức khó cưỡng, và dịch vụ khách hàng thì cực kỳ tuyệt vời. Tôi khuyên
-                        tất cả người theo dõi của mình nên thử!”</p>
-                </div>
-                <div class="card-footer-review">
-                    January 28, 2025
-                </div>
-            </div>
-
-            <div class="testimonial-card animate-on-scroll">
-                <div class="card-header-review">
-                    <div class="user-info">
-                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Michael Brown" />
-                        <div>
-                            <h4>Michael Brown</h4>
-                            <span class="user-role">Bếp Trưởng Điều Hành</span>
-                            <div class="stars">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <i class="fas fa-quote-right quote-icon"></i>
-                </div>
-                <div class="card-body-review">
-                    <p>“Với tư cách là một đầu bếp, tôi rất coi trọng chất lượng nguyên liệu.
-                        Nơi này chỉ sử dụng những nguyên liệu tốt nhất và tươi nhất. Gia đình tôi rất thích các combo ưu
-                        đãi cuối tuần. Chúng tôi đã đặt món ở đây hơn một năm và chất lượng chưa bao giờ làm chúng tôi
-                        thất vọng!”</p>
-                </div>
-                <div class="card-footer-review">
-                    March 5, 2025
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tabs = document.querySelectorAll('.menu-tab');
-        const contents = document.querySelectorAll('.menu-content');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const target = this.getAttribute('data-target');
-
-                // 1. Đổi màu nút được chọn
-                tabs.forEach(t => {
-                    t.classList.remove('active');
-                    t.style.background = 'transparent';
-                    t.style.color = '#f35f2a';
-                });
-                this.classList.add('active');
-                this.style.background = '#f35f2a';
-                this.style.color = '#fff';
-
-                // 2. Hiện danh sách món ăn tương ứng, ẩn danh sách còn lại
-                contents.forEach(content => {
-                    if (content.id === target) {
-                        content.style.display = 'grid';
-                    } else {
-                        content.style.display = 'none';
+            @if (types != null && types.Any())
+            {
+                @* Tab buttons *@
+                <div class="menu-tabs text-center mb-4"
+                     style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    @foreach (var type in types)
+                    {
+                        <button class="menu-tab btn @(isFirstTab ? "active" : "")" data-target="type-@type.IdTypeOfFastFood"
+                                style="padding: 10px 24px; border-radius: 30px; font-weight: 600; border: 2px solid #f35f2a; background: @(isFirstTab ? "#f35f2a" : "transparent"); color: @(isFirstTab ? "#fff" : "#f35f2a"); cursor: pointer; transition: all 0.3s;">
+                            @type.NameTypeOfFastFood
+                        </button>
+                        isFirstTab = false;
                     }
-                });
-            });
-        });
-    });
-</script>
+                </div>
 
+                @* Tab contents *@
+                <div id="product-container">
+                    @{
+                        isFirstTab = true;
+                    }
+                    @foreach (var type in types)
+                    {
+                        <div class="menu-content @(isFirstTab ? "active-content" : "")" id="type-@type.IdTypeOfFastFood"
+                             style="display: @(isFirstTab ? "grid" : "none");">
+                            @{
+                                await RenderProductList(Model.Where(x => x.IdTypeOfFastFood == type.IdTypeOfFastFood));
+                            }
+                        </div>
+                        isFirstTab = false;
+                    }
+                </div>
+            }
+
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Những khách hàng thân thuộc của chúng tôi nói gì?</h2>
+                <p>Khám phá lý do tại sao khách hàng của chúng tôi luôn quay lại mua hàng lần nữa.</p>
+            </div>
+
+            <div class="testimonials-grid">
+
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="card-header-review">
+                        <div class="user-info">
+                            <img src="~/images/hung.png" alt="Hung" />
+                            <div>
+                                <h4>Hưng</h4>
+                                <span class="user-role">Người Ăn Nhiều</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-quote-right quote-icon"></i>
+                    </div>
+                    <div class="card-body-review">
+                        <p>"Những chiếc burger ngon nhất trong thành phố!
+                            Tôi luôn bị ấn tượng bởi chất lượng và hương vị. Giao hàng lúc nào cũng đúng giờ, đồ ăn đến nơi
+                            vẫn nóng hổi và tươi ngon. Đây sẽ là món khoái khẩu của tôi. Tôi sẽ ăn burger để càng béo phì
+                            đến cuối đời”</p>
+                        </div>
+                        <div class="card-footer-review">
+                            February 15, 2025
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card animate-on-scroll">
+                        <div class="card-header-review">
+                            <div class="user-info">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson" />
+                                <div>
+                                    <h4>Sarah Johnson</h4>
+                                    <span class="user-role">Blogger Thức Ăn</span>
+                                    <div class="stars">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="fas fa-quote-right quote-icon"></i>
+                        </div>
+                        <div class="card-body-review">
+                            <p>“Tôi đã thử rất nhiều quán đồ ăn nhanh, nhưng nơi này thực sự nổi bật!
+                                Bánh mì gà của họ ngon đến mức khó cưỡng, và dịch vụ khách hàng thì cực kỳ tuyệt vời. Tôi khuyên
+                                tất cả người theo dõi của mình nên thử!”</p>
+                            </div>
+                            <div class="card-footer-review">
+                                January 28, 2025
+                            </div>
+                        </div>
+
+                        <div class="testimonial-card animate-on-scroll">
+                            <div class="card-header-review">
+                                <div class="user-info">
+                                    <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Michael Brown" />
+                                    <div>
+                                        <h4>Michael Brown</h4>
+                                        <span class="user-role">Bếp Trưởng Điều Hành</span>
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <i class="fas fa-quote-right quote-icon"></i>
+                            </div>
+                            <div class="card-body-review">
+                                <p>“Với tư cách là một đầu bếp, tôi rất coi trọng chất lượng nguyên liệu.
+                                    Nơi này chỉ sử dụng những nguyên liệu tốt nhất và tươi nhất. Gia đình tôi rất thích các combo ưu
+                                    đãi cuối tuần. Chúng tôi đã đặt món ở đây hơn một năm và chất lượng chưa bao giờ làm chúng tôi
+                                    thất vọng!”</p>
+                                </div>
+                                <div class="card-footer-review">
+                                    March 5, 2025
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <div class="modal fade" id="toppingModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content" id="toppingModalContent">
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    // 1. HÀM GỌI DỮ LIỆU BẢNG TOPPING TỪ CONTROLLER BẰNG AJAX
+                    function showToppingModal(fastFoodId) {
+                        // Mở Modal lên ngay để hiện trạng thái Loading
+                        var toppingModal = new bootstrap.Modal(document.getElementById('toppingModal'));
+                        toppingModal.show();
+
+                        // Gọi Ajax sang HomeController
+                        fetch('@Url.Action("GetToppingForm", "Home")?id=' + fastFoodId)
+                            .then(response => response.text())
+                            .then(html => {
+                                // Nhúng giao diện lấy được vào thẻ div content
+                                document.getElementById('toppingModalContent').innerHTML = html;
+                            })
+                            .catch(error => {
+                                console.error('Lỗi khi tải bảng tùy chọn:', error);
+                                document.getElementById('toppingModalContent').innerHTML = '<div class="p-4 text-center text-danger">Có lỗi xảy ra, không thể tải tùy chọn món ăn này!</div>';
+                            });
+                    }
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const tabs = document.querySelectorAll('.menu-tab');
+                        const contents = document.querySelectorAll('.menu-content');
+
+                        tabs.forEach(tab => {
+                            tab.addEventListener('click', function () {
+                                const target = this.getAttribute('data-target');
+
+                                // 1. Đổi màu nút được chọn
+                                tabs.forEach(t => {
+                                    t.classList.remove('active');
+                                    t.style.background = 'transparent';
+                                    t.style.color = '#f35f2a';
+                                });
+                                this.classList.add('active');
+                                this.style.background = '#f35f2a';
+                                this.style.color = '#fff';
+
+                                // 2. Hiện danh sách món ăn tương ứng, ẩn danh sách còn lại
+                                contents.forEach(content => {
+                                    if (content.id === target) {
+                                        content.style.display = 'grid';
+                                    } else {
+                                        content.style.display = 'none';
+                                    }
+                                });
+                            });
+                        });
+                    });
+                </script>
