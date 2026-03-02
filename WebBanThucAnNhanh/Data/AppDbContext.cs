@@ -437,7 +437,10 @@ namespace WebBanThucAnNhanh.Data
                 new OptionGroup { Id = 1, Name = "Size", IsMultiSelect = false },
                 new OptionGroup { Id = 2, Name = "Topping", IsMultiSelect = true },
                 new OptionGroup { Id = 3, Name = "Sốt chấm", IsMultiSelect = true },
-                new OptionGroup { Id = 4, Name = "Đế bánh", IsMultiSelect = false }
+                new OptionGroup { Id = 4, Name = "Đế bánh", IsMultiSelect = false },
+                new OptionGroup { Id = 5, Name = "Mức đường", IsMultiSelect = false },
+                new OptionGroup { Id = 6, Name = "Mức đá", IsMultiSelect = false },
+                new OptionGroup { Id = 7, Name = "Thêm đồ ăn kèm", IsMultiSelect = true }
             );
 
             // 8. Seed Data cho các lựa chọn trong từng nhóm
@@ -463,7 +466,24 @@ namespace WebBanThucAnNhanh.Data
                 // === ĐẾ BÁNH (OptionGroupId = 4) ===
                 new OptionItem { Id = 13, OptionGroupId = 4, Name = "Đế mỏng truyền thống", AdditionalPrice = 0m },
                 new OptionItem { Id = 14, OptionGroupId = 4, Name = "Đế dày xốp", AdditionalPrice = 10000m },
-                new OptionItem { Id = 15, OptionGroupId = 4, Name = "Đế viền phô mai", AdditionalPrice = 15000m }
+                new OptionItem { Id = 15, OptionGroupId = 4, Name = "Đế viền phô mai", AdditionalPrice = 15000m },
+
+                // === MỨC ĐƯỜNG (OptionGroupId = 5) ===
+                new OptionItem { Id = 16, OptionGroupId = 5, Name = "100% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 17, OptionGroupId = 5, Name = "70% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 18, OptionGroupId = 5, Name = "50% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 19, OptionGroupId = 5, Name = "30% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 20, OptionGroupId = 5, Name = "0% Đường", AdditionalPrice = 0m },
+
+                // === MỨC ĐÁ (OptionGroupId = 6) ===
+                new OptionItem { Id = 21, OptionGroupId = 6, Name = "100% Đá", AdditionalPrice = 0m },
+                new OptionItem { Id = 22, OptionGroupId = 6, Name = "50% Đá", AdditionalPrice = 0m },
+                new OptionItem { Id = 23, OptionGroupId = 6, Name = "0% Đá", AdditionalPrice = 0m },
+
+                // === THÊM ĐỒ ĂN KÈM (OptionGroupId = 7) ===
+                new OptionItem { Id = 24, OptionGroupId = 7, Name = "Thêm phô mai", AdditionalPrice = 10000m },
+                new OptionItem { Id = 25, OptionGroupId = 7, Name = "Thêm xúc xích", AdditionalPrice = 15000m },
+                new OptionItem { Id = 26, OptionGroupId = 7, Name = "Thêm trứng ốp la", AdditionalPrice = 8000m }
             );
 
             // 9. Seed Data liên kết món ăn với nhóm tùy chọn
@@ -472,43 +492,63 @@ namespace WebBanThucAnNhanh.Data
                 // Trà Sữa (Id=4)
                 new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 1 },
                 new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 6 },
                 // Trà Đào (Id=10)
                 new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 1 },
                 new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 6 },
                 // Matcha Latte (Id=18)
                 new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 1 },
                 new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 6 },
                 // Trà Vải (Id=24)
                 new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 1 },
                 new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 6 },
 
                 // === ĐỒ UỐNG: Chỉ Size ===
                 // Coca Cola (Id=2)
                 new FastFoodOptionGroup { FastFoodId = 2, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 2, OptionGroupId = 6 },
                 // Nước Cam Ép (Id=6)
                 new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 6 },
                 // Sinh Tố Bơ (Id=8)
                 new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 6 },
                 // Cà Phê Sữa Đá (Id=20)
                 new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 6 },
                 // Nước Chanh Dây (Id=23)
                 new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 6 },
 
                 // === ĐỒ ĂN: Sốt chấm ===
                 // Burger Bò (Id=1)
                 new FastFoodOptionGroup { FastFoodId = 1, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 1, OptionGroupId = 7 },
                 // Gà Rán (Id=3)
                 new FastFoodOptionGroup { FastFoodId = 3, OptionGroupId = 3 },
                 // Khoai Tây Chiên (Id=5)
                 new FastFoodOptionGroup { FastFoodId = 5, OptionGroupId = 3 },
                 // Hot Dog (Id=11)
                 new FastFoodOptionGroup { FastFoodId = 11, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 11, OptionGroupId = 7 },
                 // Gà Viên Chiên (Id=12)
                 new FastFoodOptionGroup { FastFoodId = 12, OptionGroupId = 3 },
                 // Hành Tây Chiên (Id=15)
                 new FastFoodOptionGroup { FastFoodId = 15, OptionGroupId = 3 },
                 // Sandwich Gà (Id=16)
                 new FastFoodOptionGroup { FastFoodId = 16, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 16, OptionGroupId = 7 },
                 // Cánh Gà Chiên (Id=17)
                 new FastFoodOptionGroup { FastFoodId = 17, OptionGroupId = 3 },
                 // Xúc Xích Nướng (Id=22)
@@ -517,7 +557,8 @@ namespace WebBanThucAnNhanh.Data
                 // === PIZZA: Đế bánh + Sốt ===
                 // Pizza Hải Sản (Id=7)
                 new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 4 },
-                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 3 }
+                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 7 }
             );
 
             // === CẤU HÌNH CROSS SELL BUNDLE ===
