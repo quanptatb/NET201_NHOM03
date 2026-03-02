@@ -15,7 +15,7 @@
                 <tr>
                     <th>Mã đơn</th>
                     <th>Ngày đặt</th>
-                    <th>Tổng tiền</th>
+                    <th>Chi tiết món ăn</th> <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                     <th>Địa chỉ giao hàng</th>
                 </tr>
@@ -26,12 +26,43 @@
                     <tr>
                         <td class="fw-bold">#@item.IdOrder</td>
                         <td>@item.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
+                        
+                        <td>
+                            <ul class="list-unstyled mb-0 text-start">
+                                @if(item.OrderDetails != null && item.OrderDetails.Any())
+                                {
+                                    foreach(var detail in item.OrderDetails)
+                                    {
+                                        <li class="mb-1">
+                                            <span class="fw-bold">@detail.Quantity x</span> @detail.ProductName 
+                                            @if(detail.IsReward)
+                                            {
+                                                <span class="badge bg-danger ms-1">Quà tặng</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fst-italic ms-1">(@detail.Price.ToString("N0") đ)</span>
+                                            }
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="text-muted">Không có chi tiết</li>
+                                }
+                            </ul>
+                        </td>
+
                         <td class="text-danger fw-bold">@item.TotalPrice.ToString("N0") VNĐ</td>
                         <td>
                             @if (item.Status == 0) {
                                 <span class="badge bg-warning text-dark">Đang xử lý</span>
-                            } else {
+                            } else if (item.Status == 1) {
+                                <span class="badge bg-info text-dark">Đang giao</span>
+                            } else if (item.Status == 2) {
                                 <span class="badge bg-success">Đã hoàn thành</span>
+                            } else {
+                                <span class="badge bg-secondary">Đã hủy</span>
                             }
                         </td>
                         <td>

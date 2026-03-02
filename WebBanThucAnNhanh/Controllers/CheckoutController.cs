@@ -9,7 +9,6 @@ using WebBanThucAnNhanh.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Identity;
 
 namespace WebBanThucAnNhanh.Controllers
 {
@@ -24,7 +23,6 @@ namespace WebBanThucAnNhanh.Controllers
             _context = context;
         }
 
-        // 1. Đổi tên thành Index để đường dẫn là /Checkout thay vì /Checkout/Checkout
         [HttpGet]
         public IActionResult Index()
         {
@@ -42,13 +40,13 @@ namespace WebBanThucAnNhanh.Controllers
                 return RedirectToAction("Index", "Home"); // Về trang chủ nếu giỏ rỗng
             }
 
-            // Lấy User ID từ Claim (Nhớ sửa AccountController như hướng dẫn trên)
+            // Lấy User ID từ Claim
             var userIdClaim = User.FindFirst("UserId");
 
             // Phòng hờ trường hợp cookie cũ chưa có UserId, bắt đăng nhập lại
             if (userIdClaim == null) return RedirectToAction("Login", "Account");
 
-            // Tính tổng tiền (Ép kiểu về decimal nếu CartItem dùng decimal)
+            // Tính tổng tiền
             decimal total = cartItems.Sum(item => item.Total);
 
             // Tạo model Order để truyền data sang View
@@ -58,12 +56,11 @@ namespace WebBanThucAnNhanh.Controllers
                 UserId = int.Parse(userIdClaim.Value)
             };
 
-            return View(orderModel); // View này cần đặt tên là Index.cshtml trong thư mục Views/Checkout
+            return View(orderModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // Đặt tên ActionName để trùng khớp với form post
         public async Task<IActionResult> Index([Bind("ShippingAddress,PhoneNumber")] Order order)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -73,7 +70,7 @@ namespace WebBanThucAnNhanh.Controllers
             order.DateCreated = DateTime.Now;
             order.Status = 0; // 0: Chờ xử lý
 
-            // Kiểm tra lại giỏ hàng trong Session (tránh hack sửa HTML)
+            // Kiểm tra lại giỏ hàng trong Session
             var sessionCart = HttpContext.Session.GetString("Cart");
             if (string.IsNullOrEmpty(sessionCart))
             {
@@ -89,19 +86,37 @@ namespace WebBanThucAnNhanh.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync(); // Lưu để sinh ra OrderId
 
-            // 2. Lưu OrderDetail
+            // 2. Lưu OrderDetail và Trừ tồn kho
             foreach (var item in cartItems)
             {
+                // BỔ SUNG: Xử lý nối chuỗi tên món + Topping/Size (nếu có)
+                string fullProductName = item.Name;
+                if (item.SelectedOptions != null && item.SelectedOptions.Any())
+                {
+                    fullProductName += " (" + string.Join(", ", item.SelectedOptions.Select(o => o.OptionName)) + ")";
+                }
+
                 var detail = new OrderDetail
                 {
                     OrderId = order.IdOrder,
                     FastFoodId = item.Id,
+                    ProductName = fullProductName, // BẮT BUỘC: Đảm bảo toàn vẹn dữ liệu kế toán
                     Quantity = item.Quantity,
-                    Price = item.Price, // Giá tại thời điểm mua (0đ nếu là quà)
+                    Price = item.Price, // Giá tại thời điểm mua
                     IsReward = item.IsReward,
                     Note = item.IsReward ? "🎁 Quà tặng từ Vòng quay may mắn" : null
                 };
                 _context.OrderDetails.Add(detail);
+
+                // BỔ SUNG: Trừ tồn kho
+                if (!item.IsReward) 
+                {
+                    var productInDb = await _context.FastFoods.FindAsync(item.Id);
+                    if (productInDb != null)
+                    {
+                        productInDb.Quantity -= item.Quantity; // Giảm số lượng
+                    }
+                }
             }
             await _context.SaveChangesAsync();
 
@@ -109,9 +124,6 @@ namespace WebBanThucAnNhanh.Controllers
             var currentUser = await _context.Users.FindAsync(order.UserId);
             if (currentUser != null)
             {
-                // Tính lượt quay tỷ lệ thuận với tổng đơn
-                // Mỗi 300K → +1 quay Đồ ăn + 1 quay Nước
-                // Phần dư >= 100K → +1 quay Nước
                 int foodSpinCount = (int)(order.TotalPrice / 300000);
                 int remainder = (int)(order.TotalPrice % 300000);
 
@@ -143,8 +155,8 @@ namespace WebBanThucAnNhanh.Controllers
             int userId = int.Parse(userIdClaim.Value);
 
             var myOrders = await _context.Orders
-                .Include(o => o.OrderDetails) // Nên Include thêm chi tiết nếu muốn xem sâu hơn
-                .ThenInclude(od => od.FastFood) // Include tên món ăn để hiển thị
+                .Include(o => o.OrderDetails) // Lấy thông tin chi tiết các món
+                .ThenInclude(od => od.FastFood) 
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.DateCreated)
                 .ToListAsync();

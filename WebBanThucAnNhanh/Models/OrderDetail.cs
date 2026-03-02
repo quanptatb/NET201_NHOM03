@@ -7,7 +7,9 @@ namespace WebBanThucAnNhanh.Models
     {
         [Key]
         public int IdOrderDetail { get; set; }
-
+        [Required]
+        [StringLength(255)]
+        public string ProductName { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; } // Giá tại thời điểm mua
 
