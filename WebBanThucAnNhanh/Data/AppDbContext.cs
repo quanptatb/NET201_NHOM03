@@ -19,6 +19,7 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
+        public DbSet<CrossSellBundle> CrossSellBundles { get; set; }
 
         // === LUCKY WHEEL ===
         public DbSet<WheelPrize> WheelPrizes { get; set; }
@@ -395,6 +396,54 @@ namespace WebBanThucAnNhanh.Data
                 new WheelPrize { Id = 15, PrizeName = "Sandwich Gà miễn phí", PrizeType = 2, FastFoodId = 16, Probability = 10, RemainingQuantity = 30, IsActive = true },
                 new WheelPrize { Id = 16, PrizeName = "Chúc may mắn lần sau!", PrizeType = 2, FastFoodId = null, Probability = 32, RemainingQuantity = 9999, IsActive = true }
             );
+
+            // 6. Seed Data cho Cross Sell Bundle (Mua Kèm)
+            modelBuilder.Entity<CrossSellBundle>().HasData(
+                // === COMBO BURGER BÒ ===
+                new CrossSellBundle { Id = 1, MainFastFoodId = 1, AddOnFastFoodId = 5, DiscountPercentage = 10 },  // Burger + Khoai Tây Chiên
+                new CrossSellBundle { Id = 2, MainFastFoodId = 1, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Burger + Coca Cola
+                new CrossSellBundle { Id = 3, MainFastFoodId = 1, AddOnFastFoodId = 4, DiscountPercentage = 5 },   // Burger + Trà Sữa
+
+                // === COMBO GÀ RÁN ===
+                new CrossSellBundle { Id = 4, MainFastFoodId = 3, AddOnFastFoodId = 5, DiscountPercentage = 10 },  // Gà Rán + Khoai Tây Chiên
+                new CrossSellBundle { Id = 5, MainFastFoodId = 3, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Gà Rán + Coca Cola
+                new CrossSellBundle { Id = 6, MainFastFoodId = 3, AddOnFastFoodId = 6, DiscountPercentage = 8 },   // Gà Rán + Nước Cam Ép
+
+                // === COMBO PIZZA HẢI SẢN ===
+                new CrossSellBundle { Id = 7, MainFastFoodId = 7, AddOnFastFoodId = 6, DiscountPercentage = 8 },   // Pizza + Nước Cam Ép
+                new CrossSellBundle { Id = 8, MainFastFoodId = 7, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Pizza + Coca Cola
+                new CrossSellBundle { Id = 9, MainFastFoodId = 7, AddOnFastFoodId = 4, DiscountPercentage = 5 },   // Pizza + Trà Sữa
+
+                // === COMBO HOT DOG ===
+                new CrossSellBundle { Id = 10, MainFastFoodId = 11, AddOnFastFoodId = 5, DiscountPercentage = 10 }, // Hot Dog + Khoai Tây Chiên
+                new CrossSellBundle { Id = 11, MainFastFoodId = 11, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Hot Dog + Coca Cola
+                new CrossSellBundle { Id = 12, MainFastFoodId = 11, AddOnFastFoodId = 10, DiscountPercentage = 5 }, // Hot Dog + Trà Đào
+
+                // === COMBO GÀ VIÊN CHIÊN ===
+                new CrossSellBundle { Id = 13, MainFastFoodId = 12, AddOnFastFoodId = 5, DiscountPercentage = 8 },  // Gà Viên + Khoai Tây Chiên
+                new CrossSellBundle { Id = 14, MainFastFoodId = 12, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Gà Viên + Coca Cola
+                new CrossSellBundle { Id = 15, MainFastFoodId = 12, AddOnFastFoodId = 4, DiscountPercentage = 5 },  // Gà Viên + Trà Sữa
+
+                // === COMBO SANDWICH GÀ ===
+                new CrossSellBundle { Id = 16, MainFastFoodId = 16, AddOnFastFoodId = 4, DiscountPercentage = 8 },  // Sandwich + Trà Sữa
+                new CrossSellBundle { Id = 17, MainFastFoodId = 16, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Sandwich + Coca Cola
+                new CrossSellBundle { Id = 18, MainFastFoodId = 16, AddOnFastFoodId = 20, DiscountPercentage = 5 }  // Sandwich + Cà Phê
+            );
+
+            // === CẤU HÌNH CROSS SELL BUNDLE ===
+            // Quan hệ: CrossSellBundle -> MainFastFood
+            modelBuilder.Entity<CrossSellBundle>()
+                .HasOne(c => c.MainFastFood)
+                .WithMany()
+                .HasForeignKey(c => c.MainFastFoodId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Quan hệ: CrossSellBundle -> AddOnFastFood
+            modelBuilder.Entity<CrossSellBundle>()
+                .HasOne(c => c.AddOnFastFood)
+                .WithMany()
+                .HasForeignKey(c => c.AddOnFastFoodId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
