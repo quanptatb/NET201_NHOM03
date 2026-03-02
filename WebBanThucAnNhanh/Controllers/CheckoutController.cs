@@ -89,7 +89,7 @@ namespace WebBanThucAnNhanh.Controllers
             // 2. Lưu OrderDetail và Trừ tồn kho
             foreach (var item in cartItems)
             {
-                // BỔ SUNG: Xử lý nối chuỗi tên món + Topping/Size (nếu có)
+                // Xử lý nối chuỗi tên món + Topping/Size (nếu có)
                 string fullProductName = item.Name;
                 if (item.SelectedOptions != null && item.SelectedOptions.Any())
                 {
@@ -100,7 +100,7 @@ namespace WebBanThucAnNhanh.Controllers
                 {
                     OrderId = order.IdOrder,
                     FastFoodId = item.Id,
-                    ProductName = fullProductName, // BẮT BUỘC: Đảm bảo toàn vẹn dữ liệu kế toán
+                    ProductName = fullProductName, // Đảm bảo toàn vẹn dữ liệu kế toán
                     Quantity = item.Quantity,
                     Price = item.Price, // Giá tại thời điểm mua
                     IsReward = item.IsReward,
@@ -108,13 +108,19 @@ namespace WebBanThucAnNhanh.Controllers
                 };
                 _context.OrderDetails.Add(detail);
 
-                // BỔ SUNG: Trừ tồn kho
-                if (!item.IsReward) 
+                // Trừ tồn kho (không trừ nếu là quà tặng)
+                if (!item.IsReward)
                 {
                     var productInDb = await _context.FastFoods.FindAsync(item.Id);
                     if (productInDb != null)
                     {
-                        productInDb.Quantity -= item.Quantity; // Giảm số lượng
+                        productInDb.Quantity -= item.Quantity;
+                        // Tự động đặt hết hàng nếu số lượng <= 0
+                        if (productInDb.Quantity <= 0)
+                        {
+                            productInDb.Quantity = 0;
+                            productInDb.Status = false; // Hết hàng
+                        }
                     }
                 }
             }
