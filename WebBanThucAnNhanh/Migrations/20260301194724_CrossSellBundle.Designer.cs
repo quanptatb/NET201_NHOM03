@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301194724_CrossSellBundle")]
+    partial class CrossSellBundle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,134 +85,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.HasIndex("MainFastFoodId");
 
                     b.ToTable("CrossSellBundles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AddOnFastFoodId = 6,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AddOnFastFoodId = 6,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 11,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 12,
-                            AddOnFastFoodId = 10,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 13,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 14,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 15,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 16,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 16
-                        },
-                        new
-                        {
-                            Id = 17,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 16
-                        },
-                        new
-                        {
-                            Id = 18,
-                            AddOnFastFoodId = 20,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 16
-                        });
                 });
 
             modelBuilder.Entity("WebBanThucAnNhanh.Models.FastFood", b =>
@@ -1042,13 +917,13 @@ namespace WebBanThucAnNhanh.Migrations
                     b.HasOne("WebBanThucAnNhanh.Models.FastFood", "AddOnFastFood")
                         .WithMany()
                         .HasForeignKey("AddOnFastFoodId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebBanThucAnNhanh.Models.FastFood", "MainFastFood")
                         .WithMany()
                         .HasForeignKey("MainFastFoodId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AddOnFastFood");

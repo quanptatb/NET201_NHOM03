@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301181233_khangtest")]
+    partial class khangtest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,160 +59,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.HasKey("IdCombo");
 
                     b.ToTable("Combos");
-                });
-
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.CrossSellBundle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AddOnFastFoodId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("DiscountPercentage")
-                        .HasColumnType("float");
-
-                    b.Property<int>("MainFastFoodId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddOnFastFoodId");
-
-                    b.HasIndex("MainFastFoodId");
-
-                    b.ToTable("CrossSellBundles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AddOnFastFoodId = 6,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 3
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AddOnFastFoodId = 6,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 7
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 10.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 11,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 12,
-                            AddOnFastFoodId = 10,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 11
-                        },
-                        new
-                        {
-                            Id = 13,
-                            AddOnFastFoodId = 5,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 14,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 15,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 12
-                        },
-                        new
-                        {
-                            Id = 16,
-                            AddOnFastFoodId = 4,
-                            DiscountPercentage = 8.0,
-                            MainFastFoodId = 16
-                        },
-                        new
-                        {
-                            Id = 17,
-                            AddOnFastFoodId = 2,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 16
-                        },
-                        new
-                        {
-                            Id = 18,
-                            AddOnFastFoodId = 20,
-                            DiscountPercentage = 5.0,
-                            MainFastFoodId = 16
-                        });
                 });
 
             modelBuilder.Entity("WebBanThucAnNhanh.Models.FastFood", b =>
@@ -656,13 +505,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.Property<int?>("FastFoodId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsReward")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
@@ -755,15 +597,9 @@ namespace WebBanThucAnNhanh.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DrinkSpins")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FoodSpins")
-                        .HasColumnType("int");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -799,9 +635,7 @@ namespace WebBanThucAnNhanh.Migrations
                         {
                             Id = 1,
                             Address = "Hà Nội",
-                            DrinkSpins = 0,
                             Email = "admin@fastfood.com",
-                            FoodSpins = 0,
                             FullName = "Administrator",
                             Password = "202cb962ac59075b964b07152d234b70",
                             PhoneNumber = "0123456789",
@@ -809,251 +643,6 @@ namespace WebBanThucAnNhanh.Migrations
                             Status = true,
                             Username = "admin"
                         });
-                });
-
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.UserReward", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateWon")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PrizeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PrizeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserRewards");
-                });
-
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.WheelPrize", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("FastFoodId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PrizeName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("PrizeType")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Probability")
-                        .HasColumnType("float");
-
-                    b.Property<int>("RemainingQuantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FastFoodId");
-
-                    b.ToTable("WheelPrizes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FastFoodId = 2,
-                            IsActive = true,
-                            PrizeName = "Coca Cola miễn phí",
-                            PrizeType = 1,
-                            Probability = 15.0,
-                            RemainingQuantity = 50
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FastFoodId = 4,
-                            IsActive = true,
-                            PrizeName = "Trà Sữa miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FastFoodId = 6,
-                            IsActive = true,
-                            PrizeName = "Nước Cam Ép miễn phí",
-                            PrizeType = 1,
-                            Probability = 14.0,
-                            RemainingQuantity = 45
-                        },
-                        new
-                        {
-                            Id = 4,
-                            FastFoodId = 8,
-                            IsActive = true,
-                            PrizeName = "Sinh Tố Bơ miễn phí",
-                            PrizeType = 1,
-                            Probability = 8.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FastFoodId = 10,
-                            IsActive = true,
-                            PrizeName = "Trà Đào miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 6,
-                            FastFoodId = 18,
-                            IsActive = true,
-                            PrizeName = "Matcha Latte miễn phí",
-                            PrizeType = 1,
-                            Probability = 7.0,
-                            RemainingQuantity = 25
-                        },
-                        new
-                        {
-                            Id = 7,
-                            FastFoodId = 20,
-                            IsActive = true,
-                            PrizeName = "Cà Phê Sữa Đá miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 45
-                        },
-                        new
-                        {
-                            Id = 8,
-                            IsActive = true,
-                            PrizeName = "Chúc may mắn lần sau!",
-                            PrizeType = 1,
-                            Probability = 20.0,
-                            RemainingQuantity = 9999
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FastFoodId = 1,
-                            IsActive = true,
-                            PrizeName = "Burger Bò miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 10,
-                            FastFoodId = 3,
-                            IsActive = true,
-                            PrizeName = "Gà Rán miễn phí",
-                            PrizeType = 2,
-                            Probability = 8.0,
-                            RemainingQuantity = 25
-                        },
-                        new
-                        {
-                            Id = 11,
-                            FastFoodId = 5,
-                            IsActive = true,
-                            PrizeName = "Khoai Tây Chiên miễn phí",
-                            PrizeType = 2,
-                            Probability = 14.0,
-                            RemainingQuantity = 50
-                        },
-                        new
-                        {
-                            Id = 12,
-                            FastFoodId = 7,
-                            IsActive = true,
-                            PrizeName = "Pizza Hải Sản miễn phí",
-                            PrizeType = 2,
-                            Probability = 4.0,
-                            RemainingQuantity = 15
-                        },
-                        new
-                        {
-                            Id = 13,
-                            FastFoodId = 11,
-                            IsActive = true,
-                            PrizeName = "Hot Dog miễn phí",
-                            PrizeType = 2,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 14,
-                            FastFoodId = 12,
-                            IsActive = true,
-                            PrizeName = "Gà Viên Chiên miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 35
-                        },
-                        new
-                        {
-                            Id = 15,
-                            FastFoodId = 16,
-                            IsActive = true,
-                            PrizeName = "Sandwich Gà miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 16,
-                            IsActive = true,
-                            PrizeName = "Chúc may mắn lần sau!",
-                            PrizeType = 2,
-                            Probability = 32.0,
-                            RemainingQuantity = 9999
-                        });
-                });
-
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.CrossSellBundle", b =>
-                {
-                    b.HasOne("WebBanThucAnNhanh.Models.FastFood", "AddOnFastFood")
-                        .WithMany()
-                        .HasForeignKey("AddOnFastFoodId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("WebBanThucAnNhanh.Models.FastFood", "MainFastFood")
-                        .WithMany()
-                        .HasForeignKey("MainFastFoodId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("AddOnFastFood");
-
-                    b.Navigation("MainFastFood");
                 });
 
             modelBuilder.Entity("WebBanThucAnNhanh.Models.FastFood", b =>
@@ -1140,35 +729,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.UserReward", b =>
-                {
-                    b.HasOne("WebBanThucAnNhanh.Models.WheelPrize", "WheelPrize")
-                        .WithMany()
-                        .HasForeignKey("PrizeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("WebBanThucAnNhanh.Models.User", "User")
-                        .WithMany("UserRewards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("WheelPrize");
-                });
-
-            modelBuilder.Entity("WebBanThucAnNhanh.Models.WheelPrize", b =>
-                {
-                    b.HasOne("WebBanThucAnNhanh.Models.FastFood", "FastFood")
-                        .WithMany()
-                        .HasForeignKey("FastFoodId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("FastFood");
-                });
-
             modelBuilder.Entity("WebBanThucAnNhanh.Models.FastFood", b =>
                 {
                     b.Navigation("FastFoodOptionGroups");
@@ -1197,8 +757,6 @@ namespace WebBanThucAnNhanh.Migrations
             modelBuilder.Entity("WebBanThucAnNhanh.Models.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("UserRewards");
                 });
 #pragma warning restore 612, 618
         }
