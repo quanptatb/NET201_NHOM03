@@ -193,6 +193,47 @@ namespace WebBanThucAnNhanh.Controllers
             return RedirectToAction(nameof(History));
         }
 
+        // Controllers/CheckoutController.cs
+        [HttpPost]
+        public async Task<IActionResult> ConfirmCheckout(int pointsToUse, string shippingAddress, string phoneNumber)
+        {
+            // Giả định lấy User hiện tại từ Session hoặc Claims
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var user = await _context.Users.FindAsync(userId);
+            
+            // Tính tổng tiền từ giỏ hàng (logic cũ của bạn)
+            decimal cartTotal = CalculateCartTotal(); 
+
+            var newOrder = new Order
+            {
+                UserId = userId,
+                DateCreated = DateTime.Now,
+                ShippingAddress = shippingAddress,
+                PhoneNumber = phoneNumber,
+                Status = 0 // Chờ xác nhận
+            };
+
+            // Áp dụng quy đổi điểm: 1 điểm = 1đ giảm trừ
+            if (pointsToUse > 0 && pointsToUse <= user.LoyaltyPoints)
+            {
+                decimal discountAmount = pointsToUse; 
+                if (discountAmount > cartTotal) discountAmount = cartTotal;
+
+                newOrder.TotalPrice = cartTotal - discountAmount;
+                user.LoyaltyPoints -= (int)discountAmount; // Trừ điểm ngay khi dùng
+                _context.Update(user);
+            }
+            else
+            {
+                newOrder.TotalPrice = cartTotal;
+            }
+
+            _context.Orders.Add(newOrder);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("History");
+        }
+
         public async Task<IActionResult> History()
         {
             var userIdClaim = User.FindFirst("UserId");

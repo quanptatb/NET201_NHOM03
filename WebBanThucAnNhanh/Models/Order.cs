@@ -33,5 +33,15 @@ namespace WebBanThucAnNhanh.Models
 
         // Chi tiết đơn hàng
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+
+        // Thêm hàm này vào bên trong class OrderController
+        private string EvaluateMemberTier(int totalPoints)
+        {
+            if (totalPoints >= 5000) return "Diamond";
+            if (totalPoints >= 2000) return "Gold";    
+            if (totalPoints >= 500) return "Silver";   
+            return "Bronze";                           
+        }
     }
 }
+

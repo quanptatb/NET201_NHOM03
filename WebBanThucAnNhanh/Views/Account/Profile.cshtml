@@ -46,5 +46,41 @@
             }
 
         </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-crown"></i> Chương trình Thành viên Loyalty</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h6>Hạng thành viên</h6>
+                        <h3 class="text-warning">@Model.MembershipLevel</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Điểm hiện có</h6>
+                        <h3>@Model.LoyaltyPoints.ToString("N0") <small>đang có</small></h3>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Tổng chi tiêu</h6>
+                        <p>@Model.TotalSpent.ToString("N0") VNĐ</p>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="mb-1">Tiến trình nâng hạng tiếp theo:</p>
+                    <div class="progress" style="height: 20px;">
+                        @{
+                            // Tính % dựa trên mốc Kim Cương (10tr) làm ví dụ
+                            double percent = (double)(Model.TotalSpent / 10000000m * 100);
+                            if (percent > 100) percent = 100;
+                        }
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @percent%">
+                            @percent.ToString("0")%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

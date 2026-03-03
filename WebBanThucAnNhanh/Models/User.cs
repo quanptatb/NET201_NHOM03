@@ -20,7 +20,6 @@ namespace WebBanThucAnNhanh.Models
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; }
 
-        // Bổ sung để đủ 6 thông tin theo yêu cầu Assignment
         [Required(ErrorMessage = "Vui lòng nhập họ tên")]
         [StringLength(100)]
         public string FullName { get; set; }
@@ -29,20 +28,23 @@ namespace WebBanThucAnNhanh.Models
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
 
-        public string Role { get; set; } = "Customer"; // Customer, Admin
+        public string Role { get; set; } = "Customer"; 
         public bool Status { get; set; } = true;
 
-        // === LUCKY WHEEL: Số lượt quay tích lũy ===
-        [Display(Name = "Lượt quay Nước")]
         public int DrinkSpins { get; set; } = 0;
-
-        [Display(Name = "Lượt quay Đồ ăn")]
         public int FoodSpins { get; set; } = 0;
 
-        // Quan hệ 1-n: Một User có nhiều đơn hàng
-        public virtual ICollection<Order>? Orders { get; set; }
+        // --- BỔ SUNG PHẦN TÍCH ĐIỂM & HẠNG THÀNH VIÊN ---
+        [Display(Name = "Điểm tích lũy")]
+        public int LoyaltyPoints { get; set; } = 0;
 
-        // Quan hệ 1-n: Một User có nhiều phần thưởng đã trúng
+        [Display(Name = "Tổng chi tiêu")]
+        public decimal TotalSpent { get; set; } = 0m;
+
+        [Display(Name = "Hạng thành viên")]
+        public string MembershipLevel { get; set; } = "Đồng"; // Mặc định là Đồng
+
+        public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<UserReward>? UserRewards { get; set; }
     }
 }
