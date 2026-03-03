@@ -217,7 +217,7 @@ public async Task<IActionResult> GoogleResponse()
         new Claim(ClaimTypes.Name, user.FullName ?? "User"), 
         
         new Claim(ClaimTypes.Email, user.Email),
-        new Claim("Id", user.Id.ToString()),
+        new Claim("UserId", user.Id.ToString()),
         new Claim(ClaimTypes.Role, user.Role)
     };
 
