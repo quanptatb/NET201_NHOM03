@@ -106,6 +106,28 @@ namespace WebBanThucAnNhanh.Controllers
                 }
             }
 
+            // === LOYALTY PROGRAM: Cộng điểm khi đơn hàng giao thành công ===
+            if (oldStatus != 2 && Status == 2)
+            {
+                var user = await _context.Users.FindAsync(order.UserId);
+                if (user != null)
+                {
+                    // 50 VNĐ = 1 điểm
+                    int addedPoints = (int)(order.TotalPrice / 50);
+                    user.LoyaltyPoints += addedPoints;
+
+                    // Cập nhật hạng thành viên
+                    if (user.LoyaltyPoints >= 200000) user.MemberRank = "Kim Cương";
+                    else if (user.LoyaltyPoints >= 100000) user.MemberRank = "Bạch Kim";
+                    else if (user.LoyaltyPoints >= 40000) user.MemberRank = "Vàng";
+                    else if (user.LoyaltyPoints >= 20000) user.MemberRank = "Bạc";
+                    else if (user.LoyaltyPoints >= 10000) user.MemberRank = "Đồng";
+                    else user.MemberRank = "Thành viên";
+                    
+                    _context.Update(user);
+                }
+            }
+
             try
             {
                 _context.Update(order);

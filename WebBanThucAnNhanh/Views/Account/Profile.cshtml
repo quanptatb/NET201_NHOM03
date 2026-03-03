@@ -25,6 +25,8 @@
             <div style="margin: 30px 0; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 10px;">
                 <p><strong><i class="fas fa-user"></i> Họ tên:</strong> @fullName</p>
                 <p><strong><i class="fas fa-clock"></i> Trạng thái:</strong> Đang hoạt động</p>
+                <p><strong><i class="fas fa-star" style="color:#f39c12"></i> Hạng thành viên:</strong> <span class="badge" style="background-color: #f39c12;">@(ViewBag.MemberRank ?? "Thành viên")</span></p>
+                <p><strong><i class="fas fa-coins" style="color:#f1c40f"></i> Điểm tích lũy:</strong> @(ViewBag.LoyaltyPoints ?? 0) điểm</p>
             </div>
 
             @* SỬA: Logout về AccountController *@

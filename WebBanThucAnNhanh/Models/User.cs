@@ -39,6 +39,13 @@ namespace WebBanThucAnNhanh.Models
         [Display(Name = "Lượt quay Đồ ăn")]
         public int FoodSpins { get; set; } = 0;
 
+        // === LOYALTY PROGRAM: Điểm và Hạng thành viên ===
+        [Display(Name = "Điểm tích lũy")]
+        public int LoyaltyPoints { get; set; } = 0;
+
+        [Display(Name = "Hạng thành viên")]
+        public string MemberRank { get; set; } = "Thành viên";
+
         // Quan hệ 1-n: Một User có nhiều đơn hàng
         public virtual ICollection<Order>? Orders { get; set; }
 

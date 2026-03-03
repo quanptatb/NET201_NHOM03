@@ -56,7 +56,6 @@ namespace WebBanThucAnNhanh.Controllers
                 return RedirectToAction("Index", "Home"); // Về trang chủ nếu giỏ rỗng
             }
 
-            // Lấy User ID từ Claim
             var userIdClaim = User.FindFirst("UserId");
 
             // Phòng hờ trường hợp cookie cũ chưa có UserId, bắt đăng nhập lại
@@ -64,6 +63,20 @@ namespace WebBanThucAnNhanh.Controllers
 
             // Tính tổng tiền
             decimal total = cartItems.Sum(item => item.Total);
+
+            // === LOYALTY PROGRAM: Chiết khấu hạng ===
+            decimal rankDiscount = 0;
+            string rankName = "Thành viên";
+            var dbUser = _context.Users.Find(int.Parse(userIdClaim.Value));
+            if (dbUser != null)
+            {
+                rankName = dbUser.MemberRank;
+                if (rankName == "Đồng") rankDiscount = total * 0.02m;
+                else if (rankName == "Bạc") rankDiscount = total * 0.03m;
+                else if (rankName == "Vàng") rankDiscount = total * 0.05m;
+                else if (rankName == "Bạch Kim") rankDiscount = total * 0.08m;
+                else if (rankName == "Kim Cương") rankDiscount = total * 0.10m;
+            }
 
             decimal discountAmount = 0;
             string appliedVoucher = null;
@@ -79,7 +92,6 @@ namespace WebBanThucAnNhanh.Controllers
                     else if (voucher.DiscountType == 2) discountAmount = voucher.DiscountValue;
                     
                     if (voucher.DiscountType == 1 && discountAmount > voucher.MaxDiscountAmount) discountAmount = voucher.MaxDiscountAmount;
-                    if (discountAmount > total) discountAmount = total;
                 }
                 else
                 {
@@ -87,9 +99,14 @@ namespace WebBanThucAnNhanh.Controllers
                 }
             }
 
+            decimal totalDiscount = discountAmount + rankDiscount;
+            if (totalDiscount > total) totalDiscount = total;
+
             ViewBag.VoucherCode = appliedVoucher;
-            ViewBag.DiscountAmount = discountAmount;
-            ViewBag.FinalTotal = total - discountAmount;
+            ViewBag.DiscountAmount = discountAmount; // Thay vì tên chung, giờ nó là giảm giá voucher
+            ViewBag.RankDiscount = rankDiscount;
+            ViewBag.RankName = rankName;
+            ViewBag.FinalTotal = total - totalDiscount;
             ViewBag.OriginalTotal = total;
 
             // Tạo model Order để truyền data sang View
@@ -142,6 +159,18 @@ namespace WebBanThucAnNhanh.Controllers
             // Tính toán lại tổng tiền ở Server (Bảo mật)
             decimal total = cartItems.Sum(x => x.Total);
 
+            // === LOYALTY PROGRAM: Chiết khấu hạng ===
+            decimal rankDiscount = 0;
+            var dbUser = _context.Users.Find(int.Parse(userIdClaim.Value));
+            if (dbUser != null)
+            {
+                if (dbUser.MemberRank == "Đồng") rankDiscount = total * 0.02m;
+                else if (dbUser.MemberRank == "Bạc") rankDiscount = total * 0.03m;
+                else if (dbUser.MemberRank == "Vàng") rankDiscount = total * 0.05m;
+                else if (dbUser.MemberRank == "Bạch Kim") rankDiscount = total * 0.08m;
+                else if (dbUser.MemberRank == "Kim Cương") rankDiscount = total * 0.10m;
+            }
+
             var voucherKey = GetUserVoucherKey();
             var voucherCode = Request.Cookies[voucherKey];
             decimal discountAmount = 0;
@@ -157,13 +186,16 @@ namespace WebBanThucAnNhanh.Controllers
                     else if (voucher.DiscountType == 2) discountAmount = voucher.DiscountValue;
                     
                     if (voucher.DiscountType == 1 && discountAmount > voucher.MaxDiscountAmount) discountAmount = voucher.MaxDiscountAmount;
-                    if (discountAmount > total) discountAmount = total;
                 }
             }
+            
+            decimal totalDiscount = discountAmount + rankDiscount;
+            if (totalDiscount > total) totalDiscount = total;
 
             order.AppliedVoucherCode = appliedVoucher;
-            order.DiscountAmount = discountAmount;
-            order.TotalPrice = total - discountAmount;
+            // Lưu tổng số tiền đã giảm (Gồm Voucher & Hạng)
+            order.DiscountAmount = totalDiscount;
+            order.TotalPrice = total - totalDiscount;
 
             // 1. Lưu Order
             _context.Orders.Add(order);

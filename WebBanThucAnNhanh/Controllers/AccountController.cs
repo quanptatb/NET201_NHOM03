@@ -125,8 +125,18 @@ namespace WebBanThucAnNhanh.Controllers
 
         // 2. CHỈ BẢO VỆ CÁC TRANG CẦN ĐĂNG NHẬP
         [Authorize]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
+            var userIdStr = User.FindFirst("UserId")?.Value;
+            if (userIdStr != null && int.TryParse(userIdStr, out int userId))
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    ViewBag.LoyaltyPoints = user.LoyaltyPoints;
+                    ViewBag.MemberRank = user.MemberRank;
+                }
+            }
             return View();
         }
 

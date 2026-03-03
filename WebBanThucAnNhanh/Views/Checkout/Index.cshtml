@@ -19,17 +19,18 @@
                             <h5>Tổng tiền tạm tính:</h5>
                             <h4>@ViewBag.OriginalTotal?.ToString("N0") VNĐ</h4>
                             
+                            @if (ViewBag.RankDiscount != null && ViewBag.RankDiscount > 0)
+                            {
+                                <h5 class="text-info mt-2">Chiết khấu hạng (@ViewBag.RankName): -@ViewBag.RankDiscount?.ToString("N0") VNĐ</h5>
+                            }
+
                             @if (!string.IsNullOrEmpty(ViewBag.VoucherCode))
                             {
                                 <h5 class="text-success mt-2">Mã giảm giá (@ViewBag.VoucherCode): -@ViewBag.DiscountAmount?.ToString("N0") VNĐ</h5>
-                                <h5>Tổng tiền cần thanh toán:</h5>
-                                <h2 class="text-danger">@ViewBag.FinalTotal?.ToString("N0") VNĐ</h2>
                             }
-                            else
-                            {
-                                <h5>Tổng tiền cần thanh toán:</h5>
-                                <h2 class="text-danger">@ViewBag.OriginalTotal?.ToString("N0") VNĐ</h2>
-                            }
+                            
+                            <h5>Tổng tiền cần thanh toán:</h5>
+                            <h2 class="text-danger">@ViewBag.FinalTotal?.ToString("N0") VNĐ</h2>
                         </div>
 
                         <div class="mb-3">
