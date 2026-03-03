@@ -185,6 +185,9 @@
                 url: '/Wheel/Spin',
                 type: 'POST',
                 contentType: 'application/json',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
                 data: JSON.stringify({ spinType: currentTab }),
                 success: function (result) {
                     if (!result.success) {
@@ -251,8 +254,17 @@
                         }
                     }, 5500);
                 },
-                error: function () {
-                    Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Không thể kết nối tới server!' });
+                error: function (xhr) {
+                    if (xhr.status === 429) {
+                        try {
+                            var msg = JSON.parse(xhr.responseText);
+                            Swal.fire({ icon: 'warning', title: '⏳ Quá nhanh!', text: msg.message || 'Vui lòng đợi 3 giây.' });
+                        } catch (e) {
+                            Swal.fire({ icon: 'warning', title: '⏳ Quá nhanh!', text: 'Vui lòng đợi 3 giây rồi quay lại.' });
+                        }
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Không thể kết nối tới server!' });
+                    }
                     isSpinning = false;
                     $('#btnSpin').prop('disabled', false).html('<i class="fas fa-play"></i> QUAY');
                 }
@@ -532,6 +544,7 @@
     }
 </style>
 
+@Html.AntiForgeryToken()
 <div class="wheel-page">
     <!-- Decorative particles -->
     <div class="particle"></div>

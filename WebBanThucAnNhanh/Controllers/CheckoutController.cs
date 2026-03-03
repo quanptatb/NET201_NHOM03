@@ -23,11 +23,20 @@ namespace WebBanThucAnNhanh.Controllers
             _context = context;
         }
 
+        // === HÀM TẠO KEY COOKIE RIÊNG CHO TỪNG ACC (giống CartController) ===
+        private string GetUserCartKey()
+        {
+            var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+            var safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(userName));
+            return $"Cart_{safeUserName}";
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
-            // Kiểm tra giỏ hàng
-            var cookieCart = Request.Cookies["Cart"];
+            // Kiểm tra giỏ hàng — dùng đúng key theo user
+            var cartKey = GetUserCartKey();
+            var cookieCart = Request.Cookies[cartKey];
             List<CartItem> cartItems = new List<CartItem>();
 
             if (cookieCart != null)
@@ -70,8 +79,9 @@ namespace WebBanThucAnNhanh.Controllers
             order.DateCreated = DateTime.Now;
             order.Status = 0; // 0: Chờ xử lý
 
-            // Kiểm tra lại giỏ hàng trong Cookie
-            var cookieCart = Request.Cookies["Cart"];
+            // Kiểm tra lại giỏ hàng trong Cookie — dùng đúng key theo user
+            var cartKey = GetUserCartKey();
+            var cookieCart = Request.Cookies[cartKey];
             if (string.IsNullOrEmpty(cookieCart))
             {
                 return RedirectToAction("Index", "Home");
@@ -146,8 +156,8 @@ namespace WebBanThucAnNhanh.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 3. Xóa Cookie giỏ hàng
-            Response.Cookies.Delete("Cart");
+            // 3. Xóa Cookie giỏ hàng — dùng đúng key theo user
+            Response.Cookies.Delete(cartKey);
 
             // Chuyển hướng đến trang lịch sử
             return RedirectToAction(nameof(History));
