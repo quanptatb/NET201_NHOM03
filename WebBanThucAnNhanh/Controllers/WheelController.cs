@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
@@ -54,6 +55,8 @@ namespace WebBanThucAnNhanh.Controllers
 
         // POST: /Wheel/Spin — API quay thưởng (trả JSON)
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [EnableRateLimiting("SpinLimit")]
         public async Task<IActionResult> Spin([FromBody] SpinRequest request)
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -158,6 +161,7 @@ namespace WebBanThucAnNhanh.Controllers
 
         // POST: /Wheel/RedeemReward — Sử dụng quà (thêm vào giỏ hàng giá 0đ)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RedeemReward(int rewardId)
         {
             var userIdClaim = User.FindFirst("UserId");

@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using WebBanThucAnNhanh.Models;
 using WebBanThucAnNhanh.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,28 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddHttpContextAccessor(); // Để dùng Session trong View (_Layout)
+// ============================================================
+
+// ============================================================
+// RATE LIMITING: Chống spam API quay thưởng (1 lần / 3 giây / user)
+// ============================================================
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsync(
+            "{\"success\":false,\"message\":\"Bạn quay quá nhanh! Vui lòng đợi 3 giây.\"}",
+            cancellationToken);
+    };
+    options.AddSlidingWindowLimiter("SpinLimit", opt =>
+    {
+        opt.PermitLimit = 1;
+        opt.Window = TimeSpan.FromSeconds(3);
+        opt.SegmentsPerWindow = 1;
+    });
+});
 // ============================================================
 
 // Gộp tất cả cấu hình xác thực vào đây
@@ -61,6 +85,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter(); // Chống spam API
 
 // ============================================================
 // 2. KÍCH HOẠT SESSION (ĐẶT TRƯỚC MapControllerRoute)
