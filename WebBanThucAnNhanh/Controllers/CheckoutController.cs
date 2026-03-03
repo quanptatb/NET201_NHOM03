@@ -75,13 +75,29 @@ namespace WebBanThucAnNhanh.Controllers
             var userIdClaim = User.FindFirst("UserId");
             if (userIdClaim == null) return RedirectToAction("Login", "Account");
 
+            // Ignore validation for non-bound properties
+            ModelState.Remove("User");
+            ModelState.Remove("OrderDetails");
+            ModelState.Remove("TotalPrice");
+
+            var cartKey = GetUserCartKey();
+            var cookieCart = Request.Cookies[cartKey];
+
+            if (!ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(cookieCart))
+                {
+                    var cartItemsInvalid = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
+                    order.TotalPrice = cartItemsInvalid.Sum(x => x.Total);
+                }
+                return View(order);
+            }
+
             order.UserId = int.Parse(userIdClaim.Value);
             order.DateCreated = DateTime.Now;
             order.Status = 0; // 0: Chờ xử lý
 
             // Kiểm tra lại giỏ hàng trong Cookie — dùng đúng key theo user
-            var cartKey = GetUserCartKey();
-            var cookieCart = Request.Cookies[cartKey];
             if (string.IsNullOrEmpty(cookieCart))
             {
                 return RedirectToAction("Index", "Home");
