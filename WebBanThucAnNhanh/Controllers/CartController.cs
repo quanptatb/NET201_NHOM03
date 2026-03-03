@@ -157,11 +157,14 @@ namespace WebBanThucAnNhanh.Controllers
 
             if (item != null)
             {
-                // Kiểm tra nếu là hàng khuyến mãi (có option âm) thì không cho tăng số lượng
-                if (item.SelectedOptions != null && item.SelectedOptions.Any(o => o.OptionItemId < 0) && quantity > 1)
+                // Kiểm tra nếu là hàng khuyến mãi (có option âm hoặc hàng tặng từ vòng quay) thì không cho tăng số lượng
+                if ((item.SelectedOptions != null && item.SelectedOptions.Any(o => o.OptionItemId < 0)) || item.IsReward)
                 {
-                    // Giữ nguyên số lượng là 1 nếu cố tình truyền quantity lớn hơn 1
-                    quantity = 1;
+                    if (quantity > 1) 
+                    {
+                        // Giữ nguyên số lượng là 1 nếu cố tình truyền quantity lớn hơn 1
+                        quantity = 1;
+                    }
                 }
 
                 item.Quantity = quantity;
