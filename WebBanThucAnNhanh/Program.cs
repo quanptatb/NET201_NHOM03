@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using WebBanThucAnNhanh.Hubs;
 using WebBanThucAnNhanh.Models;
 using WebBanThucAnNhanh.Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR(); // SignalR real-time notifications
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
@@ -103,5 +105,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// === SIGNALR HUB ENDPOINT ===
+app.MapHub<WheelHub>("/hubs/wheel");
 
 app.Run();

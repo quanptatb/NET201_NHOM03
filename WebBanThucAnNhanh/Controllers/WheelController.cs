@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.SignalR;
+using WebBanThucAnNhanh.Hubs;
 using Microsoft.EntityFrameworkCore;
 using WebBanThucAnNhanh.Data;
 using WebBanThucAnNhanh.Models;
@@ -16,10 +18,12 @@ namespace WebBanThucAnNhanh.Controllers
     public class WheelController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IHubContext<WheelHub> _wheelHub;
 
-        public WheelController(AppDbContext context)
+        public WheelController(AppDbContext context, IHubContext<WheelHub> wheelHub)
         {
             _context = context;
+            _wheelHub = wheelHub;
         }
 
         // GET: /Wheel — Trang vòng quay
@@ -130,6 +134,14 @@ namespace WebBanThucAnNhanh.Controllers
             _context.UserRewards.Add(reward);
             await _context.SaveChangesAsync();
 
+            // === SIGNALR: Broadcast thông báo real-time khi trúng giải thật ===
+            if (wonPrize.FastFoodId != null)
+            {
+                string displayName = User.Identity?.Name ?? "Khách hàng";
+                await _wheelHub.Clients.All.SendAsync("ReceivePrizeNotification",
+                    displayName, wonPrize.PrizeName);
+            }
+
             // Trả về wonPrizeId để frontend tìm đúng ô (kể cả đã shuffle/sort)
             return Json(new
             {
@@ -198,7 +210,12 @@ namespace WebBanThucAnNhanh.Controllers
             var foodItem = reward.WheelPrize.FastFood;
 
             // 3. Thêm vào giỏ hàng với giá = 0 và đánh dấu IsReward
-            var cookieCart = Request.Cookies["Cart"];
+            // Dùng đúng key cookie theo user (giống CartController)
+            var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+            var safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(userName));
+            var cartKey = $"Cart_{safeUserName}";
+
+            var cookieCart = Request.Cookies[cartKey];
             List<CartItem> cart = new List<CartItem>();
             if (cookieCart != null)
             {
@@ -223,7 +240,7 @@ namespace WebBanThucAnNhanh.Controllers
                 HttpOnly = true, // Tăng cường bảo mật
                 IsEssential = true
             };
-            Response.Cookies.Append("Cart", cartJson, cookieOptions);
+            Response.Cookies.Append(cartKey, cartJson, cookieOptions);
 
             // 4. Đánh dấu đã sử dụng
             reward.IsUsed = true;
