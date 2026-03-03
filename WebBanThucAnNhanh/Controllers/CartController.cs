@@ -12,7 +12,6 @@ namespace WebBanThucAnNhanh.Controllers
     {
         private readonly AppDbContext _context;
         // 1. HÀM TẠO KEY RIÊNG CHO TỪNG ACC
-        // 1. HÀM TẠO KEY RIÊNG CHO TỪNG ACC
         private string GetUserCartKey()
         {
             var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
@@ -158,6 +157,13 @@ namespace WebBanThucAnNhanh.Controllers
 
             if (item != null)
             {
+                // Kiểm tra nếu là hàng khuyến mãi (có option âm) thì không cho tăng số lượng
+                if (item.SelectedOptions != null && item.SelectedOptions.Any(o => o.OptionItemId < 0) && quantity > 1)
+                {
+                    // Giữ nguyên số lượng là 1 nếu cố tình truyền quantity lớn hơn 1
+                    quantity = 1;
+                }
+
                 item.Quantity = quantity;
 
                 // Nếu số lượng <= 0 thì xóa luôn sản phẩm khỏi giỏ

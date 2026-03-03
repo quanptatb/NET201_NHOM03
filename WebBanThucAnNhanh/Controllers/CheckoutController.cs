@@ -147,6 +147,20 @@ namespace WebBanThucAnNhanh.Controllers
                             productInDb.Quantity = 0;
                             productInDb.Status = false; // Hết hàng
                         }
+                        
+                        // SYNC SỐ LƯỢNG KHI MUA HÀNG TIÊU TỐN STOCK
+                        var linkedPrizes = await _context.WheelPrizes
+                            .Where(wp => wp.FastFoodId == item.Id)
+                            .ToListAsync();
+                        
+                        foreach (var prize in linkedPrizes)
+                        {
+                            prize.RemainingQuantity = productInDb.Quantity;
+                            if (productInDb.Quantity <= 0)
+                            {
+                                prize.IsActive = false;
+                            }
+                        }
                     }
                 }
             }

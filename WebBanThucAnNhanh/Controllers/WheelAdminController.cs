@@ -57,6 +57,12 @@ namespace WebBanThucAnNhanh.Controllers
         {
             ModelState.Remove("FastFood");
 
+            if (prize.FastFoodId.HasValue)
+            {
+                var food = await _context.FastFoods.FindAsync(prize.FastFoodId.Value);
+                if (food != null) prize.RemainingQuantity = food.Quantity;
+            }
+
             if (ModelState.IsValid)
             {
                 _context.WheelPrizes.Add(prize);
@@ -107,6 +113,12 @@ namespace WebBanThucAnNhanh.Controllers
             if (id != prize.Id) return NotFound();
 
             ModelState.Remove("FastFood");
+
+            if (prize.FastFoodId.HasValue)
+            {
+                var food = await _context.FastFoods.FindAsync(prize.FastFoodId.Value);
+                if (food != null) prize.RemainingQuantity = food.Quantity;
+            }
 
             if (ModelState.IsValid)
             {
@@ -175,6 +187,76 @@ namespace WebBanThucAnNhanh.Controllers
                 prize.IsActive = !prize.IsActive;
                 await _context.SaveChangesAsync();
             }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: /WheelAdmin/GenerateSampleData
+        [HttpPost]
+        public async Task<IActionResult> GenerateSampleData()
+        {
+            try
+            {
+                // Kiểm tra nếu TypeOfFastFood và Theme chưa có, tạo mặc định
+                if (!_context.TypeOfFastFoods.Any())
+                {
+                    _context.TypeOfFastFoods.Add(new TypeOfFastFood { NameTypeOfFastFood = "Đồ ăn nhanh" });
+                    _context.TypeOfFastFoods.Add(new TypeOfFastFood { NameTypeOfFastFood = "Đồ uống" });
+                    await _context.SaveChangesAsync();
+                }
+
+                if (!_context.Themes.Any())
+                {
+                    _context.Themes.Add(new Theme { NameTheme = "Bữa sáng" });
+                    _context.Themes.Add(new Theme { NameTheme = "Bữa trưa" });
+                    await _context.SaveChangesAsync();
+                }
+
+                int typeFoodId = _context.TypeOfFastFoods.First(t => t.NameTypeOfFastFood == "Đồ ăn nhanh").IdTypeOfFastFood;
+                int typeDrinkId = _context.TypeOfFastFoods.First(t => t.NameTypeOfFastFood == "Đồ uống").IdTypeOfFastFood;
+                int themeId = _context.Themes.First().IdTheme;
+
+                // Tạo 3 Món Ăn Mẫu
+                var sampleFoods = new List<FastFood>
+                {
+                    new FastFood { NameFastFood = "Gà Rán (Sample)", Price = 35000, Quantity = 50, Status = true, IdTypeOfFastFood = typeFoodId, IdTheme = themeId },
+                    new FastFood { NameFastFood = "Burger (Sample)", Price = 45000, Quantity = 40, Status = true, IdTypeOfFastFood = typeFoodId, IdTheme = themeId },
+                    new FastFood { NameFastFood = "CocaCola (Sample)", Price = 15000, Quantity = 100, Status = true, IdTypeOfFastFood = typeDrinkId, IdTheme = themeId }
+                };
+
+                foreach (var food in sampleFoods)
+                {
+                    if (!_context.FastFoods.Any(f => f.NameFastFood == food.NameFastFood))
+                    {
+                        _context.FastFoods.Add(food);
+                    }
+                }
+                await _context.SaveChangesAsync(); // Cần lưu để lấy ID
+
+                // Tạo 3 giải thưởng vòng quay liên kết
+                foreach (var food in sampleFoods)
+                {
+                    if (!_context.WheelPrizes.Any(p => p.PrizeName == food.NameFastFood + " Miễn Phí" && p.FastFoodId == food.IdFastFood))
+                    {
+                        _context.WheelPrizes.Add(new WheelPrize
+                        {
+                            PrizeName = food.NameFastFood + " Miễn Phí",
+                            PrizeType = food.IdTypeOfFastFood == typeDrinkId ? 1 : 2,
+                            FastFoodId = food.IdFastFood,
+                            Probability = 10,
+                            RemainingQuantity = food.Quantity,
+                            IsActive = true
+                        });
+                    }
+                }
+                
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Quá trình tạo dữ liệu mẫu hoàn tất!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

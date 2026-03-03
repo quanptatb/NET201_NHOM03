@@ -90,8 +90,9 @@ namespace WebBanThucAnNhanh.Controllers
             // === 3. Lấy giải thưởng hợp lệ (còn số lượng VÀ món ăn liên kết còn hàng) ===
             var availablePrizes = await _context.WheelPrizes
                 .Include(p => p.FastFood)
-                .Where(p => p.PrizeType == spinType && p.IsActive && p.RemainingQuantity > 0)
-                .Where(p => p.FastFoodId == null || (p.FastFood.Quantity > 0 && p.FastFood.Status))
+                .Where(p => p.PrizeType == spinType && p.IsActive)
+                .Where(p => (p.FastFoodId != null && p.FastFood.Quantity > 0 && p.FastFood.Status) 
+                         || (p.FastFoodId == null && p.RemainingQuantity > 0))
                 .ToListAsync();
 
             if (!availablePrizes.Any())
@@ -110,18 +111,21 @@ namespace WebBanThucAnNhanh.Controllers
             }
 
             // === 5. Trừ số lượng giải và đồng bộ kho FastFood ===
-            wonPrize.RemainingQuantity -= 1;
-
-            // Trừ kho FastFood liên kết
             if (wonPrize.FastFood != null)
             {
                 wonPrize.FastFood.Quantity -= 1;
+                wonPrize.RemainingQuantity = wonPrize.FastFood.Quantity; // Đồng bộ số lượng
+
                 if (wonPrize.FastFood.Quantity <= 0)
                 {
                     wonPrize.FastFood.Quantity = 0;
                     wonPrize.FastFood.Status = false; // Hết hàng
                     wonPrize.IsActive = false;         // Tắt giải trong vòng quay
                 }
+            }
+            else
+            {
+                wonPrize.RemainingQuantity -= 1;
             }
 
             var reward = new UserReward

@@ -198,6 +198,14 @@ namespace WebBanThucAnNhanh.Controllers
 
                     _context.Update(fastFood);
 
+                    // Đồng bộ số lượng cho vòng quay may mắn có liên kết
+                    var linkedPrizes = await _context.WheelPrizes.Where(p => p.FastFoodId == id).ToListAsync();
+                    foreach(var prize in linkedPrizes) 
+                    {
+                        prize.RemainingQuantity = fastFood.Quantity;
+                        if (fastFood.Quantity <= 0) prize.IsActive = false;
+                    }
+
                     // Xóa liên kết OptionGroup cũ và tạo lại
                     var oldLinks = _context.FastFoodOptionGroups.Where(fog => fog.FastFoodId == id);
                     _context.FastFoodOptionGroups.RemoveRange(oldLinks);

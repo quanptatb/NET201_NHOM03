@@ -11,9 +11,16 @@
     <div class="admin-header d-flex justify-content-between align-items-center mb-4">
         <h2 class="admin-title">🎡 Quản lý Giải thưởng Vòng quay</h2>
 
-        <a asp-action="Create" class="btn btn-success">
-            <i class="bi bi-plus-circle"></i> Thêm giải thưởng
-        </a>
+        <div class="d-flex gap-2">
+            <form asp-action="GenerateSampleData" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-warning" onclick="return confirm('Bạn có chắc chắn muốn tạo dữ liệu mẫu đồ ăn và vòng quay?');">
+                    <i class="bi bi-box-seam"></i> Tạo dữ liệu mẫu
+                </button>
+            </form>
+            <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Thêm giải thưởng
+            </a>
+        </div>
     </div>
 
     <!-- CARD -->

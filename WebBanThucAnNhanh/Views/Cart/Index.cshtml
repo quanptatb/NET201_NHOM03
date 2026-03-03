@@ -147,11 +147,22 @@
                                     <form asp-action="UpdateCart" asp-controller="Cart" method="post"
                                         class="d-flex justify-content-center">
                                         <input type="hidden" name="signature" value="@item.CartItemSignature" />
-                                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
-                                            class="form-control text-center me-2 quantity-input" style="width: 70px;" />
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Cập nhật">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </button>
+                                        @if (item.SelectedOptions != null && item.SelectedOptions.Any(o => o.OptionItemId < 0))
+                                        {
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" max="1" readonly
+                                                class="form-control text-center me-2 quantity-input" style="width: 70px; background-color: #e9ecef; cursor: not-allowed;" title="Sản phẩm khuyến mãi không thể thay đổi số lượng" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary" disabled title="Không thể cập nhật">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
+                                                class="form-control text-center me-2 quantity-input" style="width: 70px;" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Cập nhật">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        }
                                     </form>
                                 </td>
                                 <td class="text-end fw-bold text-danger" style="font-size: 1.46rem;">

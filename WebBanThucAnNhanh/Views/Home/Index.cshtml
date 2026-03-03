@@ -115,10 +115,10 @@
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                     </div>
-                                    <div class="action-group">
+                                    <div class="action-group" style="display: flex; gap: 10px; margin-top: 10px;width: 70%;">
                                         @* NÚT XEM CHI TIẾT *@
-                                        <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom">
-                                            <i class="fas fa-eye"></i><span>Xem</span>
+                                        <a href="@Url.Action("Details", "Home", new { id = item.IdFastFood })" class="btn-sm-custom btn-xem">
+                                            <i class="fas fa-eye"></i><span>XEM</span>
                                         </a>
 
                                         @* NÚT THÊM VÀO GIỎ / CHỌN OPTION *@
@@ -127,23 +127,22 @@
                                             // Kiểm tra: Nếu món này có cài đặt Size/Topping trong Database
                                             @if (item.FastFoodOptionGroups != null && item.FastFoodOptionGroups.Any())
                                             {
-                                                <button type="button" onclick="showToppingModal(@item.IdFastFood)" class="btn-sm-custom"
-                                                        style="background-color: #ff9800; border-color: #ff9800; color: #fff; border: none;">
-                                                    <i class="fas fa-tasks"></i><span>Tùy chọn</span>
+                                                <button type="button" onclick="showToppingModal(@item.IdFastFood)" class="btn-sm-custom btn-tuychon">
+                                                    <i class="fas fa-list-ul"></i><span>TÙY CHỌN</span>
                                                 </button>
                                             }
                                             else
                                             {
                                                 // Nếu món ăn bình thường không có Topping -> Bấm 1 phát thêm thẳng vào giỏ
-                                                <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom">
-                                                    <i class="fas fa-cart-plus"></i><span>Thêm</span>
+                                                <a href="@Url.Action("AddToCart", "Cart", new { id = item.IdFastFood })" class="btn-sm-custom btn-them">
+                                                    <i class="fas fa-cart-plus"></i><span>THÊM</span>
                                                 </a>
                                             }
                                         }
                                         else
                                         {
-                                            <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed;">
-                                                <i class="fas fa-ban"></i><span>Hết</span>
+                                            <button class="btn-sm-custom" disabled style="opacity: 0.6; cursor: not-allowed; flex-grow: 1;">
+                                                <i class="fas fa-ban"></i><span>HẾT</span>
                                             </button>
                                         }
                                     </div>
