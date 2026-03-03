@@ -31,6 +31,9 @@ namespace WebBanThucAnNhanh.Models
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 
+        public string? AppliedVoucherCode { get; set; }
+        public decimal DiscountAmount { get; set; } = 0;
+
         // Chi tiết đơn hàng
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }

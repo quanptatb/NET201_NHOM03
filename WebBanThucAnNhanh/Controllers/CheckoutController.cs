@@ -31,6 +31,13 @@ namespace WebBanThucAnNhanh.Controllers
             return $"Cart_{safeUserName}";
         }
 
+        private string GetUserVoucherKey()
+        {
+            var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+            var safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(userName));
+            return $"Voucher_{safeUserName}";
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -57,6 +64,33 @@ namespace WebBanThucAnNhanh.Controllers
 
             // Tính tổng tiền
             decimal total = cartItems.Sum(item => item.Total);
+
+            decimal discountAmount = 0;
+            string appliedVoucher = null;
+            var voucherKey = GetUserVoucherKey();
+            var voucherCode = Request.Cookies[voucherKey];
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var voucher = _context.Vouchers.FirstOrDefault(v => v.Code == voucherCode && v.IsActive);
+                if (voucher != null && total >= voucher.MinOrderValue && voucher.ExpiryDate >= DateTime.Now)
+                {
+                    appliedVoucher = voucher.Code;
+                    if (voucher.DiscountType == 1) discountAmount = total * (voucher.DiscountValue / 100);
+                    else if (voucher.DiscountType == 2) discountAmount = voucher.DiscountValue;
+                    
+                    if (voucher.DiscountType == 1 && discountAmount > voucher.MaxDiscountAmount) discountAmount = voucher.MaxDiscountAmount;
+                    if (discountAmount > total) discountAmount = total;
+                }
+                else
+                {
+                    Response.Cookies.Delete(voucherKey);
+                }
+            }
+
+            ViewBag.VoucherCode = appliedVoucher;
+            ViewBag.DiscountAmount = discountAmount;
+            ViewBag.FinalTotal = total - discountAmount;
+            ViewBag.OriginalTotal = total;
 
             // Tạo model Order để truyền data sang View
             var orderModel = new Order
@@ -106,7 +140,30 @@ namespace WebBanThucAnNhanh.Controllers
             var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
 
             // Tính toán lại tổng tiền ở Server (Bảo mật)
-            order.TotalPrice = cartItems.Sum(x => x.Total);
+            decimal total = cartItems.Sum(x => x.Total);
+
+            var voucherKey = GetUserVoucherKey();
+            var voucherCode = Request.Cookies[voucherKey];
+            decimal discountAmount = 0;
+            string appliedVoucher = null;
+
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var voucher = _context.Vouchers.FirstOrDefault(v => v.Code == voucherCode && v.IsActive);
+                if (voucher != null && total >= voucher.MinOrderValue && voucher.ExpiryDate >= DateTime.Now)
+                {
+                    appliedVoucher = voucher.Code;
+                    if (voucher.DiscountType == 1) discountAmount = total * (voucher.DiscountValue / 100);
+                    else if (voucher.DiscountType == 2) discountAmount = voucher.DiscountValue;
+                    
+                    if (voucher.DiscountType == 1 && discountAmount > voucher.MaxDiscountAmount) discountAmount = voucher.MaxDiscountAmount;
+                    if (discountAmount > total) discountAmount = total;
+                }
+            }
+
+            order.AppliedVoucherCode = appliedVoucher;
+            order.DiscountAmount = discountAmount;
+            order.TotalPrice = total - discountAmount;
 
             // 1. Lưu Order
             _context.Orders.Add(order);
@@ -188,6 +245,7 @@ namespace WebBanThucAnNhanh.Controllers
 
             // 3. Xóa Cookie giỏ hàng — dùng đúng key theo user
             Response.Cookies.Delete(cartKey);
+            Response.Cookies.Delete(GetUserVoucherKey());
 
             // Chuyển hướng đến trang lịch sử
             return RedirectToAction(nameof(History));
@@ -208,6 +266,56 @@ namespace WebBanThucAnNhanh.Controllers
                 .ToListAsync();
 
             return View(myOrders);
+        }
+
+        [HttpPost]
+        public IActionResult ApplyVoucher(string voucherCode)
+        {
+            if (string.IsNullOrEmpty(voucherCode)) return RedirectToAction("Index");
+
+            var cartKey = GetUserCartKey();
+            var cookieCart = Request.Cookies[cartKey];
+            if (string.IsNullOrEmpty(cookieCart)) return RedirectToAction("Index");
+
+            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
+            decimal total = cartItems.Sum(x => x.Total);
+
+            var voucher = _context.Vouchers.FirstOrDefault(v => v.Code == voucherCode && v.IsActive);
+            if (voucher == null)
+            {
+                TempData["VoucherError"] = "Mã giảm giá không tồn tại hoặc không hợp lệ.";
+                return RedirectToAction("Index");
+            }
+
+            if (voucher.ExpiryDate < DateTime.Now)
+            {
+                TempData["VoucherError"] = "Mã giảm giá đã hết hạn.";
+                return RedirectToAction("Index");
+            }
+
+            if (total < voucher.MinOrderValue)
+            {
+                TempData["VoucherError"] = $"Đơn hàng chưa đạt giá trị tối thiểu {voucher.MinOrderValue.ToString("n0")}đ để áp dụng mã này.";
+                return RedirectToAction("Index");
+            }
+
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(1),
+                HttpOnly = true,
+                IsEssential = true
+            };
+            Response.Cookies.Append(GetUserVoucherKey(), voucher.Code, cookieOptions);
+            TempData["VoucherSuccess"] = "Áp dụng mã giảm giá thành công!";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult RemoveVoucher()
+        {
+            Response.Cookies.Delete(GetUserVoucherKey());
+            TempData["VoucherSuccess"] = "Đã gỡ mã giảm giá.";
+            return RedirectToAction("Index");
         }
     }
 }

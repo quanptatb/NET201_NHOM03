@@ -22,6 +22,13 @@ namespace WebBanThucAnNhanh.Controllers
             return $"Cart_{safeUserName}";
         }
 
+        private string GetUserVoucherKey()
+        {
+            var userName = User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Anonymous";
+            var safeUserName = Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes(userName));
+            return $"Voucher_{safeUserName}";
+        }
+
         public CartController(AppDbContext context)
         {
             _context = context;
@@ -144,6 +151,7 @@ namespace WebBanThucAnNhanh.Controllers
             {
                 cart.Remove(item);
                 SaveCart(cart);
+                CheckAndRemoveVoucherIfInvalid(cart);
             }
             return RedirectToAction("Index");
         }
@@ -175,6 +183,7 @@ namespace WebBanThucAnNhanh.Controllers
                     cart.Remove(item);
                 }
                 SaveCart(cart);
+                CheckAndRemoveVoucherIfInvalid(cart);
             }
             return RedirectToAction("Index");
         }
@@ -183,7 +192,25 @@ namespace WebBanThucAnNhanh.Controllers
         {
             // Xóa đúng giỏ hàng của acc đó
             Response.Cookies.Delete(GetUserCartKey());
+            Response.Cookies.Delete(GetUserVoucherKey());
             return RedirectToAction("Index", "Home");
+        }
+
+        private void CheckAndRemoveVoucherIfInvalid(List<CartItem> cart)
+        {
+            var voucherKey = GetUserVoucherKey();
+            var voucherCode = Request.Cookies[voucherKey];
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var voucher = _context.Vouchers.FirstOrDefault(v => v.Code == voucherCode && v.IsActive);
+                decimal total = cart.Sum(c => c.Total);
+                if (voucher == null || total < voucher.MinOrderValue || voucher.ExpiryDate < DateTime.Now)
+                {
+                    Response.Cookies.Delete(voucherKey);
+                    var minVal = voucher != null ? voucher.MinOrderValue.ToString("n0") : "0";
+                    TempData["Warning"] = $"Mã giảm giá {voucherCode} đã bị gỡ do giỏ hàng không đủ điều kiện (Tối thiểu {minVal}đ).";
+                }
+            }
         }
 
             [HttpPost]

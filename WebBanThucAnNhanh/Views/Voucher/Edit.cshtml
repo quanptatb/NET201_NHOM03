@@ -1,0 +1,87 @@
+@model WebBanThucAnNhanh.Models.Voucher
+
+@{
+    ViewData["Title"] = "Chỉnh sửa mã giảm giá";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h3 class="mb-4"><i class="fas fa-edit text-warning"></i> Chỉnh sửa mã giảm giá</h3>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="Code" class="form-label fw-bold">Mã Code (Ví dụ: SALE2026)</label>
+                        <input asp-for="Code" class="form-control text-uppercase" placeholder="Nhập mã..." />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DiscountType" class="form-label fw-bold">Loại giảm giá</label>
+                        <select asp-for="DiscountType" class="form-select" id="DiscountType">
+                            <option value="1">Giảm theo tỷ lệ phần trăm (%)</option>
+                            <option value="2">Giảm số tiền cố định (đ)</option>
+                        </select>
+                        <span asp-validation-for="DiscountType" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DiscountValue" class="form-label fw-bold">Giá trị giảm</label>
+                        <input asp-for="DiscountValue" class="form-control" type="number" step="1" />
+                        <span asp-validation-for="DiscountValue" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3" id="maxDiscountContainer">
+                        <label asp-for="MaxDiscountAmount" class="form-label fw-bold">Số tiền giảm tối đa (nếu giảm theo %)</label>
+                        <input asp-for="MaxDiscountAmount" class="form-control" type="number" step="1000" />
+                        <span asp-validation-for="MaxDiscountAmount" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MinOrderValue" class="form-label fw-bold">Giá trị đơn hàng tối thiểu (đ)</label>
+                        <input asp-for="MinOrderValue" class="form-control" type="number" step="1000" />
+                        <span asp-validation-for="MinOrderValue" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ExpiryDate" class="form-label fw-bold">Ngày hết hạn</label>
+                        <input asp-for="ExpiryDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3 form-check form-switch fs-5">
+                        <input class="form-check-input" type="checkbox" asp-for="IsActive">
+                        <label class="form-check-label ms-2" asp-for="IsActive">Đang hoạt động</label>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                        <button type="submit" class="btn btn-warning fw-bold"><i class="fas fa-save"></i> Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            function toggleMaxDiscount() {
+                if ($('#DiscountType').val() == '1') {
+                    $('#maxDiscountContainer').show();
+                } else {
+                    $('#maxDiscountContainer').hide();
+                }
+            }
+            $('#DiscountType').change(toggleMaxDiscount);
+            toggleMaxDiscount();
+        });
+    </script>
+}

@@ -1,0 +1,73 @@
+@model WebBanThucAnNhanh.Models.Voucher
+
+@{
+    ViewData["Title"] = "Xóa mã giảm giá";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h3 class="mb-4 text-danger"><i class="fas fa-exclamation-triangle"></i> Xác nhận xóa mã giảm giá</h3>
+        <div class="card shadow-sm border-danger">
+            <div class="card-body">
+                <h5 class="card-title text-center text-danger mb-4">Bạn có chắc chắn muốn xóa mã giảm giá này không? Hành động này không thể hoàn tác.</h5>
+                
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th class="bg-light" style="width: 40%;">Mã Code</th>
+                            <td class="fw-bold fs-5">@Model.Code</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Loại giảm</th>
+                            <td>@(Model.DiscountType == 1 ? "Phần trăm (%)" : "Số tiền cố định (đ)")</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Giá trị giảm</th>
+                            <td class="text-danger fw-bold">
+                                @(Model.DiscountType == 1 ? Model.DiscountValue.ToString("0.##") + "%" : Model.DiscountValue.ToString("n0") + "đ")
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Giảm tối đa</th>
+                            <td>@(Model.DiscountType == 1 && Model.MaxDiscountAmount > 0 ? Model.MaxDiscountAmount.ToString("n0") + " đ" : "-")</td>
+                        </tr>
+                         <tr>
+                            <th class="bg-light">Đơn hàng tối thiểu</th>
+                            <td>@Model.MinOrderValue.ToString("n0") đ</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Ngày hết hạn</th>
+                            <td>@Model.ExpiryDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Trạng thái</th>
+                            <td>
+                                @if (Model.IsActive && Model.ExpiryDate >= DateTime.Now)
+                                {
+                                    <span class="badge bg-success">Đang hoạt động</span>
+                                }
+                                else if (!Model.IsActive)
+                                {
+                                    <span class="badge bg-secondary">Đã vô hiệu</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Đã hết hạn</span>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <form asp-action="Delete" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                        <button type="submit" class="btn btn-danger fw-bold"><i class="fas fa-trash-alt"></i> Xác nhận Xóa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,8 +16,20 @@
                         @Html.AntiForgeryToken()
                         
                         <div class="mb-4 text-center">
-                            <h5>Tổng tiền cần thanh toán:</h5>
-                            <h2 class="text-danger">@Model.TotalPrice.ToString("N0") VNĐ</h2>
+                            <h5>Tổng tiền tạm tính:</h5>
+                            <h4>@ViewBag.OriginalTotal?.ToString("N0") VNĐ</h4>
+                            
+                            @if (!string.IsNullOrEmpty(ViewBag.VoucherCode))
+                            {
+                                <h5 class="text-success mt-2">Mã giảm giá (@ViewBag.VoucherCode): -@ViewBag.DiscountAmount?.ToString("N0") VNĐ</h5>
+                                <h5>Tổng tiền cần thanh toán:</h5>
+                                <h2 class="text-danger">@ViewBag.FinalTotal?.ToString("N0") VNĐ</h2>
+                            }
+                            else
+                            {
+                                <h5>Tổng tiền cần thanh toán:</h5>
+                                <h2 class="text-danger">@ViewBag.OriginalTotal?.ToString("N0") VNĐ</h2>
+                            }
                         </div>
 
                         <div class="mb-3">
@@ -46,6 +58,32 @@
                             </a>
                         </div>
                     </form>
+                    
+                    <hr class="my-4" />
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.VoucherCode))
+                    {
+                        <form asp-action="RemoveVoucher" asp-controller="Checkout" method="post" class="mt-2 text-center">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i> Gỡ mã giảm giá</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="ApplyVoucher" asp-controller="Checkout" method="post" class="mt-3 d-flex justify-content-center align-items-center">
+                            <label class="fw-bold me-2 mb-0">Mã giảm giá:</label>
+                            <input type="text" name="voucherCode" class="form-control me-2" style="max-width: 200px;" placeholder="Nhập mã..." required />
+                            <button type="submit" class="btn btn-primary">Áp dụng</button>
+                        </form>
+                    }
+
+                    @if (TempData["VoucherError"] != null)
+                    {
+                        <div class="text-danger mt-2 text-center small"><i class="fas fa-times-circle"></i> @TempData["VoucherError"]</div>
+                    }
+                    @if (TempData["VoucherSuccess"] != null)
+                    {
+                        <div class="text-success mt-2 text-center small"><i class="fas fa-check-circle"></i> @TempData["VoucherSuccess"]</div>
+                    }
                 </div>
             </div>
         </div>

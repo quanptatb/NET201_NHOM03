@@ -20,6 +20,7 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
         public DbSet<CrossSellBundle> CrossSellBundles { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
 
         // === LUCKY WHEEL ===
         public DbSet<WheelPrize> WheelPrizes { get; set; }
@@ -575,6 +576,32 @@ namespace WebBanThucAnNhanh.Data
                 .WithMany()
                 .HasForeignKey(c => c.AddOnFastFoodId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // 6.5 Seed Data cho Voucher
+            modelBuilder.Entity<Voucher>().HasData(
+                new Voucher
+                {
+                    Id = 1,
+                    Code = "GIAM20",
+                    DiscountType = 1, // Percentage
+                    DiscountValue = 20, // 20%
+                    MaxDiscountAmount = 50000,
+                    MinOrderValue = 100000,
+                    ExpiryDate = new DateTime(2026, 12, 31, 23, 59, 59),
+                    IsActive = true
+                },
+                new Voucher
+                {
+                    Id = 2,
+                    Code = "GIAM50K",
+                    DiscountType = 2, // Fixed Amount
+                    DiscountValue = 50000, // 50k
+                    MaxDiscountAmount = 50000,
+                    MinOrderValue = 200000,
+                    ExpiryDate = new DateTime(2026, 12, 31, 23, 59, 59),
+                    IsActive = true
+                }
+            );
 
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()
