@@ -1,0 +1,111 @@
+@model IEnumerable<WebBanThucAnNhanh.Models.WheelPrize>
+
+@{
+    ViewData["Title"] = "Quản lý Giải thưởng Vòng quay";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="admin-page">
+
+    <!-- HEADER -->
+    <div class="admin-header d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title">🎡 Quản lý Giải thưởng Vòng quay</h2>
+
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm giải thưởng
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card admin-card">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên giải</th>
+                        <th>Loại</th>
+                        <th>Món liên kết</th>
+                        <th>Tỷ lệ (%)</th>
+                        <th>Còn lại</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+
+                            <td class="fw-bold">
+                                @item.PrizeName
+                            </td>
+
+                            <td>
+                                @if (item.PrizeType == 1)
+                                {
+                                    <span class="badge bg-info">🥤 Nước</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">🍔 Đồ ăn</span>
+                                }
+                            </td>
+
+                            <td>
+                                @(item.FastFood?.NameFastFood ?? "—")
+                            </td>
+
+                            <td class="fw-semibold">
+                                @item.Probability%
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">@item.RemainingQuantity</span>
+                            </td>
+
+                            <td>
+                                <form asp-action="ToggleActive" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    @if (item.IsActive)
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-success" title="Bấm để tắt">
+                                            <i class="bi bi-check-circle"></i> Bật
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-secondary" title="Bấm để bật">
+                                            <i class="bi bi-x-circle"></i> Tắt
+                                        </button>
+                                    }
+                                </form>
+                            </td>
+
+                            <td class="text-center">
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-primary me-1"
+                                   title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-danger"
+                                   title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

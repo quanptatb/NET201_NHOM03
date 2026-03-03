@@ -1,0 +1,194 @@
+@model IEnumerable<WebBanThucAnNhanh.Models.UserReward>
+
+@{
+    ViewData["Title"] = "Quà đã trúng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .rewards-page {
+        min-height: 70vh;
+        padding: 40px 0;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    }
+
+    .rewards-title {
+        color: #ffd700;
+        font-family: 'Dancing Script', cursive;
+        font-size: 2.5rem;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .rewards-card {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .rewards-card table {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+    }
+
+    .rewards-card thead {
+        background: rgba(255, 215, 0, 0.15);
+    }
+
+    .rewards-card thead th {
+        color: #ffd700;
+        border: none;
+        padding: 14px 16px;
+    }
+
+    .rewards-card tbody td {
+        border-color: rgba(255, 255, 255, 0.08);
+        padding: 12px 16px;
+        vertical-align: middle;
+    }
+
+    .rewards-card tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .back-link {
+        color: #ffd700;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .back-link:hover {
+        color: #fff;
+    }
+
+    .empty-state {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        padding: 60px 20px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: rgba(255, 215, 0, 0.4);
+    }
+</style>
+
+<div class="rewards-page">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="rewards-title">🎁 Quà Đã Trúng</h1>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="rewards-card">
+                    @if (Model.Any())
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Giải thưởng</th>
+                                    <th>Loại</th>
+                                    <th>Ngày trúng</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hạn dùng</th>
+                                    <th class="text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int stt = 1; }
+                                @foreach (var item in Model)
+                                {
+                                    var expireDate = item.DateWon.AddDays(3);
+                                    var isExpired = !item.IsUsed && expireDate < DateTime.Now;
+
+                                    <tr style="@(isExpired ? "opacity: 0.5;" : "")">
+                                        <td>@(stt++)</td>
+                                        <td class="fw-bold">@item.WheelPrize?.PrizeName</td>
+                                        <td>
+                                            @if (item.WheelPrize?.PrizeType == 1)
+                                            {
+                                                <span class="badge bg-info">🥤 Nước</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">🍔 Đồ ăn</span>
+                                            }
+                                        </td>
+                                        <td>@item.DateWon.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>
+                                            @if (item.IsUsed)
+                                            {
+                                                <span class="badge bg-secondary">Đã sử dụng</span>
+                                            }
+                                            else if (isExpired)
+                                            {
+                                                <span class="badge bg-danger">Hết hạn</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Chưa dùng</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!item.IsUsed && !isExpired)
+                                            {
+                                                <span>@expireDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (!item.IsUsed && !isExpired && item.WheelPrize?.FastFoodId != null)
+                                            {
+                                                <form asp-controller="Wheel" asp-action="RedeemReward" method="post" style="display:inline;">
+                                                    <input type="hidden" name="rewardId" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-success"
+                                                            onclick="return confirm('Thêm món này vào giỏ hàng miễn phí?');">
+                                                        <i class="fas fa-cart-plus"></i> Sử dụng
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (item.IsUsed)
+                                            {
+                                                <span class="text-muted">Đã dùng</span>
+                                            }
+                                            else if (isExpired)
+                                            {
+                                                <span class="text-danger"><i class="fas fa-clock"></i> Đã hết hạn</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-gift d-block"></i>
+                            <h5>Bạn chưa trúng giải nào</h5>
+                            <p>Hãy quay vòng quay để nhận quà!</p>
+                        </div>
+                    }
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Index", "Wheel")" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Quay lại Vòng quay
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

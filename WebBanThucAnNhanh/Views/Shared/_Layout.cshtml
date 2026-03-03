@@ -2,6 +2,7 @@
 @using WebBanThucAnNhanh.Models
 @using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor
+@inject WebBanThucAnNhanh.Data.AppDbContext AppDb
 
 <!DOCTYPE html>
 <html lang="vi"> @* Sửa lang thành tiếng Việt *@
@@ -55,6 +56,31 @@
                     <li><a href="@Url.Action("Index", "Home")" class="active"><i class="fas fa-home"></i> Trang chủ</a></li>
                     <li><a href="@Url.Action("Index", "Home")#about"><i class="fas fa-info-circle"></i> Giới thiệu</a></li>
                     <li><a href="@Url.Action("Index", "Home")#menu"><i class="fas fa-utensils"></i> Thực đơn</a></li>
+                    <li>
+                        @{
+                            int totalSpins = 0;
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                var spinClaim = User.FindFirst("UserId");
+                                if (spinClaim != null)
+                                {
+                                    int spinUserId = int.Parse(spinClaim.Value);
+                                    var spinUser = AppDb.Users.FirstOrDefault(u => u.Id == spinUserId);
+                                    if (spinUser != null)
+                                    {
+                                        totalSpins = spinUser.DrinkSpins + spinUser.FoodSpins;
+                                    }
+                                }
+                            }
+                        }
+                        <a href="@Url.Action("Index", "Wheel")">
+                            <i class="fas fa-dharmachakra"></i> Vòng quay
+                            @if (totalSpins > 0)
+                            {
+                                <span class="cart-badge">@totalSpins</span>
+                            }
+                        </a>
+                    </li>
 
                     <li class="nav-divider"></li>
 

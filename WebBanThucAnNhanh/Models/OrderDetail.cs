@@ -25,5 +25,11 @@ namespace WebBanThucAnNhanh.Models
         public int? ComboId { get; set; }
         [ForeignKey("ComboId")]
         public virtual Combo? Combo { get; set; }
+
+        // === LUCKY WHEEL: Đánh dấu món này là quà trúng thưởng ===
+        public bool IsReward { get; set; } = false;
+
+        [StringLength(200)]
+        public string? Note { get; set; } // VD: "Quà tặng từ Vòng quay"
     }
 }

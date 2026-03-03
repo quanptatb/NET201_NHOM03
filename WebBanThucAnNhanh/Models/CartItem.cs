@@ -21,6 +21,9 @@ namespace WebBanThucAnNhanh.Models
 
         public int Quantity { get; set; }
 
+        // Đánh dấu món này là quà trúng từ vòng quay (giá = 0đ)
+        public bool IsReward { get; set; } = false;
+
         // Nếu có thuộc tính Total, cũng đổi thành decimal
         public decimal Total => Price * Quantity;
     }

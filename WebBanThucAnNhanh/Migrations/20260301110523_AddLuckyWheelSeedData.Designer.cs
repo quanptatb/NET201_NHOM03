@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301110523_AddLuckyWheelSeedData")]
+    partial class AddLuckyWheelSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -501,13 +504,6 @@ namespace WebBanThucAnNhanh.Migrations
 
                     b.Property<int?>("FastFoodId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsReward")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");

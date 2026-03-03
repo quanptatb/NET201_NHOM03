@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301103922_AddLuckyWheel")]
+    partial class AddLuckyWheel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -502,13 +505,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.Property<int?>("FastFoodId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsReward")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
@@ -721,166 +717,6 @@ namespace WebBanThucAnNhanh.Migrations
                     b.HasIndex("FastFoodId");
 
                     b.ToTable("WheelPrizes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FastFoodId = 2,
-                            IsActive = true,
-                            PrizeName = "Coca Cola miễn phí",
-                            PrizeType = 1,
-                            Probability = 15.0,
-                            RemainingQuantity = 50
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FastFoodId = 4,
-                            IsActive = true,
-                            PrizeName = "Trà Sữa miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FastFoodId = 6,
-                            IsActive = true,
-                            PrizeName = "Nước Cam Ép miễn phí",
-                            PrizeType = 1,
-                            Probability = 14.0,
-                            RemainingQuantity = 45
-                        },
-                        new
-                        {
-                            Id = 4,
-                            FastFoodId = 8,
-                            IsActive = true,
-                            PrizeName = "Sinh Tố Bơ miễn phí",
-                            PrizeType = 1,
-                            Probability = 8.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FastFoodId = 10,
-                            IsActive = true,
-                            PrizeName = "Trà Đào miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 6,
-                            FastFoodId = 18,
-                            IsActive = true,
-                            PrizeName = "Matcha Latte miễn phí",
-                            PrizeType = 1,
-                            Probability = 7.0,
-                            RemainingQuantity = 25
-                        },
-                        new
-                        {
-                            Id = 7,
-                            FastFoodId = 20,
-                            IsActive = true,
-                            PrizeName = "Cà Phê Sữa Đá miễn phí",
-                            PrizeType = 1,
-                            Probability = 12.0,
-                            RemainingQuantity = 45
-                        },
-                        new
-                        {
-                            Id = 8,
-                            IsActive = true,
-                            PrizeName = "Chúc may mắn lần sau!",
-                            PrizeType = 1,
-                            Probability = 20.0,
-                            RemainingQuantity = 9999
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FastFoodId = 1,
-                            IsActive = true,
-                            PrizeName = "Burger Bò miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 10,
-                            FastFoodId = 3,
-                            IsActive = true,
-                            PrizeName = "Gà Rán miễn phí",
-                            PrizeType = 2,
-                            Probability = 8.0,
-                            RemainingQuantity = 25
-                        },
-                        new
-                        {
-                            Id = 11,
-                            FastFoodId = 5,
-                            IsActive = true,
-                            PrizeName = "Khoai Tây Chiên miễn phí",
-                            PrizeType = 2,
-                            Probability = 14.0,
-                            RemainingQuantity = 50
-                        },
-                        new
-                        {
-                            Id = 12,
-                            FastFoodId = 7,
-                            IsActive = true,
-                            PrizeName = "Pizza Hải Sản miễn phí",
-                            PrizeType = 2,
-                            Probability = 4.0,
-                            RemainingQuantity = 15
-                        },
-                        new
-                        {
-                            Id = 13,
-                            FastFoodId = 11,
-                            IsActive = true,
-                            PrizeName = "Hot Dog miễn phí",
-                            PrizeType = 2,
-                            Probability = 12.0,
-                            RemainingQuantity = 40
-                        },
-                        new
-                        {
-                            Id = 14,
-                            FastFoodId = 12,
-                            IsActive = true,
-                            PrizeName = "Gà Viên Chiên miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 35
-                        },
-                        new
-                        {
-                            Id = 15,
-                            FastFoodId = 16,
-                            IsActive = true,
-                            PrizeName = "Sandwich Gà miễn phí",
-                            PrizeType = 2,
-                            Probability = 10.0,
-                            RemainingQuantity = 30
-                        },
-                        new
-                        {
-                            Id = 16,
-                            IsActive = true,
-                            PrizeName = "Chúc may mắn lần sau!",
-                            PrizeType = 2,
-                            Probability = 32.0,
-                            RemainingQuantity = 9999
-                        });
                 });
 
             modelBuilder.Entity("WebBanThucAnNhanh.Models.FastFood", b =>
