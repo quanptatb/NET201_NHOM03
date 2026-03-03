@@ -3,10 +3,6 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-# visual studio code
-.sln
-.csproj
-
 # dotenv files
 .env
 

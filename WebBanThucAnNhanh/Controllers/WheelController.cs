@@ -194,11 +194,11 @@ namespace WebBanThucAnNhanh.Controllers
             var foodItem = reward.WheelPrize.FastFood;
 
             // 3. Thêm vào giỏ hàng với giá = 0 và đánh dấu IsReward
-            var sessionCart = HttpContext.Session.GetString("Cart");
+            var cookieCart = Request.Cookies["Cart"];
             List<CartItem> cart = new List<CartItem>();
-            if (sessionCart != null)
+            if (cookieCart != null)
             {
-                cart = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
+                cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
             }
 
             cart.Add(new CartItem
@@ -212,7 +212,14 @@ namespace WebBanThucAnNhanh.Controllers
                 SelectedOptions = new List<CartItemOption>()
             });
 
-            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cart));
+            var cartJson = JsonConvert.SerializeObject(cart);
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(30),
+                HttpOnly = true, // Tăng cường bảo mật
+                IsEssential = true
+            };
+            Response.Cookies.Append("Cart", cartJson, cookieOptions);
 
             // 4. Đánh dấu đã sử dụng
             reward.IsUsed = true;

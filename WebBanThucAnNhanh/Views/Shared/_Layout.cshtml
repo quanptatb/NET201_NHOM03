@@ -52,71 +52,72 @@
             </button>
 
             <nav>
-                <ul>
-                    <li><a href="@Url.Action("Index", "Home")" class="active"><i class="fas fa-home"></i> Trang chủ</a></li>
-                    <li><a href="@Url.Action("Index", "Home")#about"><i class="fas fa-info-circle"></i> Giới thiệu</a></li>
-                    <li><a href="@Url.Action("Index", "Home")#menu"><i class="fas fa-utensils"></i> Thực đơn</a></li>
-                    <li>
-                        @{
-                            int totalSpins = 0;
-                            if (User.Identity.IsAuthenticated)
+                <ul class="nav-main">
+                    <li><a href="@Url.Action("Index", "Home")" class="active">Trang chủ</a></li>
+                    <li><a href="@Url.Action("Index", "Home")#about">Giới thiệu</a></li>
+                    <li><a href="@Url.Action("Index", "Home")#menu">Thực đơn</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    @* VÒNG QUAY *@
+                    @{
+                        int totalSpins = 0;
+                        if (User.Identity.IsAuthenticated)
+                        {
+                            var spinClaim = User.FindFirst("UserId");
+                            if (spinClaim != null)
                             {
-                                var spinClaim = User.FindFirst("UserId");
-                                if (spinClaim != null)
+                                int spinUserId = int.Parse(spinClaim.Value);
+                                var spinUser = AppDb.Users.FirstOrDefault(u => u.Id == spinUserId);
+                                if (spinUser != null)
                                 {
-                                    int spinUserId = int.Parse(spinClaim.Value);
-                                    var spinUser = AppDb.Users.FirstOrDefault(u => u.Id == spinUserId);
-                                    if (spinUser != null)
-                                    {
-                                        totalSpins = spinUser.DrinkSpins + spinUser.FoodSpins;
-                                    }
+                                    totalSpins = spinUser.DrinkSpins + spinUser.FoodSpins;
                                 }
                             }
                         }
-                        <a href="@Url.Action("Index", "Wheel")">
-                            <i class="fas fa-dharmachakra"></i> Vòng quay
-                            @if (totalSpins > 0)
-                            {
-                                <span class="cart-badge">@totalSpins</span>
-                            }
-                        </a>
-                    </li>
-
-                    <li class="nav-divider"></li>
-
-                    @* LOGIC GIỎ HÀNG *@
-                    <li>
-                        @{
-                            var sessionCart = HttpContextAccessor.HttpContext.Session.GetString("Cart");
-                            int countCart = 0;
-                            if (sessionCart != null)
-                            {
-                                var cart = JsonConvert.DeserializeObject<List<CartItem>>(sessionCart);
-                                countCart = cart.Sum(x => x.Quantity);
-                            }
-                        }
-                        <a href="@Url.Action("Index", "Cart")" class="nav-cart-link">
-                            <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                            @if (countCart > 0)
-                            {
-                                <span class="cart-badge">@countCart</span>
-                            }
-                        </a>
-                    </li>
-
-                    @* LOGIC ĐĂNG NHẬP / USER *@
-                    <li class="user-menu-item dropdown">
-                        @if (User.Identity.IsAuthenticated)
+                    }
+                    <a href="@Url.Action("Index", "Wheel")" class="nav-action-btn" title="Vòng quay may mắn">
+                        <i class="fas fa-dharmachakra"></i>
+                        @if (totalSpins > 0)
                         {
-                            <a href="#" class="dropdown-toggle user-avatar-wrap" data-bs-toggle="dropdown">
-                                <img src="~/images/avtdefault.png" class="user-avatar" />
-                                <span>@User.Identity.Name</span>
-                            </a>
+                            <span class="action-badge">@totalSpins</span>
+                        }
+                    </a>
 
+                    @* GIỎ HÀNG *@
+                    @{
+                        var cookieCart = HttpContextAccessor.HttpContext.Request.Cookies["Cart"];
+                        int countCart = 0;
+                        if (!string.IsNullOrEmpty(cookieCart))
+                        {
+                            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cookieCart);
+                            countCart = cart.Sum(x => x.Quantity);
+                        }
+                    }
+                    <a href="@Url.Action("Index", "Cart")" class="nav-action-btn" title="Giỏ hàng">
+                        <i class="fas fa-shopping-bag"></i>
+                        @if (countCart > 0)
+                        {
+                            <span class="action-badge">@countCart</span>
+                        }
+                    </a>
+
+                    @* ĐĂNG NHẬP / USER *@
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="user-menu-item dropdown">
+                            <a href="#" class="nav-user-btn dropdown-toggle" data-bs-toggle="dropdown">
+                                <img src="~/images/avtdefault.png" class="user-avatar" />
+                            </a>
                             <ul class="dropdown-menu dropdown-menu-end">
+                                <li class="dropdown-user-info">
+                                    <img src="~/images/avtdefault.png" class="dropdown-avatar" />
+                                    <span class="dropdown-username">@User.Identity.Name</span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="@Url.Action("Profile", "Account")">
-                                        <i class="fas fa-id-card me-2"></i> Hồ sơ
+                                        <i class="fas fa-user me-2"></i> Hồ sơ
                                     </a>
                                 </li>
                                 <li>
@@ -128,7 +129,7 @@
                                 {
                                     <li>
                                         <a class="dropdown-item text-danger" href="@Url.Action("Index", "Dashboard")">
-                                            <i class="fas fa-cog me-2"></i> Quản trị Admin
+                                            <i class="fas fa-cog me-2"></i> Quản trị
                                         </a>
                                     </li>
                                 }
@@ -139,15 +140,15 @@
                                     </a>
                                 </li>
                             </ul>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("Login", "Account")" class="nav-login-btn">
-                                <i class="fas fa-user"></i> Đăng nhập
-                            </a>
-                        }
-                    </li>
-                </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account")" class="nav-login-btn">
+                            Đăng nhập
+                        </a>
+                    }
+                </div>
             </nav>
         </div>
     </header>

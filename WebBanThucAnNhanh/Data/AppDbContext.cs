@@ -19,6 +19,7 @@ namespace WebBanThucAnNhanh.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Theme> Themes { get; set; }
+        public DbSet<CrossSellBundle> CrossSellBundles { get; set; }
 
         // === LUCKY WHEEL ===
         public DbSet<WheelPrize> WheelPrizes { get; set; }
@@ -395,6 +396,185 @@ namespace WebBanThucAnNhanh.Data
                 new WheelPrize { Id = 15, PrizeName = "Sandwich Gà miễn phí", PrizeType = 2, FastFoodId = 16, Probability = 10, RemainingQuantity = 30, IsActive = true },
                 new WheelPrize { Id = 16, PrizeName = "Chúc may mắn lần sau!", PrizeType = 2, FastFoodId = null, Probability = 32, RemainingQuantity = 9999, IsActive = true }
             );
+
+            // 6. Seed Data cho Cross Sell Bundle (Mua Kèm)
+            modelBuilder.Entity<CrossSellBundle>().HasData(
+                // === COMBO BURGER BÒ ===
+                new CrossSellBundle { Id = 1, MainFastFoodId = 1, AddOnFastFoodId = 5, DiscountPercentage = 10 },  // Burger + Khoai Tây Chiên
+                new CrossSellBundle { Id = 2, MainFastFoodId = 1, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Burger + Coca Cola
+                new CrossSellBundle { Id = 3, MainFastFoodId = 1, AddOnFastFoodId = 4, DiscountPercentage = 5 },   // Burger + Trà Sữa
+
+                // === COMBO GÀ RÁN ===
+                new CrossSellBundle { Id = 4, MainFastFoodId = 3, AddOnFastFoodId = 5, DiscountPercentage = 10 },  // Gà Rán + Khoai Tây Chiên
+                new CrossSellBundle { Id = 5, MainFastFoodId = 3, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Gà Rán + Coca Cola
+                new CrossSellBundle { Id = 6, MainFastFoodId = 3, AddOnFastFoodId = 6, DiscountPercentage = 8 },   // Gà Rán + Nước Cam Ép
+
+                // === COMBO PIZZA HẢI SẢN ===
+                new CrossSellBundle { Id = 7, MainFastFoodId = 7, AddOnFastFoodId = 6, DiscountPercentage = 8 },   // Pizza + Nước Cam Ép
+                new CrossSellBundle { Id = 8, MainFastFoodId = 7, AddOnFastFoodId = 2, DiscountPercentage = 5 },   // Pizza + Coca Cola
+                new CrossSellBundle { Id = 9, MainFastFoodId = 7, AddOnFastFoodId = 4, DiscountPercentage = 5 },   // Pizza + Trà Sữa
+
+                // === COMBO HOT DOG ===
+                new CrossSellBundle { Id = 10, MainFastFoodId = 11, AddOnFastFoodId = 5, DiscountPercentage = 10 }, // Hot Dog + Khoai Tây Chiên
+                new CrossSellBundle { Id = 11, MainFastFoodId = 11, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Hot Dog + Coca Cola
+                new CrossSellBundle { Id = 12, MainFastFoodId = 11, AddOnFastFoodId = 10, DiscountPercentage = 5 }, // Hot Dog + Trà Đào
+
+                // === COMBO GÀ VIÊN CHIÊN ===
+                new CrossSellBundle { Id = 13, MainFastFoodId = 12, AddOnFastFoodId = 5, DiscountPercentage = 8 },  // Gà Viên + Khoai Tây Chiên
+                new CrossSellBundle { Id = 14, MainFastFoodId = 12, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Gà Viên + Coca Cola
+                new CrossSellBundle { Id = 15, MainFastFoodId = 12, AddOnFastFoodId = 4, DiscountPercentage = 5 },  // Gà Viên + Trà Sữa
+
+                // === COMBO SANDWICH GÀ ===
+                new CrossSellBundle { Id = 16, MainFastFoodId = 16, AddOnFastFoodId = 4, DiscountPercentage = 8 },  // Sandwich + Trà Sữa
+                new CrossSellBundle { Id = 17, MainFastFoodId = 16, AddOnFastFoodId = 2, DiscountPercentage = 5 },  // Sandwich + Coca Cola
+                new CrossSellBundle { Id = 18, MainFastFoodId = 16, AddOnFastFoodId = 20, DiscountPercentage = 5 }  // Sandwich + Cà Phê
+            );
+
+            // =============================================
+            // 7. Seed Data cho Nhóm tùy chọn (Size, Topping, Sốt...)
+            // =============================================
+            modelBuilder.Entity<OptionGroup>().HasData(
+                new OptionGroup { Id = 1, Name = "Size", IsMultiSelect = false },
+                new OptionGroup { Id = 2, Name = "Topping", IsMultiSelect = true },
+                new OptionGroup { Id = 3, Name = "Sốt chấm", IsMultiSelect = true },
+                new OptionGroup { Id = 4, Name = "Đế bánh", IsMultiSelect = false },
+                new OptionGroup { Id = 5, Name = "Mức đường", IsMultiSelect = false },
+                new OptionGroup { Id = 6, Name = "Mức đá", IsMultiSelect = false },
+                new OptionGroup { Id = 7, Name = "Thêm đồ ăn kèm", IsMultiSelect = true }
+            );
+
+            // 8. Seed Data cho các lựa chọn trong từng nhóm
+            modelBuilder.Entity<OptionItem>().HasData(
+                // === SIZE (OptionGroupId = 1) ===
+                new OptionItem { Id = 1, OptionGroupId = 1, Name = "Size S", AdditionalPrice = 0m },
+                new OptionItem { Id = 2, OptionGroupId = 1, Name = "Size M", AdditionalPrice = 5000m },
+                new OptionItem { Id = 3, OptionGroupId = 1, Name = "Size L", AdditionalPrice = 10000m },
+
+                // === TOPPING (OptionGroupId = 2) ===
+                new OptionItem { Id = 4, OptionGroupId = 2, Name = "Trân châu đen", AdditionalPrice = 5000m },
+                new OptionItem { Id = 5, OptionGroupId = 2, Name = "Trân châu trắng", AdditionalPrice = 5000m },
+                new OptionItem { Id = 6, OptionGroupId = 2, Name = "Thạch dừa", AdditionalPrice = 5000m },
+                new OptionItem { Id = 7, OptionGroupId = 2, Name = "Pudding", AdditionalPrice = 8000m },
+                new OptionItem { Id = 8, OptionGroupId = 2, Name = "Kem cheese", AdditionalPrice = 10000m },
+
+                // === SỐT CHẤM (OptionGroupId = 3) ===
+                new OptionItem { Id = 9, OptionGroupId = 3, Name = "Sốt BBQ", AdditionalPrice = 0m },
+                new OptionItem { Id = 10, OptionGroupId = 3, Name = "Sốt Cay", AdditionalPrice = 3000m },
+                new OptionItem { Id = 11, OptionGroupId = 3, Name = "Sốt Phô mai", AdditionalPrice = 5000m },
+                new OptionItem { Id = 12, OptionGroupId = 3, Name = "Sốt Mù tạt", AdditionalPrice = 0m },
+
+                // === ĐẾ BÁNH (OptionGroupId = 4) ===
+                new OptionItem { Id = 13, OptionGroupId = 4, Name = "Đế mỏng truyền thống", AdditionalPrice = 0m },
+                new OptionItem { Id = 14, OptionGroupId = 4, Name = "Đế dày xốp", AdditionalPrice = 10000m },
+                new OptionItem { Id = 15, OptionGroupId = 4, Name = "Đế viền phô mai", AdditionalPrice = 15000m },
+
+                // === MỨC ĐƯỜNG (OptionGroupId = 5) ===
+                new OptionItem { Id = 16, OptionGroupId = 5, Name = "100% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 17, OptionGroupId = 5, Name = "70% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 18, OptionGroupId = 5, Name = "50% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 19, OptionGroupId = 5, Name = "30% Đường", AdditionalPrice = 0m },
+                new OptionItem { Id = 20, OptionGroupId = 5, Name = "0% Đường", AdditionalPrice = 0m },
+
+                // === MỨC ĐÁ (OptionGroupId = 6) ===
+                new OptionItem { Id = 21, OptionGroupId = 6, Name = "100% Đá", AdditionalPrice = 0m },
+                new OptionItem { Id = 22, OptionGroupId = 6, Name = "50% Đá", AdditionalPrice = 0m },
+                new OptionItem { Id = 23, OptionGroupId = 6, Name = "0% Đá", AdditionalPrice = 0m },
+
+                // === THÊM ĐỒ ĂN KÈM (OptionGroupId = 7) ===
+                new OptionItem { Id = 24, OptionGroupId = 7, Name = "Thêm phô mai", AdditionalPrice = 10000m },
+                new OptionItem { Id = 25, OptionGroupId = 7, Name = "Thêm xúc xích", AdditionalPrice = 15000m },
+                new OptionItem { Id = 26, OptionGroupId = 7, Name = "Thêm trứng ốp la", AdditionalPrice = 8000m }
+            );
+
+            // 9. Seed Data liên kết món ăn với nhóm tùy chọn
+            modelBuilder.Entity<FastFoodOptionGroup>().HasData(
+                // === ĐỒ UỐNG: Size + Topping ===
+                // Trà Sữa (Id=4)
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 4, OptionGroupId = 6 },
+                // Trà Đào (Id=10)
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 10, OptionGroupId = 6 },
+                // Matcha Latte (Id=18)
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 18, OptionGroupId = 6 },
+                // Trà Vải (Id=24)
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 2 },
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 24, OptionGroupId = 6 },
+
+                // === ĐỒ UỐNG: Chỉ Size ===
+                // Coca Cola (Id=2)
+                new FastFoodOptionGroup { FastFoodId = 2, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 2, OptionGroupId = 6 },
+                // Nước Cam Ép (Id=6)
+                new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 6, OptionGroupId = 6 },
+                // Sinh Tố Bơ (Id=8)
+                new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 8, OptionGroupId = 6 },
+                // Cà Phê Sữa Đá (Id=20)
+                new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 20, OptionGroupId = 6 },
+                // Nước Chanh Dây (Id=23)
+                new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 1 },
+                new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 5 },
+                new FastFoodOptionGroup { FastFoodId = 23, OptionGroupId = 6 },
+
+                // === ĐỒ ĂN: Sốt chấm ===
+                // Burger Bò (Id=1)
+                new FastFoodOptionGroup { FastFoodId = 1, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 1, OptionGroupId = 7 },
+                // Gà Rán (Id=3)
+                new FastFoodOptionGroup { FastFoodId = 3, OptionGroupId = 3 },
+                // Khoai Tây Chiên (Id=5)
+                new FastFoodOptionGroup { FastFoodId = 5, OptionGroupId = 3 },
+                // Hot Dog (Id=11)
+                new FastFoodOptionGroup { FastFoodId = 11, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 11, OptionGroupId = 7 },
+                // Gà Viên Chiên (Id=12)
+                new FastFoodOptionGroup { FastFoodId = 12, OptionGroupId = 3 },
+                // Hành Tây Chiên (Id=15)
+                new FastFoodOptionGroup { FastFoodId = 15, OptionGroupId = 3 },
+                // Sandwich Gà (Id=16)
+                new FastFoodOptionGroup { FastFoodId = 16, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 16, OptionGroupId = 7 },
+                // Cánh Gà Chiên (Id=17)
+                new FastFoodOptionGroup { FastFoodId = 17, OptionGroupId = 3 },
+                // Xúc Xích Nướng (Id=22)
+                new FastFoodOptionGroup { FastFoodId = 22, OptionGroupId = 3 },
+
+                // === PIZZA: Đế bánh + Sốt ===
+                // Pizza Hải Sản (Id=7)
+                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 4 },
+                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 3 },
+                new FastFoodOptionGroup { FastFoodId = 7, OptionGroupId = 7 }
+            );
+
+            // === CẤU HÌNH CROSS SELL BUNDLE ===
+            // Quan hệ: CrossSellBundle -> MainFastFood
+            modelBuilder.Entity<CrossSellBundle>()
+                .HasOne(c => c.MainFastFood)
+                .WithMany()
+                .HasForeignKey(c => c.MainFastFoodId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Quan hệ: CrossSellBundle -> AddOnFastFood
+            modelBuilder.Entity<CrossSellBundle>()
+                .HasOne(c => c.AddOnFastFood)
+                .WithMany()
+                .HasForeignKey(c => c.AddOnFastFoodId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // 1. Set giá trị mặc định cho ngày tạo đơn
             modelBuilder.Entity<Order>()

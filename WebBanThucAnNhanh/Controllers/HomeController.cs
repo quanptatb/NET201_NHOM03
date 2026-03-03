@@ -20,6 +20,7 @@ public class HomeController : Controller
         var query = _context.FastFoods
             .Include(f => f.TypeOfFastFood)
             .Include(f => f.Theme)
+            .Include(f => f.FastFoodOptionGroups)
             .AsQueryable();
 
         // Thực hiện lọc nếu có tham số
@@ -46,6 +47,7 @@ public class HomeController : Controller
         var query = _context.FastFoods
             .Include(f => f.TypeOfFastFood)
             .Include(f => f.Theme)
+            .Include(f => f.FastFoodOptionGroups)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(keyword))
@@ -85,36 +87,74 @@ public class HomeController : Controller
     }
 
     // GET: Home/Details/5 - Trang chi tiết sản phẩm cho User
-    // GET: Home/Details/5 - Trang chi tiết sản phẩm cho User
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null) return NotFound();
+public async Task<IActionResult> Details(int? id)
+{
+    if (id == null) return NotFound();
 
+    var fastFood = await _context.FastFoods
+        .Include(f => f.Theme)
+        .Include(f => f.TypeOfFastFood)
+        .FirstOrDefaultAsync(m => m.IdFastFood == id);
+
+    if (fastFood == null) return NotFound();
+
+    // 1. LẤY DANH SÁCH TOPPING / SIZE truyền sang View
+    var options = await _context.FastFoodOptionGroups
+        .Where(fog => fog.FastFoodId == id)
+        .Include(fog => fog.OptionGroup)
+            .ThenInclude(g => g.OptionItems)
+        .Select(fog => fog.OptionGroup)
+        .ToListAsync();
+        
+    ViewBag.Options = options;
+
+    // 2. Lấy các sản phẩm liên quan (cùng loại, trừ sản phẩm hiện tại)
+    ViewBag.RelatedProducts = await _context.FastFoods
+        .Include(f => f.TypeOfFastFood)
+        .Where(f => f.IdTypeOfFastFood == fastFood.IdTypeOfFastFood && f.IdFastFood != id)
+        .Take(4)
+        .ToListAsync();
+
+    // ==========================================
+    // 3. GỢI Ý MUA KÈM ĐỘNG (THÊM VÀO ĐÂY)
+    // ==========================================
+    // Lấy 4 sản phẩm ngẫu nhiên để làm món mua kèm giảm giá 50%
+    var randomProducts = await _context.FastFoods
+        .Where(f => f.IdFastFood != id && f.Status == true)
+        .OrderBy(r => Guid.NewGuid()) 
+        .Take(4)
+        .ToListAsync();
+
+    var addOnItems = new List<CrossSellBundle>();
+    foreach (var p in randomProducts)
+    {
+        addOnItems.Add(new CrossSellBundle
+        {
+            MainFastFoodId = fastFood.IdFastFood,
+            AddOnFastFoodId = p.IdFastFood,
+            AddOnFastFood = p, 
+            DiscountPercentage = 50 // Giảm 50%
+        });
+    }
+    ViewBag.AddOnItems = addOnItems;
+    // ==========================================
+
+    return View(fastFood);
+}
+
+
+    public async Task<IActionResult> GetToppingForm(int id)
+    {
         var fastFood = await _context.FastFoods
-            .Include(f => f.Theme)
-            .Include(f => f.TypeOfFastFood)
+            .Include(f => f.FastFoodOptionGroups)
+                .ThenInclude(fog => fog.OptionGroup)
+                    .ThenInclude(g => g.OptionItems)
             .FirstOrDefaultAsync(m => m.IdFastFood == id);
 
         if (fastFood == null) return NotFound();
 
-        // 1. LẤY DANH SÁCH TOPPING / SIZE truyền sang View
-        var options = await _context.FastFoodOptionGroups
-            .Where(fog => fog.FastFoodId == id)
-            .Include(fog => fog.OptionGroup)
-                .ThenInclude(g => g.OptionItems)
-            .Select(fog => fog.OptionGroup)
-            .ToListAsync();
-            
-        ViewBag.Options = options;
-
-        // 2. Lấy các sản phẩm liên quan (cùng loại, trừ sản phẩm hiện tại)
-        ViewBag.RelatedProducts = await _context.FastFoods
-            .Include(f => f.TypeOfFastFood)
-            .Where(f => f.IdTypeOfFastFood == fastFood.IdTypeOfFastFood && f.IdFastFood != id)
-            .Take(4)
-            .ToListAsync();
-
-        return View(fastFood);
+        // Trả về một file giao diện nhỏ (Partial View)
+        return PartialView("_ToppingModalPartial", fastFood);
     }
 
     public IActionResult Privacy()

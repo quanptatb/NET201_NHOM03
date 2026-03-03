@@ -1,0 +1,84 @@
+@model WebBanThucAnNhanh.Models.FastFood
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">@Model.NameFastFood</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form action="@Url.Action("AddToCart", "Cart")" method="post" id="modalCartForm">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-5 text-center mb-3">
+                <img src="~/images/@Model.Image" alt="@Model.NameFastFood" class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover;" />
+                <h4 class="text-danger fw-bold mt-3">@Model.Price.ToString("#,##0") đ</h4>
+            </div>
+
+            <div class="col-md-7">
+                <input type="hidden" name="id" value="@Model.IdFastFood" />
+                
+                <div style="max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
+                    @if (Model.FastFoodOptionGroups != null)
+                    {
+                        foreach (var fog in Model.FastFoodOptionGroups)
+                        {
+                            var group = fog.OptionGroup;
+                            <div class="mb-3 p-3 border rounded shadow-sm bg-light">
+                                <h6 class="fw-bold border-bottom pb-2">
+                                    <i class="fas fa-list-ul text-warning me-2"></i>@group.Name 
+                                    @if(group.IsMultiSelect) { <small class="text-muted fw-normal">(Có thể chọn nhiều)</small> }
+                                </h6>
+                                <div class="row mt-2">
+                                    @foreach (var item in group.OptionItems)
+                                    {
+                                        <div class="col-12 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="@(group.IsMultiSelect ? "checkbox" : "radio")" 
+                                                       name="@(group.IsMultiSelect ? "selectedOptionIds" : $"group_{group.Id}")" 
+                                                       value="@item.Id" id="modal_opt_@item.Id">
+                                                <label class="form-check-label d-flex justify-content-between w-100" for="modal_opt_@item.Id" style="cursor:pointer;">
+                                                    <span>@item.Name</span>
+                                                    @if (item.AdditionalPrice > 0)
+                                                    {
+                                                        <span class="text-danger fw-bold">+@item.AdditionalPrice.ToString("#,##0") đ</span>
+                                                    }
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="d-flex align-items-center mt-3 pt-3 border-top">
+                    <label class="fw-bold me-3">Số lượng:</label>
+                    <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="@Model.Quantity" style="width: 90px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn text-white px-4" style="background-color: #f35f2a;">
+            <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+        </button>
+    </div>
+</form>
+
+<script>
+    // Logic gộp các nút Radio lại trước khi gửi lên Cart Controller giống hệt trang Details
+    document.getElementById('modalCartForm').addEventListener('submit', function(e) {
+        var radios = this.querySelectorAll('input[type="radio"]:checked');
+        radios.forEach(function(radio) {
+            if (radio.name !== 'selectedOptionIds') {
+                var hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'selectedOptionIds';
+                hidden.value = radio.value;
+                e.target.appendChild(hidden);
+            }
+        });
+    });
+</script>

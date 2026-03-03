@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanThucAnNhanh.Data;
 
@@ -11,9 +12,11 @@ using WebBanThucAnNhanh.Data;
 namespace WebBanThucAnNhanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260302155557_SeedOptionGroupsAndToppings")]
+    partial class SeedOptionGroupsAndToppings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -572,16 +575,6 @@ namespace WebBanThucAnNhanh.Migrations
                         },
                         new
                         {
-                            FastFoodId = 4,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 4,
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
                             FastFoodId = 10,
                             OptionGroupId = 1
                         },
@@ -589,16 +582,6 @@ namespace WebBanThucAnNhanh.Migrations
                         {
                             FastFoodId = 10,
                             OptionGroupId = 2
-                        },
-                        new
-                        {
-                            FastFoodId = 10,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 10,
-                            OptionGroupId = 6
                         },
                         new
                         {
@@ -612,16 +595,6 @@ namespace WebBanThucAnNhanh.Migrations
                         },
                         new
                         {
-                            FastFoodId = 18,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 18,
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
                             FastFoodId = 24,
                             OptionGroupId = 1
                         },
@@ -629,16 +602,6 @@ namespace WebBanThucAnNhanh.Migrations
                         {
                             FastFoodId = 24,
                             OptionGroupId = 2
-                        },
-                        new
-                        {
-                            FastFoodId = 24,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 24,
-                            OptionGroupId = 6
                         },
                         new
                         {
@@ -647,23 +610,8 @@ namespace WebBanThucAnNhanh.Migrations
                         },
                         new
                         {
-                            FastFoodId = 2,
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
                             FastFoodId = 6,
                             OptionGroupId = 1
-                        },
-                        new
-                        {
-                            FastFoodId = 6,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 6,
-                            OptionGroupId = 6
                         },
                         new
                         {
@@ -672,53 +620,18 @@ namespace WebBanThucAnNhanh.Migrations
                         },
                         new
                         {
-                            FastFoodId = 8,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 8,
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
                             FastFoodId = 20,
                             OptionGroupId = 1
                         },
                         new
                         {
-                            FastFoodId = 20,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 20,
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
                             FastFoodId = 23,
                             OptionGroupId = 1
-                        },
-                        new
-                        {
-                            FastFoodId = 23,
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            FastFoodId = 23,
-                            OptionGroupId = 6
                         },
                         new
                         {
                             FastFoodId = 1,
                             OptionGroupId = 3
-                        },
-                        new
-                        {
-                            FastFoodId = 1,
-                            OptionGroupId = 7
                         },
                         new
                         {
@@ -737,11 +650,6 @@ namespace WebBanThucAnNhanh.Migrations
                         },
                         new
                         {
-                            FastFoodId = 11,
-                            OptionGroupId = 7
-                        },
-                        new
-                        {
                             FastFoodId = 12,
                             OptionGroupId = 3
                         },
@@ -754,11 +662,6 @@ namespace WebBanThucAnNhanh.Migrations
                         {
                             FastFoodId = 16,
                             OptionGroupId = 3
-                        },
-                        new
-                        {
-                            FastFoodId = 16,
-                            OptionGroupId = 7
                         },
                         new
                         {
@@ -779,11 +682,6 @@ namespace WebBanThucAnNhanh.Migrations
                         {
                             FastFoodId = 7,
                             OptionGroupId = 3
-                        },
-                        new
-                        {
-                            FastFoodId = 7,
-                            OptionGroupId = 7
                         });
                 });
 
@@ -830,24 +728,6 @@ namespace WebBanThucAnNhanh.Migrations
                             Id = 4,
                             IsMultiSelect = false,
                             Name = "Đế bánh"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsMultiSelect = false,
-                            Name = "Mức đường"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            IsMultiSelect = false,
-                            Name = "Mức đá"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            IsMultiSelect = true,
-                            Name = "Thêm đồ ăn kèm"
                         });
                 });
 
@@ -980,83 +860,6 @@ namespace WebBanThucAnNhanh.Migrations
                             AdditionalPrice = 15000m,
                             Name = "Đế viền phô mai",
                             OptionGroupId = 4
-                        },
-                        new
-                        {
-                            Id = 16,
-                            AdditionalPrice = 0m,
-                            Name = "100% Đường",
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            Id = 17,
-                            AdditionalPrice = 0m,
-                            Name = "70% Đường",
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            Id = 18,
-                            AdditionalPrice = 0m,
-                            Name = "50% Đường",
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            Id = 19,
-                            AdditionalPrice = 0m,
-                            Name = "30% Đường",
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            Id = 20,
-                            AdditionalPrice = 0m,
-                            Name = "0% Đường",
-                            OptionGroupId = 5
-                        },
-                        new
-                        {
-                            Id = 21,
-                            AdditionalPrice = 0m,
-                            Name = "100% Đá",
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
-                            Id = 22,
-                            AdditionalPrice = 0m,
-                            Name = "50% Đá",
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
-                            Id = 23,
-                            AdditionalPrice = 0m,
-                            Name = "0% Đá",
-                            OptionGroupId = 6
-                        },
-                        new
-                        {
-                            Id = 24,
-                            AdditionalPrice = 10000m,
-                            Name = "Thêm phô mai",
-                            OptionGroupId = 7
-                        },
-                        new
-                        {
-                            Id = 25,
-                            AdditionalPrice = 15000m,
-                            Name = "Thêm xúc xích",
-                            OptionGroupId = 7
-                        },
-                        new
-                        {
-                            Id = 26,
-                            AdditionalPrice = 8000m,
-                            Name = "Thêm trứng ốp la",
-                            OptionGroupId = 7
                         });
                 });
 

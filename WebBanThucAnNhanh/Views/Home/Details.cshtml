@@ -6,7 +6,6 @@
 
 <section class="product-detail-section">
     <div class="container">
-        <!-- Breadcrumb -->
         <nav class="product-breadcrumb">
             <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Trang chủ</a>
             <i class="fas fa-chevron-right"></i>
@@ -15,10 +14,8 @@
             <span>@Model.NameFastFood</span>
         </nav>
 
-        <!-- Product Detail Card -->
         <div class="product-detail-card">
             <div class="product-detail-grid">
-                <!-- Image Section -->
                 <div class="product-detail-image">
                     <div class="image-wrapper">
                         @if (!string.IsNullOrEmpty(Model.Image))
@@ -41,7 +38,6 @@
                     }
                 </div>
 
-                <!-- Info Section -->
                 <div class="product-detail-info">
                     <div class="product-category-tag">
                         <i class="fas fa-tag"></i>
@@ -104,7 +100,7 @@
                     <div class="product-detail-actions">
                         @if (Model.Status && Model.Quantity > 0)
                         {
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100">
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100" id="addToCartForm">
                                 <input type="hidden" name="id" value="@Model.IdFastFood" />
 
                                 <div class="options-section mb-4 text-start">
@@ -125,10 +121,11 @@
                                                     {
                                                         <div class="col-sm-6 mb-2">
                                                             <div class="form-check custom-checkbox">
-                                                                <input class="form-check-input"
+                                                                <input class="form-check-input option-input"
                                                                        type="@(group.IsMultiSelect ? "checkbox" : "radio")"
                                                                        name="@(group.IsMultiSelect ? "selectedOptionIds" : $"group_{group.Id}")"
-                                                                       value="@item.Id" id="option_@item.Id" />
+                                                                       value="@item.Id" id="option_@item.Id"
+                                                                       data-price="@item.AdditionalPrice" />
                                                                 <label class="form-check-label d-flex justify-content-between w-100"
                                                                        for="option_@item.Id" style="cursor:pointer;">
                                                                     <span>@item.Name</span>
@@ -158,6 +155,22 @@
                                     </button>
                                 </div>
                             </form>
+
+                            <script>
+                                document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+                                    // Tìm tất cả radio button đang được chọn và tạo hidden input cho chúng
+                                    var radios = this.querySelectorAll('input[type="radio"]:checked');
+                                    radios.forEach(function(radio) {
+                                        if (radio.name !== 'selectedOptionIds') {
+                                            var hidden = document.createElement('input');
+                                            hidden.type = 'hidden';
+                                            hidden.name = 'selectedOptionIds';
+                                            hidden.value = radio.value;
+                                            e.target.appendChild(hidden);
+                                        }
+                                    });
+                                });
+                            </script>
                         }
                         else
                         {
@@ -175,11 +188,49 @@
             </div>
         </div>
 
-        <!-- Related Products -->
+        @if (ViewBag.AddOnItems != null && ViewBag.AddOnItems.Count > 0)
+        {
+            <div class="cross-sell-section mt-5 bg-white p-4 rounded shadow-sm border-top border-danger border-3">
+                <h4 class="fw-bold mb-4 text-danger"><i class="fas fa-gift me-2"></i> Mua kèm giảm thêm</h4>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+                    @foreach (var addon in ViewBag.AddOnItems)
+                        {
+                            var discount = (decimal)addon.DiscountPercentage / 100m;
+                            var discountedPrice = addon.AddOnFastFood.Price * (1m - discount);
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0 bg-light">
+                                <img src="~/images/@addon.AddOnFastFood.Image" class="card-img-top p-3" alt="@addon.AddOnFastFood.NameFastFood" style="object-fit: contain; height: 160px; mix-blend-mode: multiply;">
+                                <div class="card-body text-center d-flex flex-column">
+                                    <h6 class="card-title fw-bold text-dark">@addon.AddOnFastFood.NameFastFood</h6>
+                                    <div class="mt-auto">
+                                        <p class="card-text mb-0 text-muted text-decoration-line-through small">
+                                            @addon.AddOnFastFood.Price.ToString("#,##0") đ
+                                        </p>
+                                        <p class="card-text text-danger fw-bold fs-5 mb-3">
+                                            @discountedPrice.ToString("#,##0") đ 
+                                            <span class="badge bg-danger ms-1 fs-6">-@addon.DiscountPercentage%</span>
+                                        </p>
+                                        <form asp-controller="Cart" asp-action="AddBundle" method="post">
+                                            <input type="hidden" name="mainId" value="@Model.IdFastFood" />
+                                            <input type="hidden" name="addOnId" value="@addon.AddOnFastFood.IdFastFood" />
+                                            <input type="hidden" name="discount" value="@addon.DiscountPercentage" />
+                                            <button type="submit" class="btn btn-warning w-100 fw-bold rounded-pill text-dark">
+                                                <i class="fas fa-cart-plus"></i> Mua kèm ngay
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
         @if (ViewBag.RelatedProducts != null &&
                 ((IEnumerable<WebBanThucAnNhanh.Models.FastFood>)ViewBag.RelatedProducts).Any())
         {
-            <div class="related-products-section">
+            <div class="related-products-section mt-5">
                 <div class="section-title text-center">
                     <h2>Sản Phẩm <span class="highlight">Liên Quan</span></h2>
                 </div>

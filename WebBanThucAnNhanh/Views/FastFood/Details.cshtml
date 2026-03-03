@@ -1,10 +1,8 @@
 @model WebBanThucAnNhanh.Models.FastFood
 @{
-    ViewData["Title"] = "Quản lý người dùng";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Trỏ về layout admin mới tạo
-}
-@{
     ViewData["Title"] = "Chi Tiết Món Ăn";
+    // Nếu bạn đang hiển thị cho khách xem thì không cần Layout Admin
+    // Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; 
 }
 
 <div class="container py-5">
@@ -15,7 +13,7 @@
         </ol>
     </nav>
 
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 mb-5">
         <div class="card-body p-4">
             <div class="row">
                 <div class="col-md-5 mb-4 mb-md-0">
@@ -40,8 +38,7 @@
 
                     <div class="mb-3">
                         <span class="badge bg-primary me-2">
-                            <i class="bi bi-tag-fill"></i> @Html.DisplayFor(model =>
-                                                        model.TypeOfFastFood.NameTypeOfFastFood)
+                            <i class="bi bi-tag-fill"></i> @Html.DisplayFor(model => model.TypeOfFastFood.NameTypeOfFastFood)
                         </span>
                         @if (Model.Theme != null)
                         {
@@ -70,6 +67,7 @@
                     </div>
 
                     <hr />
+                    
                     <div class="options-section mb-4">
                         <form id="addToCartForm">
                             @if (Model.FastFoodOptionGroups != null && Model.FastFoodOptionGroups.Any())
@@ -79,109 +77,117 @@
                                     <div class="option-group mb-3">
                                         <h6 class="fw-bold text-uppercase" style="font-size: 0.9rem;">
                                             @fog.OptionGroup.Name
-                                            <span class="text-muted small">@(fog.OptionGroup.IsMultiSelect ? "(Chọn nhiều)" :
-                                                                                        "(Chọn 1)")</span>
-                                            </h6>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                @foreach (var item in fog.OptionGroup.OptionItems)
-                                                {
-                                                    <div class="option-item">
-                                                        @if (fog.OptionGroup.IsMultiSelect)
-                                                        {
-                                                            <input type="checkbox" class="btn-check" id="item-@item.Id"
-                                                                   name="selectedOptions" value="@item.Id" autocomplete="off">
-                                                            <label class="btn btn-outline-danger btn-sm" for="item-@item.Id">
-                                                                @item.Name (+@item.AdditionalPrice.ToString("N0")đ)
-                                                            </label>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="radio" class="btn-check" id="item-@item.Id"
-                                                                   name="group-@fog.OptionGroupId" value="@item.Id" autocomplete="off" @(item
-                                                                                                                                                                                                                        == fog.OptionGroup.OptionItems.First() ? "checked" : "")>
-                                                            <label class="btn btn-outline-primary btn-sm" for="item-@item.Id">
-                                                                @item.Name (+@item.AdditionalPrice.ToString("N0")đ)
-                                                            </label>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                            </form>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-6">
-                                <small class="text-muted fw-bold d-block">TÌNH TRẠNG</small>
-                                @if (Model.Status && Model.Quantity > 0)
-                                {
-                                    <span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Còn hàng</span>
-                                }
-                                else
-                                {
-                                    <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill"></i> Hết hàng / Ngừng
-                                        bán</span>
-                                    }
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted fw-bold d-block">SỐ LƯỢNG KHO</small>
-                                    <span class="fw-bold">@Model.Quantity</span>
-                                </div>
-                            </div>
-
-                            <div class="d-flex gap-2 mt-auto">
-                                <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model?.IdFastFood"
-                                       class="btn btn-danger px-4 fw-bold">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                                </a>
-
-                                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
-                                    <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
-                                </a>
-                            </div>
-                            <div class="mt-4">
-                                <h5 class="fw-bold"><i class="bi bi-plus-circle"></i> Tùy chọn thêm:</h5>
-                                <form id="toppingForm">
-                                    @if (Model.FastFoodOptionGroups != null && Model.FastFoodOptionGroups.Any())
-                                    {
-                                        @foreach (var fog in Model.FastFoodOptionGroups)
-                                        {
-                                            <div class="mb-3 border-bottom pb-2">
-                                                <label class="form-label fw-bold text-primary">@fog.OptionGroup.Name</label>
-                                                <div class="d-flex flex-wrap gap-2">
-                                                    @foreach (var item in fog.OptionGroup.OptionItems)
+                                            <span class="text-muted small">
+                                                @(fog.OptionGroup.IsMultiSelect ? "(Chọn nhiều)" : "(Chọn 1)")
+                                            </span>
+                                        </h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach (var item in fog.OptionGroup.OptionItems)
+                                            {
+                                                <div class="option-item">
+                                                    @if (fog.OptionGroup.IsMultiSelect)
                                                     {
-                                                        <div class="form-check border rounded p-2">
-                                                            @if (fog.OptionGroup.IsMultiSelect)
-                                                            {
-                                                                <input class="form-check-input ms-0" type="checkbox" name="toppingIds"
-                                                                       value="@item.Id" id="item-@item.Id">
-                                                            }
-                                                            else
-                                                            {
-                                                                <input class="form-check-input ms-0" type="radio"
-                                                                       name="group-@fog.OptionGroupId" value="@item.Id" id="item-@item.Id">
-                                                            }
-                                                            <label class="form-check-label ps-4" for="item-@item.Id">
-                                                                @item.Name <span
-                                                                class="text-danger">(+@item.AdditionalPrice.ToString("N0")đ)</span>
-                                                            </label>
-                                                        </div>
+                                                        <input type="checkbox" class="btn-check" id="item-@item.Id"
+                                                               name="selectedOptions" value="@item.Id" autocomplete="off">
+                                                        <label class="btn btn-outline-danger btn-sm" for="item-@item.Id">
+                                                            @item.Name (+@item.AdditionalPrice.ToString("N0")đ)
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" class="btn-check" id="item-@item.Id"
+                                                               name="group-@fog.OptionGroupId" value="@item.Id" autocomplete="off"
+                                                               @(item == fog.OptionGroup.OptionItems.First() ? "checked" : "")>
+                                                        <label class="btn btn-outline-primary btn-sm" for="item-@item.Id">
+                                                            @item.Name (+@item.AdditionalPrice.ToString("N0")đ)
+                                                        </label>
                                                     }
                                                 </div>
-                                            </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <p class="text-muted small"><i>Món này không có tùy chọn thêm.</i></p>
-                                    }
-                                </form>
-                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </form>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <small class="text-muted fw-bold d-block">TÌNH TRẠNG</small>
+                            @if (Model.Status && Model.Quantity > 0)
+                            {
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Còn hàng</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill"></i> Hết hàng / Ngừng bán</span>
+                            }
                         </div>
+                        <div class="col-6">
+                            <small class="text-muted fw-bold d-block">SỐ LƯỢNG KHO</small>
+                            <span class="fw-bold">@Model.Quantity</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-auto">
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model?.IdFastFood"
+                           class="btn btn-danger px-4 fw-bold">
+                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                        </a>
+
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    @if (ViewBag.AddOnItems != null && ViewBag.AddOnItems.Count > 0)
+    {
+        <div class="cross-sell-section bg-white p-4 rounded shadow-sm border-top border-danger border-3">
+            <h4 class="fw-bold mb-4 text-danger"><i class="bi bi-gift-fill me-2"></i> Mua kèm giảm thêm</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+                
+                @foreach (var item in ViewBag.AddOnItems)
+                {
+                    // Tính giá trị giảm giá thực tế (dùng decimal tránh lỗi kiểu)
+                    var discount = (decimal)item.DiscountPercentage / 100m;
+                    var discountedPrice = item.AddOnFastFood.Price * (1m - discount);
+
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 bg-light">
+                            <img src="~/images/@item.AddOnFastFood.Image" class="card-img-top p-3" alt="@item.AddOnFastFood.NameFastFood" 
+                                 style="object-fit: contain; height: 160px; mix-blend-mode: multiply;">
+                            
+                            <div class="card-body text-center d-flex flex-column">
+                                <h6 class="card-title fw-bold text-dark">@item.AddOnFastFood.NameFastFood</h6>
+                                
+                                <div class="mt-auto">
+                                    <p class="card-text mb-0 text-muted text-decoration-line-through small">
+                                        @item.AddOnFastFood.Price.ToString("N0") đ
+                                    </p>
+                                    
+                                    <p class="card-text text-danger fw-bold fs-5 mb-3">
+                                        @discountedPrice.ToString("N0") đ 
+                                        <span class="badge bg-danger ms-1 fs-6">-@item.DiscountPercentage%</span>
+                                    </p>
+                                    
+                                    <form asp-controller="Cart" asp-action="AddBundle" method="post">
+                                        <input type="hidden" name="mainId" value="@Model.IdFastFood" />
+                                        <input type="hidden" name="addOnId" value="@item.AddOnFastFood.IdFastFood" />
+                                        <input type="hidden" name="discount" value="@item.DiscountPercentage" />
+                                        <button type="submit" class="btn btn-warning w-100 fw-bold rounded-pill text-dark">
+                                            <i class="bi bi-bag-plus-fill"></i> Mua kèm ngay
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+    </div>

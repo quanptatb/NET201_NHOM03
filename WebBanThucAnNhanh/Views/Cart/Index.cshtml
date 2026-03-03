@@ -7,6 +7,71 @@
 <section class="cart-section" style="padding-bottom: 50px;">
     <div class="container">
         <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
+        <style>
+            input[type="number"].quantity-input { font-size: 1.25rem; font-weight: 600; }
+            
+            /* Table styling */
+            .table {
+                border-collapse: separate;
+                border-spacing: 0 12px;
+            }
+            
+            /* Card-style cho mỗi sản phẩm */
+            .table tbody tr {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                background-color: #fff !important;
+            }
+            
+            .table tbody tr td {
+                border: none !important;
+                padding: 16px 12px;
+                vertical-align: middle;
+                background-color: #fff;
+            }
+            
+            .table tbody tr td:first-child {
+                border-radius: 12px 0 0 12px;
+                padding-left: 16px;
+            }
+            
+            .table tbody tr td:last-child {
+                border-radius: 0 12px 12px 0;
+                padding-right: 16px;
+            }
+            
+            .table tbody tr:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            }
+            
+            .table tbody tr:hover td {
+                background-color: #fafafa;
+            }
+            
+            /* Khump mua kèm - giữ nguyên style gold */
+            .promo-badge {
+                display: block;
+                width: 20%;
+                margin-left: 0;
+                background-color: #fff3cd;
+                color: #856404;
+                border: 2px dashed #f6c23e;
+                padding: 14px 15px;
+                border-radius: 8px;
+                font-size: 1.05rem;
+                font-weight: 600;
+                margin-top: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+            
+            .normal-topping {
+                font-size: 0.85rem;
+                padding: 4px 8px;
+                margin-right: 4px;
+                margin-bottom: 4px;
+                border-radius: 4px;
+                display: inline-block;
+            }
+        </style>
 
         @if (Model == null || Model.Count == 0)
         {
@@ -40,32 +105,63 @@
                             <tr>
                                 <td class="text-center">
                                     <img src="~/images/@item.Image" alt="@item.Name"
-                                        style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;">
+                                        style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                                 </td>
                                 <td>
-                                    <strong>@item.Name</strong>
+                                    <div style="font-size: 1.55rem; font-weight: 500; color: #333;">@item.Name</div>
+                                    
+                                    @if (item.SelectedOptions != null && item.SelectedOptions.Any())
+                                    {
+                                        <div class="mt-1">
+                                            @foreach (var opt in item.SelectedOptions)
+                                            {
+                                                // NẾU LÀ MÓN MUA KÈM -> HIỂN THỊ KHUNG VÀNG TO ĐẸP
+                                                if (opt.OptionName.Contains("Mua kèm"))
+                                                {
+                                                    <div class="promo-badge d-block w-100 mt-2">
+                                                    @opt.OptionName
+                                                        @if (opt.AdditionalPrice > 0)
+                                                        {
+                                                            <span class="ms-1">(+@opt.AdditionalPrice.ToString("n0")đ)</span>
+                                                        }
+                                                    </div>
+                                                }
+                                                // NẾU LÀ TOPPING BÌNH THƯỜNG -> HIỂN THỊ BADGE XANH NHƯ CŨ
+                                                else
+                                                {
+                                                    <span class="badge bg-info text-dark me-1 normal-topping">
+                                                        @opt.OptionName
+                                                        @if (opt.AdditionalPrice > 0)
+                                                        {
+                                                            <small class="text-danger ms-1">(+@opt.AdditionalPrice.ToString("n0")đ)</small>
+                                                        }
+                                                    </span>
+                                                }
+                                            }
+                                        </div>
+                                    }
                                 </td>
-                                <td class="text-end">@item.Price.ToString("n0") đ</td>
+                                <td class="text-end fw-semibold">@item.Price.ToString("n0") đ</td>
                                 <td>
                                     @* Form cập nhật số lượng *@
                                     <form asp-action="UpdateCart" asp-controller="Cart" method="post"
                                         class="d-flex justify-content-center">
                                         <input type="hidden" name="signature" value="@item.CartItemSignature" />
                                         <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
-                                            class="form-control text-center me-2" style="width: 70px;" />
+                                            class="form-control text-center me-2 quantity-input" style="width: 70px;" />
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" title="Cập nhật">
                                             <i class="fas fa-sync-alt"></i>
                                         </button>
                                     </form>
                                 </td>
-                                <td class="text-end fw-bold text-danger">
+                                <td class="text-end fw-bold text-danger" style="font-size: 1.46rem;">
                                     @item.Total.ToString("n0") đ
                                 </td>
                                 <td class="text-center">
-                                    <form asp-action="Remove" asp-controller="Cart" method="post" style="display:inline;">
+                                    @* ĐÃ SỬA ID THÀNH SIGNATURE ĐỂ NÚT XÓA CHẠY ĐƯỢC CHÍNH XÁC MÓN *@
+                                    <form asp-action="Remove" asp-controller="Cart" method="post" class="d-inline">
                                         <input type="hidden" name="signature" value="@item.CartItemSignature" />
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Bạn có chắc muốn xóa món này?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa món này?');">
                                             <i class="fas fa-trash-alt"></i> Xóa
                                         </button>
                                     </form>
@@ -74,12 +170,11 @@
                         }
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <td colspan="4" class="text-end fw-bold fs-5">Tổng cộng:</td>
+                        <tr class="bg-light">
+                            <td colspan="5" class="text-end fw-bold fs-5">Tổng cộng:</td>
                             <td class="text-end fw-bold fs-4 text-danger">
-                                @Model.Sum(x => x.Price * x.Quantity).ToString("n0") đ
+                                @Model.Sum(x => x.Total).ToString("n0") đ
                             </td>
-                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -95,7 +190,7 @@
                     <a href="@Url.Action("Index", "Home")" class="btn btn-secondary me-2">
                         <i class="fas fa-arrow-left"></i> Mua thêm
                     </a>
-                    <a href="@Url.Action("Index", "Checkout")" class="btn btn-success btn-lg">
+                    <a href="@Url.Action("Index", "Checkout")" class="btn btn-success btn-lg fw-bold shadow-sm">
                         <i class="fas fa-check-circle"></i> Thanh toán ngay
                     </a>
                 </div>
